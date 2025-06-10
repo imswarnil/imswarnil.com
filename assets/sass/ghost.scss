@@ -1,0 +1,174 @@
+/*
+==========================================================================
+    2. WIDE & FULL-WIDTH CARD STYLES (REQUIRED FOR GHOST THEMES)
+    This makes .kg-width-wide and .kg-width-full break out of the
+    main content container.
+==========================================================================
+*/
+.kg-width-wide,
+.kg-width-full {
+  /* These properties are essential for the breakout effect */
+  position: relative;
+  width: 100vw;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  transform: translateX(0); /* Fix for potential transform bugs */
+}
+
+/* Constrain the .kg-width-wide to its specified max-width */
+.kg-width-wide {
+  max-width: var(--wide-width);
+}
+
+/* Ensure the image inside fills the breakout container */
+.kg-width-wide .kg-image,
+.kg-width-full .kg-image {
+  width: 100%;
+}
+
+/*
+==========================================================================
+    3. GHOST KOENIG CARD STYLES
+    Styling for individual cards using the Bulma variables.
+==========================================================================
+*/
+
+/* --- Base Card Margin --- */
+.kg-card {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* --- Image & Gallery Cards --- */
+.kg-image-card .kg-image,
+.kg-gallery-card .kg-gallery-image img {
+  border-radius: var(--bulma-radius-large);
+  box-shadow: var(--bulma-shadow);
+}
+.kg-image-card figcaption {
+  /* Captions for wide/full images should be narrower than the image */
+  max-width: var(--content-width);
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0.75em;
+  padding: 0 1rem;
+  text-align: center;
+  font-size: 0.9em;
+  color: var(--bulma-text-light);
+}
+
+/* --- Bookmark Card --- */
+.kg-bookmark-card .kg-bookmark-container {
+  display: flex;
+  background-color: var(--bulma-card-background);
+  border: 1px solid var(--bulma-border);
+  border-radius: var(--bulma-radius-large);
+  text-decoration: none !important;
+  transition: all 0.2s ease-in-out;
+  overflow: hidden;
+  box-shadow: var(--bulma-shadow);
+  max-width: var(--content-width); /* Constrain bookmarks to text width */
+  margin-left: auto;
+  margin-right: auto;
+}
+.kg-bookmark-card .kg-bookmark-container:hover {
+  transform: translateY(-3px);
+  border-color: var(--bulma-link);
+}
+.kg-bookmark-card .kg-bookmark-content {
+  padding: 20px;
+}
+.kg-bookmark-card .kg-bookmark-title {
+  font-weight: 700;
+  color: var(--bulma-text-strong);
+}
+.kg-bookmark-card .kg-bookmark-description {
+  color: var(--bulma-text-light);
+  margin-top: 0.5em;
+}
+
+/* --- Blockquote Card --- */
+.kg-blockquote-card {
+  padding: 1.5em;
+  background-color: var(--bulma-background);
+  border-left: 5px solid var(--bulma-border);
+  border-radius: var(--bulma-radius);
+  max-width: var(--content-width);
+  margin-left: auto;
+  margin-right: auto;
+}
+.kg-blockquote-card blockquote {
+  margin: 0;
+  padding: 0;
+  border: none;
+  font-size: 1.25rem;
+  font-style: italic;
+  color: var(--bulma-text-light);
+}
+
+/* --- Code Card --- */
+.kg-code-card {
+  background-color: #282c34; /* A common dark theme color */
+  color: #abb2bf;
+  padding: 1.5em;
+  border-radius: var(--bulma-radius-large);
+  box-shadow: var(--bulma-shadow);
+  max-width: var(--content-width);
+  margin-left: auto;
+  margin-right: auto;
+}
+.kg-code-card pre {
+  margin: 0;
+  overflow-x: auto;
+}
+
+/* --- Embed Cards (YouTube, Twitter, etc.) --- */
+/* Note: Wide/Full classes are often used with embeds */
+.kg-embed-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.kg-embed-card iframe {
+  border-radius: var(--bulma-radius-large);
+  box-shadow: var(--bulma-shadow);
+  max-width: 100%;
+}
+
+/* --- Button Card --- */
+.kg-button-card a.kg-btn {
+  display: inline-block;
+  background-color: var(--bulma-primary);
+  color: white;
+  border: none;
+  padding: 0.75em 1.5em;
+  font-weight: 700;
+  border-radius: var(--bulma-radius);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  box-shadow: var(--bulma-shadow);
+}
+.kg-button-card a.kg-btn:hover {
+  background-color: hsl(from var(--bulma-primary) h s calc(l - 5%));
+  transform: translateY(-2px);
+  color: white;
+}
+.kg-button-card.kg-align-center {
+  text-align: center;
+}
+
+/* --- Divider Card --- */
+.kg-divider-card {
+  padding: 1rem 0;
+  max-width: var(--content-width);
+  margin-left: auto;
+  margin-right: auto;
+}
+.kg-divider-card hr {
+  height: 2px;
+  border: none;
+  background-color: var(--bulma-border);
+}

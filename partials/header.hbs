@@ -1,19 +1,19 @@
 <header class="header">
   <nav class="navbar is-transparent {{#if @custom.fixed_navbar}}is-fixed-top{{/if}}" role="navigation" aria-label="main navigation" id="mainNavbar">
-    <div class="container is-fluid">
       <div class="navbar-brand">
         <a class="navbar-item py-1" href="{{@site.url}}" aria-label="Homepage - {{@site.title}}">
           {{#if @site.logo}}
-            <img src="{{@site.logo}}" alt="{{@site.title}} Logo" style="max-height: 3rem; width: auto;">
+            <img src="{{@site.logo}}" alt="{{@site.title}} Logo" style="max-height: 2rem; width: auto;">  <span class="has-text-weight-bold is-size-6 has-text-dark">{{@site.title}}</span>
           {{else}}
             <span class="has-text-weight-bold is-size-3 has-text-white">{{@site.title}}</span>
           {{/if}}
         </a>
 
-        <a role="button" class="navbar-burger burger has-text-white" aria-label="menu" aria-expanded="false" data-target="navbarMenuMain">
+        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarMenuMain">
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
         </a>
       </div>
 
@@ -60,21 +60,22 @@
 
         <div class="navbar-end">
           {{!-- Search (More prominent) --}}
-          <div class="navbar-item">
-            <a href="/search/" class="button is-small is-white is-outlined is-rounded has-tooltip-bottom" data-tooltip="Search Site" aria-label="Search">
-              <span class="icon"><i class="ph-duotone ph-magnifying-glass"></i></span>
-              <span class="is-hidden-touch">Search</span>
-            </a>
-          </div>
+         
 
           {{!-- Dark Mode Toggle (More prominent) --}}
           <div class="navbar-item">
-             <button class="button is-small is-white is-outlined is-rounded has-tooltip-bottom" data-tooltip="Toggle Theme" id="darkModeToggleNavbar" aria-label="Toggle Dark Mode">
+             <button class="" data-tooltip="Toggle Theme" id="darkModeToggleNavbar" aria-label="Toggle Dark Mode">
                 <span class="icon">
                   <i class="ph-duotone ph-moon theme-icon-moon"></i>
                   <i class="ph-duotone ph-sun theme-icon-sun is-hidden"></i>
                 </span>
             </button>
+          </div>
+
+           <div class="navbar-item">
+            <a href="/search/" class="  has-tooltip-bottom" data-tooltip="Search Site" aria-label="Search">
+              <span class="icon"><i class="ph-duotone ph-magnifying-glass"></i></span>
+            </a>
           </div>
 
 
@@ -127,7 +128,6 @@
           </div>
         </div>
       </div>
-    </div>
   </nav>
 </header>
 
