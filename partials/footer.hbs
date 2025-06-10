@@ -1,0 +1,166 @@
+
+<footer class="footer"> {{!-- 'is-large' for even more padding, 'white-ter' for very subtle background --}}
+  <div class="container">
+    <div class="columns is-multiline is-mobile is-variable is-6-tablet is-8-desktop"> {{!-- Increased variable gaps for more spacing --}}
+
+      {{!-- Column 1: Brand Identity & Support --}}
+      <div class="column is-12-mobile is-half-tablet is-3-desktop mb-6"> {{!-- Increased mb-6 for more vertical space between stacked columns --}}
+        {{#if @site.logo}}
+          <a href="{{@site.url}}" class="is-block mb-5" aria-label="Homepage - {{@site.title}}">
+            <img src="{{@site.logo}}" alt="{{@site.title}} Logo" width="160"> {{!-- Slightly larger width hint --}}
+          </a>
+        {{else}}
+          <a href="{{@site.url}}" class="is-block mb-5" aria-label="Homepage - {{@site.title}}">
+            <h1 class="title is-2 has-text-primary has-text-weight-bold">{{@site.title}}</h1> {{!-- Upgraded to h1/is-2 for primary brand --}}
+          </a>
+        {{/if}}
+
+        {{#if @site.description}}
+          <p class="is-size-6 has-text-grey-darker mb-6">{{@site.description}}</p>
+        {{/if}}
+
+        <h2 class="title is-4 has-text-weight-semibold mb-4 icon-text">
+          <span class="icon has-text-primary"><i class="ph-duotone ph-hand-heart"></i></span>
+          <span>Support Our Mission</span>
+        </h2>
+        <p class="is-size-6 mb-4 has-text-grey-darker">
+          Your contribution empowers us to create more valuable content.
+        </p>
+        <div class="buttons are-medium">
+          <a href="YOUR_SUPPORT_OR_DONATION_LINK_HERE" class="button is-primary is-rounded mr-2-desktop" target="_blank" rel="noopener noreferrer" aria-label="Support or Donate to {{@site.title}}">
+            <span class="icon"><i class="ph-duotone ph-heart"></i></span>
+            <span>Support Now</span>
+          </a>
+          <a href="YOUR_SUPPORTERS_PAGE_LINK_HERE" class="button is-link is-rounded is-light" target="_blank" rel="noopener noreferrer" aria-label="See supporters of {{@site.title}}">
+            <span class="icon"><i class="ph-duotone ph-users"></i></span>
+            <span>Our Community</span>
+          </a>
+        </div>
+      </div>
+
+      {{!-- Column 2: Navigation & Contact --}}
+      <div class="column is-12-mobile is-half-tablet is-3-desktop mb-6">
+        <h2 class="title is-4 has-text-weight-semibold mb-5 icon-text">
+          <span class="icon has-text-primary"><i class="ph-duotone ph-compass"></i></span>
+          <span>Navigate</span>
+        </h2>
+        <div class="content is-size-6 footer-navigation-links mb-6">
+          {{navigation type="secondary"}}
+        </div>
+
+        <h2 class="title is-4 has-text-weight-semibold mb-5 icon-text">
+          <span class="icon has-text-primary"><i class="ph-duotone ph-chat-circle-dots"></i></span>
+          <span>Get in Touch</span>
+        </h2>
+        <div class="content is-size-6">
+          <address class="is-not-italic">
+            <p class="mb-3 icon-text">
+              <span class="icon has-text-grey-dark"><i class="ph-duotone ph-map-pin"></i></span>
+              <span>123 Content Lane, Suite A<br>Knowledge City, World</span>
+            </p>
+            <p class="mb-3 icon-text">
+              <span class="icon has-text-grey-dark"><i class="ph-duotone ph-phone-call"></i></span>
+              <span><a href="tel:+15551234567" class="has-text-link">(555) 123-4567</a></span>
+            </p>
+            <p class="icon-text">
+              <span class="icon has-text-grey-dark"><i class="ph-duotone ph-paper-plane-tilt"></i></span>
+              <span><a href="mailto:hello@{{@site.url_no_scheme}}" class="has-text-link">hello@{{@site.url_no_scheme}}</a></span>
+            </p>
+          </address>
+        </div>
+      </div>
+
+      {{!-- Column 3: Discover & Social Media --}}
+      <div class="column is-12-mobile is-half-tablet is-3-desktop mb-6">
+        <h2 class="title is-4 has-text-weight-semibold mb-5 icon-text">
+          <span class="icon has-text-primary"><i class="ph-duotone ph-squares-four"></i></span>
+          <span>Explore Topics</span>
+        </h2>
+        {{#get "tags" limit="20" include="count.posts" order="count.posts desc"}}
+          {{#if tags}}
+            <div class="field is-grouped is-grouped-multiline mb-6">
+              {{#foreach tags}}
+                <div class="control">
+                  <div class="tags has-addons">
+                    <a href="{{url}}" class="tag is-link" title="View posts tagged with {{name}}">
+                      {{name}}
+                    </a>
+                    <span class="tag is-light">
+                      {{count.posts}}
+                    </span>
+                  </div>
+                </div>
+              {{/foreach}}
+            </div>
+          {{else}}
+            <p class="is-size-6 has-text-grey-darker mb-6">No topics found yet.</p>
+          {{/if}}
+        {{/get}}
+
+        {{#if @site.facebook_url}}
+          <h2 class="title is-4 has-text-weight-semibold mb-5 icon-text">
+            <span class="icon has-text-primary"><i class="ph-duotone ph-share-network"></i></span>
+            <span>Connect With Us</span>
+          </h2>
+          <div class="buttons are-medium">
+            {{!-- Ensure social-media.hbs outputs <a class="button is-rounded ..."> for consistent look --}}
+            {{> social-media}}
+          </div>
+        {{/if}}
+      </div>
+
+      {{!-- Column 4: Stay Updated (Newsletter CTA) --}}
+      <div class="column is-12-mobile is-half-tablet is-3-desktop mb-6">
+        {{#if @site.members_enabled}}
+            <h2 class="title is-4 has-text-weight-semibold mb-5 icon-text">
+              <span class="icon has-text-primary"><i class="ph-duotone ph-envelope-simple-open"></i></span>
+              <span>Join Our Newsletter</span>
+            </h2>
+            <p class="is-size-6 mb-4 has-text-grey-darker">
+              Subscribe to get exclusive content and updates directly to your inbox.
+            </p>
+            <form data-members-form="subscribe">
+              <div class="field has-addons">
+                <div class="control is-expanded">
+                  <input data-members-email class="input  is-rounded" type="email" placeholder="Your email address" required aria-label="Email for newsletter subscription">
+                </div>
+                <div class="control">
+                  <button class="button is-primary is-rounded has-text-weight-semibold" type="submit" aria-label="Subscribe to newsletter">Subscribe</button>
+                </div>
+              </div>
+              <div data-members-error class="has-text-danger is-size-7 mt-2"></div>
+            </form>
+        {{else}}
+            <p class="is-size-6 has-text-grey-darker">Newsletter currently unavailable.</p>
+        {{/if}}
+      </div>
+    </div>
+
+    <hr class="my-6"> {{!-- Increased margin for HR --}}
+
+    {{!-- Bottom Footer Strip --}}
+    <div class="level is-mobile">
+      <div class="level-left">
+        <div class="level-item">
+          <p class="is-size-7 has-text-grey">
+            © {{date format="YYYY"}} <a href="{{@site.url}}" class="has-text-link has-text-weight-medium">{{@site.title}}</a>. All Rights Reserved.
+          </p>
+        </div>
+      </div>
+      <div class="level-right">
+        <div class="level-item is-hidden-mobile">
+           <a href="/privacy-policy/" class="has-text-link is-size-7 mr-3">Privacy Policy</a>
+           <a href="/terms-of-service/" class="has-text-link is-size-7 mr-3">Terms of Service</a>
+        </div>
+        <div class="level-item">
+          <p class="is-size-7 has-text-grey">
+            Published with <a href="https://ghost.org" target="_blank" rel="noopener noreferrer" class="has-text-link has-text-weight-medium">Ghost</a>
+            {{#if @custom.theme_credit_name}}
+              & <a href="{{@custom.theme_credit_url}}" target="_blank" rel="noopener noreferrer" class="has-text-link has-text-weight-medium">{{@custom.theme_credit_name}}</a>.
+            {{/if}}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

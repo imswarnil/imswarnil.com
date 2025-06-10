@@ -1,0 +1,104 @@
+////////////////////////////////////////////////
+// IMSWARNIL - Custom Theme Settings
+////////////////////////////////////////////////
+
+// --- Core Color Palette (Red Primary) ---
+$im-red-primary: #e53935; // Materia's Red, you can use your specific red
+$im-red-primary-invert: #ffffff; // Text color on primary red background
+
+// Supporting Colors (Inspired by Enjidev general style, adjust as needed)
+$im-body-background: #F9F9FF; // Very light, almost white
+$im-content-background: #ffffff; // For cards, content areas
+$im-text-dark: #363636;
+$im-text-light: #7a7a7a;
+$im-border-color: #f0f0f0; // Light grey for borders, dividers
+
+// Accent Colors (Optional - for specific elements, can be from Materia or custom)
+$im-accent-yellow: #ffdd57;
+$im-accent-pink: #ff3860;   // Could be a secondary accent if primary is red
+$im-accent-blue: #3273dc;
+
+// --- Font Family ---
+$im-font-family-sans-serif: "Outfit", "Roboto", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
+
+// --- Structural & UI Styling (Inspired by Materia, simplified) ---
+$im-radius: 2px; // Base radius for elements
+$im-radius-large: 6px; // For larger elements like cards if desired
+
+$im-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
+  0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+$im-shadow-large: 0px 5px 5px -3px rgba(0, 0, 0, 0.2),
+  0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+
+$im-border-width: 1px; // Default border width
+
+// --- Bulma Variable Mapping (Connecting `im-` vars to Bulma's expectations) ---
+
+// 1. Main Theme Colors
+$primary: $im-red-primary;
+$primary-invert: $im-red-primary-invert;
+
+// Link color
+$link: $primary; // Links use the primary color
+$link-invert: $primary-invert;
+$link-focus-border: $primary;
+
+// Text Colors
+$text: $im-text-dark;
+$text-light: $im-text-light;
+$text-strong: darken($im-text-dark, 5%); // Slightly darker for strong text
+
+// Background Colors
+$body-background-color: $im-body-background;
+$background: $im-content-background; // Default background for components like cards, navbar
+
+// General Colors (Bulma defaults that might be used if not explicitly overridden)
+// These are less critical if your mixins in customizing.scss directly use im- variables
+$black: #0a0a0a;
+$grey-darker: hsl(0, 0%, 21%);
+$grey-dark: $im-text-dark;
+$grey: $im-text-light;
+$grey-light: hsl(0, 0%, 71%);
+$grey-lighter: $im-border-color; // Using im-border-color for Bulma's grey-lighter
+$white: #ffffff;
+
+// Info, Success, Warning, Danger (Using Materia colors as placeholders, can be im- prefixed too)
+$info: #29b6f6; // Materia's cyan
+$info-invert: #ffffff;
+$success: #4caf50; // Materia's green
+$success-invert: #ffffff;
+$warning: $im-accent-yellow; // Your accent yellow
+$warning-invert: $im-text-dark; // Text on yellow
+$danger: #f44336;  // Materia's red (or a different shade if primary is also red)
+$danger-invert: #ffffff;
+
+// Font
+$family-sans-serif: $im-font-family-sans-serif;
+$family-primary: $family-sans-serif;
+$title-weight: 400; // From Materia
+$title-strong-weight: 500; // From Materia (used as $title-weight-bold previously)
+
+// Borders
+$border: $im-border-color;
+$border-hover: darken($border, 10%);
+
+// UI Elements (values from Materia to guide mixins)
+$radius: $im-radius;
+$box-shadow: none;
+$box-radius : $im-radius;
+$box-border: 1px solid black; // For general boxes/cards not using specific card mixin
+$control-height: 2.5em;
+$navbar-height: 4rem;
+$input-border-color: $grey-lighter; // Fallback for input borders before styling
+$input-focus-border-color: $primary;
+
+// Generate colors for Bulma components (e.g. .is-primary, .is-info)
+// This map allows Bulma to generate its .is-$name helper classes.
+// We ensure $primary, $link, $info, etc. are defined before this.
+// Define $light and $dark based on what's used in the $colors map above, for clarity
+// These are common Bulma variables.
+$light: $grey-lighter;
+$light-invert: $grey-dark; // Text color on $light background
+$dark: $grey-dark;
+$dark-invert: $grey-lighter;   // Text color on $dark background

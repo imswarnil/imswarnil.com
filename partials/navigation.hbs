@@ -1,0 +1,6 @@
+{{#foreach navigation}}
+  <a class="navbar-item nav-{{slug}}{{#if current}} is-active{{/if}}" href="{{url absolute="true"}}">
+    <i class="ph-duotone has-text-dark mr-1 {{#has slug="home"}}ph-house{{/has}}{{#has slug="about"}}ph-info{{/has}}"></i>
+    <span>{{label}}</span>
+  </a>
+{{/foreach}}

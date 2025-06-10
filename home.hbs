@@ -1,0 +1,580 @@
+{{!< default}}
+{{!-- The tag above means: insert everything in this file into the body of the default.hbs template --}}
+
+{{#contentFor "body-class"}}page-home has-background-white-ter{{/contentFor}}
+
+<h1 class="is-sr-only">{{@site.title}}</h1> {{!-- Bulma's screen-reader-only class --}}
+
+{{!-- HERO SECTION --}}
+<section class="hero is-primary is-small">
+  <div class="hero-body">
+    <div class="container">
+      <div class="columns is-vcentered is-desktop is-variable is-6">
+        <!-- Left Content -->
+        <div class="column is-7-desktop is-12-mobile px-5 py-6">
+
+          <div class="mb-3">
+            <span class="tag is-rounded is-primary is-light">
+              <span class="icon is-small"><i class="ph-duotone ph-map-pin"></i></span>
+              <span>Bangalore, India</span> {{!-- Static Location --}}
+            </span>
+          </div>
+          <p class="is-size-6 mb-2">hi! 👋</p>
+          <h1 class="title is-size-2-touch is-size-1-desktop has-text-weight-bold has-text-light mb-3">
+            I'm <span class="has-text-light">{{@site.title}}</span>,
+          </h1>
+          <h2 class="subtitle is-size-5-touch is-size-4-desktop has-text-light mb-4">
+            a <strong>front-end developer</strong> who loves intuitive,<br class="is-hidden-mobile">
+            clean and modern UI design. {{!-- Static Subtitle --}}
+          </h2>
+        
+
+          <!-- Action Buttons -->
+          <div class="buttons are-small">
+            <a href="#contact" class="button is-link is-inverted">Get in Touch</a> {{!-- Assumes a #contact section exists on the page or is a link to a contact page --}}
+            <a href="{{@site.url}}/resume.pdf" class="button is-light" target="_blank" rel="noopener noreferrer">
+              <span class="icon"><i class="fas fa-file-alt"></i></span>
+              <span>Resume</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Right Side: Profile Image -->
+        <div class="column is-4-desktop is-12-mobile has-text-centered px-5 py-6">
+          {{#if @site.cover_image}}
+            <figure class="image is-inline-block">
+              <img
+                src="{{img_url @site.cover_image size="l"}}" {{!-- Using img_url for potential responsive handling by Ghost --}}
+                alt="Profile Picture of {{@site.title}}"
+                class="is-rounded" {{!-- Added is-rounded for a softer look, optional --}}
+                style="box-shadow: 0 10px 40px rgba(0,0,0,0.1); border: 4px solid white; max-width: 300px; aspect-ratio: 1/1; object-fit: cover;">
+                {{!-- Inline style from your example. Consider moving to a class if you prefer. Added max-width and aspect-ratio for consistency. --}}
+            </figure>
+          {{else}}
+            <div class="notification is-warning is-light">
+                Please set a "Publication cover" image in Ghost Admin (Settings > Design > Brand) for the hero section.
+            </div>
+          {{/if}}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+{{!-- END HERO SECTION --}}
+
+
+<section class="section section-all-tags-complex-header">
+  <div class="container">
+    {{!-- Header Row: Icon/Title/Subtitle on Left, Ad Placeholder on Right --}}
+    <div class="columns is-vcentered mb-6">
+      {{!-- Left Column: Icon, Title, Subtitle --}}
+      <div class="column is-4-desktop is-two-thirds-tablet"> {{!-- Adjust proportions as needed --}}
+        <div class="media is-align-items-center">
+          <div class="media-left">
+            <span class="icon is-large has-text-primary is-flex is-align-items-center is-justify-content-center" style="width: 90px; height: 90px;"> {{!-- Icon container same height as ad --}}
+              <i class="ph-duotone ph-squares-four" style="font-size: 3rem;"></i>
+            </span>
+          </div>
+          <div class="media-content">
+            <h1 class="title is-3 mb-0">{{t "All Topics"}}</h1> {{!-- Title size adjusted --}}
+            <p class="subtitle is-6 has-text-grey-dark mt-1">{{t "Browse our diverse range of subjects and projects."}}</p> {{!-- Subtitle size adjusted --}}
+          </div>
+        </div>
+      </div>
+
+      {{!-- Right Column: AdSense Placeholder --}}
+      <div class="column is-auto">
+        <div class="is-flex is-justify-content-center is-align-items-center" style="width: 100%; max-width: 728px; height: 90px; background-color: #f5f5f5; border: 1px dashed #dbdbdb; margin-left: auto; margin-right: auto;">
+          <div class="has-text-centered">
+            <p class="heading has-text-grey">Ad Space</p>
+            <p class="is-size-7 has-text-grey-light">728x90</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {{!-- Grid of Tag Cards --}}
+    <div class="columns is-multiline is-variable is-2 is-centered">
+      {{#get "tags" limit="all" include="count.posts,feature_image,description" order="name asc"}}
+        {{#foreach tags}}
+          <div class="column is-half-mobile is-one-third-tablet is-one-quarter-desktop">
+            <a href="{{url}}" style="text-decoration: none; display: block; height: 100%;">
+              <div class="card p-3 is-shadowless is-fullheight is-hoverable has-background-white">
+                <div class="media is-align-items-center">
+                  <div class="media-left">
+                    {{#if feature_image}}
+                      <figure class="image is-48x48">
+                        <img src="{{img_url feature_image size="s"}}" alt="{{name}}" style="object-fit: cover; width:100%; height:100%;">
+                      </figure>
+                    {{else}}
+                      <figure class="image is-48x48 is-flex is-align-items-center is-justify-content-center" style="background-color: #f5f5f5; border: 1px solid #dbdbdb;">
+                        <span class="icon is-medium has-text-grey-light">
+                          <i class="ph-duotone ph-tag" style="font-size: 1.5rem;"></i>
+                        </span>
+                      </figure>
+                    {{/if}}
+                  </div>
+                  <div class="media-content" style="overflow: hidden; min-width: 0;">
+                    <p class="title is-4 mb-0 is-clipped">{{name}}</p>
+                    {{#if description}}
+                      <div class="content is-small has-text-grey mt-1">
+                        <p class="is-size-7">{{excerpt description words="8"}}</p>
+                      </div>
+                    {{/if}}
+                  </div>
+                  <div class="media-right is-flex is-align-items-center pl-2">
+                    <div class="has-text-centered">
+                        <p class="title is-4 has-text-light">{{count.posts}}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+        {{else}}
+            <div class="column is-full">
+                <div class="notification is-light">
+                    <p>{{t "No tags found to display."}}</p>
+                </div>
+            </div>
+        {{/foreach}}
+      {{/get}}
+    </div>
+
+    {{!-- View All Tags Button --}}
+    <div class="has-text-centered mt-6">
+      <a href="{{@site.url}}/tags/" class="button is-primary is-medium">
+        <span class="icon"><i class="ph-duotone ph-tag"></i></span>
+        <span>{{t "View All Tags Archive"}}</span>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+{{!-- Section: Featured Posts --}}
+{{#get "posts" limit="3" filter="featured:true" include="authors,tags,tiers" as |featured|}}
+    {{#if featured.posts}}
+        <section class="section section-featured-posts">
+            <div class="container">
+                <h2 class="title is-2 has-text-centered mb-6">{{t "Featured Posts"}}</h2>
+                {{#if featured.posts}}
+                    {{#match featured.posts.length ">" 1}}
+                        {{!-- If more than one featured post, display in columns --}}
+                        <div class="columns is-multiline is-variable is-4">
+                            {{#foreach featured.posts}}
+                                <div class="column is-one-third-desktop is-half-tablet">
+                                    <article class="card is-shadowless has-background-white">
+                                        {{#if feature_image}}
+                                            <div class="card-image">
+                                                <a href="{{url}}">
+                                                    <figure class="image is-16by9">
+                                                        <img src="{{img_url feature_image size="m"}}"
+                                                             srcset="{{img_url feature_image size="s"}} 300w,
+                                                                     {{img_url feature_image size="m"}} 600w,
+                                                                     {{img_url feature_image size="l"}} 1000w,
+                                                                     {{img_url feature_image size="xl"}} 2000w"
+                                                             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                                             alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}"
+                                                             loading="lazy" {{#if @first}}loading="eager"{{/if}}>
+                                                    </figure>
+                                                </a>
+                                            </div>
+                                        {{/if}}
+                                        <div class="card-content">
+                                            <header class="mb-2">
+                                                {{#if primary_tag}}
+                                                    <a href="{{primary_tag.url}}" class="tag is-primary is-light mb-2">{{primary_tag.name}}</a>
+                                                {{/if}}
+                                                <h3 class="title is-4 has-text-weight-semibold mb-1"><a href="{{url}}" class="has-text-dark">{{title}}</a></h3>
+                                            </header>
+                                            <div class="content is-small mb-3">
+                                                <p>{{excerpt words="25"}}</p>
+                                            </div>
+                                            <footer class="is-size-7 has-text-grey">
+                                                {{#foreach authors}}
+                                                    <a href="{{url}}" class="has-text-grey-dark has-text-weight-medium">{{name}}</a>{{#unless @last}}, {{/unless}}
+                                                {{/foreach}}
+                                                <span class="mx-1">•</span>
+                                                <time datetime="{{date format="YYYY-MM-DD"}}">{{date}}</time>
+                                            </footer>
+                                        </div>
+                                    </article>
+                                </div>
+                            {{/foreach}}
+                        </div>
+                    {{else}}
+                        {{!-- If only one featured post, display it prominently --}}
+                        {{#foreach featured.posts}}
+                        <div class="columns is-centered">
+                            <div class="column is-three-quarters-desktop is-full-tablet">
+                                <article class="card is-shadowless has-background-white">
+                                    {{#if feature_image}}
+                                    <div class="card-image">
+                                        <a href="{{url}}">
+                                            <figure class="image is-2by1"> {{!-- Different aspect ratio for prominence --}}
+                                                <img src="{{img_url feature_image size="l"}}"
+                                                     srcset="{{img_url feature_image size="s"}} 300w,
+                                                             {{img_url feature_image size="m"}} 600w,
+                                                             {{img_url feature_image size="l"}} 1000w,
+                                                             {{img_url feature_image size="xl"}} 2000w"
+                                                     sizes="(max-width: 1023px) 100vw, 75vw"
+                                                     alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}"
+                                                     loading="eager">
+                                            </figure>
+                                        </a>
+                                    </div>
+                                    {{/if}}
+                                    <div class="card-content">
+                                        <header class="mb-2">
+                                            {{#if primary_tag}}
+                                                <a href="{{primary_tag.url}}" class="tag is-primary is-light mb-2">{{primary_tag.name}}</a>
+                                            {{/if}}
+                                            <h3 class="title is-3 has-text-weight-semibold mb-1"><a href="{{url}}" class="has-text-dark">{{title}}</a></h3>
+                                        </header>
+                                        <div class="content mb-3">
+                                            <p>{{excerpt words="40"}}</p>
+                                        </div>
+                                        <footer class="is-size-7 has-text-grey">
+                                            {{#foreach authors}}
+                                                <a href="{{url}}" class="has-text-grey-dark has-text-weight-medium">{{name}}</a>{{#unless @last}}, {{/unless}}
+                                            {{/foreach}}
+                                            <span class="mx-1">•</span>
+                                            <time datetime="{{date format="YYYY-MM-DD"}}">{{date}}</time>
+                                        </footer>
+                                    </div>
+                                </article>
+                            </div>
+                        </div>
+                        {{/foreach}}
+                    {{/match}}
+                {{else}}
+                    <div class="notification is-warning">{{t "No featured posts yet."}}</div>
+                {{/if}}
+            </div>
+        </section>
+    {{/if}}
+{{/get}}
+
+{{!-- Section: Recent Posts --}}
+<section class="section section-recent-posts">
+    <div class="container">
+        <div class="level mb-5">
+            <div class="level-left">
+                <h2 class="title is-3">{{t "Latest Posts"}}</h2>
+            </div>
+            <div class="level-right">
+                {{#if @custom.archive_page_url}}
+                    <a class="button is-link is-light" href="{{@custom.archive_page_url}}">
+                        <span>{{t "All Posts"}}</span>
+                        <span class="icon is-small">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 12H20M20 12L14 6M20 12L14 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </span>
+                    </a>
+                {{else}}
+                     <a class="button is-link is-light" href="/archive/"> {{!-- Fallback if custom setting not present --}}
+                        <span>{{t "All Posts"}}</span>
+                        <span class="icon is-small">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 12H20M20 12L14 6M20 12L14 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </span>
+                    </a>
+                {{/if}}
+            </div>
+        </div>
+
+        <div class="columns is-multiline is-variable is-4">
+            {{#foreach posts}} {{!-- This uses the main posts collection --}}
+                <div class="column is-one-third-desktop is-half-tablet">
+                    <article class="card is-shadowless has-background-white {{post_class}}">
+                        {{#if feature_image}}
+                        <div class="card-image">
+                            <a href="{{url}}">
+                                <figure class="image is-16by9">
+                                    <img src="{{img_url feature_image size="m"}}"
+                                         srcset="{{img_url feature_image size="s"}} 300w,
+                                                 {{img_url feature_image size="m"}} 600w,
+                                                 {{img_url feature_image size="l"}} 1000w,
+                                                 {{img_url feature_image size="xl"}} 2000w"
+                                         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                         alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}"
+                                         loading="lazy">
+                                </figure>
+                            </a>
+                        </div>
+                        {{/if}}
+                        <div class="card-content">
+                            <header class="mb-2">
+                                {{#if primary_tag}}
+                                    <a href="{{primary_tag.url}}" class="tag is-info is-light mb-2">{{primary_tag.name}}</a>
+                                {{/if}}
+                                <h3 class="title is-5 has-text-weight-semibold mb-1"><a href="{{url}}" class="has-text-dark">{{title}}</a></h3>
+                            </header>
+                            <div class="content is-small mb-3">
+                                <p>{{excerpt words="20"}}</p>
+                            </div>
+                            <footer class="is-size-7 has-text-grey">
+                                {{#if primary_author}}
+                                    {{#if primary_author.profile_image}}
+                                    <figure class="image is-24x24 is-inline-block mr-1 va-middle">
+                                        <img class="is-rounded" src="{{img_url primary_author.profile_image size="xs"}}" alt="{{primary_author.name}}">
+                                    </figure>
+                                    {{/if}}
+                                    <a href="{{primary_author.url}}" class="has-text-grey-dark has-text-weight-medium">{{primary_author.name}}</a>
+                                    <span class="mx-1">•</span>
+                                {{/if}}
+                                <time datetime="{{date format="YYYY-MM-DD"}}">{{date}}</time>
+                                {{#if reading_time}}
+                                    <span class="mx-1">•</span>
+                                    <span>{{reading_time}}</span>
+                                {{/if}}
+                            </footer>
+                        </div>
+                    </article>
+                </div>
+            {{else}}
+                <div class="column">
+                    <div class="notification is-info">{{t "No posts found."}}</div>
+                </div>
+            {{/foreach}}
+        </div>
+
+        {{pagination}}
+    </div>
+</section>
+
+{{!-- Section: Authors --}}
+{{#get "authors" limit="5" include="count.posts" order="count.posts DESC"}}
+    {{#if authors}}
+    <section class="section section-authors">
+        <div class="container">
+            <div class="level mb-5">
+                <div class="level-left">
+                    <h2 class="title is-3">{{t "Our Authors"}}</h2>
+                </div>
+                <div class="level-right">
+                     {{#if @custom.authors_page_url}}
+                        <a class="button is-link is-light" href="{{@custom.authors_page_url}}">
+                           <span>{{t "All Authors"}}</span>
+                           <span class="icon is-small">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 12H20M20 12L14 6M20 12L14 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                           </span>
+                        </a>
+                     {{else}}
+                        <a class="button is-link is-light" href="/authors/"> {{!-- Fallback --}}
+                           <span>{{t "All Authors"}}</span>
+                           <span class="icon is-small">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 12H20M20 12L14 6M20 12L14 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                           </span>
+                        </a>
+                     {{/if}}
+                </div>
+            </div>
+
+            <div class="columns is-multiline is-centered is-variable is-4">
+                {{#foreach authors}}
+                <div class="column is-one-fifth-desktop is-one-third-tablet has-text-centered">
+                    <div class="box has-background-white py-5 px-4">
+                        <a href="{{url}}">
+                            {{#if profile_image}}
+                                <figure class="image is-96x96 is-inline-block mb-3">
+                                    <img class="is-rounded" src="{{img_url profile_image size="m"}}" alt="{{name}}" loading="lazy">
+                                </figure>
+                            {{else}}
+                                <figure class="image is-96x96 is-inline-block mb-3 has-background-grey-lighter is-rounded">
+                                    <span class="icon is-large has-text-grey" style="width: 96px; height: 96px; display: flex; align-items: center; justify-content: center;">
+                                        <svg width="48" height="48" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"></path></svg>
+                                    </span>
+                                </figure>
+                            {{/if}}
+                            <h3 class="title is-5 has-text-dark mb-1">{{name}}</h3>
+                            <p class="subtitle is-7 has-text-grey">
+                                {{#if count.posts}}
+                                    {{count.posts}} {{plural count.posts empty=(t "No posts") singular=(t "post") plural=(t "posts")}}
+                                {{else}}
+                                    {{t "No posts"}}
+                                {{/if}}
+                            </p>
+                        </a>
+                    </div>
+                </div>
+                {{/foreach}}
+            </div>
+        </div>
+    </section>
+    {{/if}}
+{{/get}}
+
+{{!-- Section: Subscription --}}
+{{#if @site.members_enabled}}
+<section class="section section-subscription has-background-primary-light">
+    <div class="container has-text-centered">
+        <h2 class="title is-2 has-text-dark">{{t "Subscribe to {title}" title=@site.title}}</h2>
+        {{#if @site.paid_members_enabled}}
+            <p class="subtitle is-5 has-text-grey-darker">{{@site.description}}</p>
+        {{else}}
+            <p class="subtitle is-5 has-text-grey-darker">{{t "Get the latest posts delivered right to your inbox."}}</p>
+        {{/if}}
+        <div class="columns is-centered mt-5">
+            <div class="column is-half-desktop is-two-thirds-tablet">
+                {{subscribe_form
+                    placeholder=(t "Your email address")
+                    button_text=(t "Subscribe")
+                    form_class="field is-grouped"
+                    input_class="input is-medium is-expanded"
+                    button_class="button is-primary is-medium"
+                }}
+            </div>
+        </div>
+    </div>
+</section>
+{{/if}}
+
+
+{{!-- Section: Posts by Tag --}}
+{{#get "tags" limit="3" include="count.posts" order="count.posts desc" filter="visibility:public"}}
+    {{#foreach tags as |tag|}}
+        {{#if tag.count.posts}}
+        <section class="section section-tag-posts-{{tag.slug}}">
+            <div class="container">
+                <div class="level mb-5">
+                    <div class="level-left">
+                        <h2 class="title is-3">
+                            <a href="{{tag.url}}" class="has-text-dark">{{tag.name}}</a>
+                            {{#if tag.accent_color}}
+                                <span class="icon is-small ml-1" style="color:{{tag.accent_color}};">
+                                    <svg viewBox="0 0 8 8" width="12" height="12" fill="currentColor"><circle cx="4" cy="4" r="4"/></svg>
+                                </span>
+                            {{/if}}
+                        </h2>
+                    </div>
+                    <div class="level-right">
+                         <a href="{{tag.url}}" class="button is-link is-light">
+                            <span>{{t "View all in {tag}" tag=tag.name}}</span>
+                            <span class="icon is-small">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 12H20M20 12L14 6M20 12L14 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </span>
+                        </a>
+                    </div>
+                </div>
+                {{#if tag.description}}
+                    <p class="subtitle is-6 has-text-grey-dark mb-5">{{tag.description}}</p>
+                {{/if}}
+
+                {{#get "posts" limit="4" filter=(concat "tags:" tag.slug) include="authors,tags,tiers"}}
+                    {{#if posts}}
+                        <div class="columns is-multiline is-variable is-4">
+                            {{#foreach posts}}
+                            <div class="column is-one-quarter-desktop is-half-tablet">
+                                <article class="card is-shadowless has-background-white">
+                                    {{#if feature_image}}
+                                    <div class="card-image">
+                                        <a href="{{url}}">
+                                        <figure class="image is-4by3">
+                                            <img src="{{img_url feature_image size="s"}}" alt="{{title}}" loading="lazy">
+                                        </figure>
+                                        </a>
+                                    </div>
+                                    {{/if}}
+                                    <div class="card-content py-4 px-4">
+                                        <h4 class="title is-6 has-text-weight-semibold mb-1"><a href="{{url}}" class="has-text-dark">{{title}}</a></h4>
+                                        <footer class="is-size-7 has-text-grey">
+                                            <time datetime="{{date format="YYYY-MM-DD"}}">{{date}}</time>
+                                        </footer>
+                                    </div>
+                                </article>
+                            </div>
+                            {{/foreach}}
+                        </div>
+                    {{else}}
+                        <div class="notification is-info">{{t "No posts found for this tag yet."}}</div>
+                    {{/if}}
+                {{/get}}
+            </div>
+        </section>
+        {{/if}}
+    {{/foreach}}
+{{/get}}
+
+{{!-- Section: Recommendations --}}
+{{#if @site.recommendations_enabled}}
+    {{#get "recommendations" limit="6" as |rec_items|}}
+        {{#if rec_items}}
+        <section class="section section-recommendations">
+            <div class="container">
+                 <div class="level mb-5">
+                    <div class="level-left">
+                        <h2 class="title is-3">{{t "Recommendations"}}</h2>
+                    </div>
+                    <div class="level-right">
+                         {{#if @custom.recommendations_page_url}}
+                            <a class="button is-link is-light" href="{{@custom.recommendations_page_url}}">
+                               <span>{{t "All Recommendations"}}</span>
+                               <span class="icon is-small">
+                                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 12H20M20 12L14 6M20 12L14 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                               </span>
+                            </a>
+                         {{else}}
+                             <a class="button is-link is-light" href="/recommendations/"> {{!-- Fallback --}}
+                               <span>{{t "All Recommendations"}}</span>
+                               <span class="icon is-small">
+                                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 12H20M20 12L14 6M20 12L14 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                               </span>
+                            </a>
+                         {{/if}}
+                    </div>
+                </div>
+
+                <div class="columns is-multiline is-variable is-3">
+                    {{#foreach rec_items}}
+                        <div class="column is-one-third-desktop is-half-tablet">
+                            <a href="{{url}}" target="_blank" rel="noopener noreferrer" class="box is-flex is-align-items-center recommendation-box has-background-white">
+                                {{#if feature_image}}
+                                    <figure class="image is-32x32 mr-3">
+                                        <img src="{{img_url feature_image size="xs"}}" alt="{{title}} favicon" loading="lazy" class="is-rounded">
+                                    </figure>
+                                {{else}}
+                                    <figure class="image is-32x32 mr-3 has-background-grey-lighter is-rounded" style="display: flex; align-items: center; justify-content: center;">
+                                        <span class="icon has-text-grey">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-link-45deg" viewBox="0 0 16 16">
+                                              <path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.002 1.002 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z"/>
+                                              <path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z"/>
+                                            </svg>
+                                        </span>
+                                    </figure>
+                                {{/if}}
+                                <div class="is-flex-grow-1 recommendation-content">
+                                    <h4 class="title is-6 has-text-dark mb-0_5">{{title}}</h4>
+                                    {{#if excerpt}}
+                                        <p class="is-size-7 has-text-grey-dark">{{excerpt words="10"}}</p>
+                                    {{/if}}
+                                </div>
+                                <span class="icon has-text-grey-light ml-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                      <path fill-rule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/>
+                                      <path fill-rule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/>
+                                    </svg>
+                                </span>
+                            </a>
+                        </div>
+                    {{/foreach}}
+                </div>
+            </div>
+        </section>
+        {{/if}}
+    {{/get}}
+{{/if}}
+
+{{!-- Add this to your default.hbs <head> for Bulma: --}}
+{{!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"> --}}
+{{!-- And links to your chosen icon libraries (e.g., Font Awesome, Phosphor Icons) --}}
+
+{{!-- Helper styles for inline elements (optional, can be in a global CSS) --}}
+<style>
+    .va-middle { vertical-align: middle; }
+    .mb-0_5 { margin-bottom: 0.125rem !important; }
+    .recommendation-box:hover { box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0px 0 1px rgba(10, 10, 10, 0.02); transform: translateY(-2px); }
+    .recommendation-box { transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out; }
+    .card:hover { box-shadow: 0 0.5em 1em -0.125em rgba(10,10,10,.1), 0 0 0 1px rgba(10,10,10,.02); }
+    .pagination { display: block; margin-top: 2rem; }
+</style>

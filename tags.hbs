@@ -1,0 +1,99 @@
+{{!< default}}
+
+{{#contentFor "body-class"}}page-all-tags-final-layout has-background-light{{/contentFor}}
+
+<section class="section section-tags-page-wrapper my-5">
+  <div class="container">
+    {{!-- Header Row: Icon/Title/Subtitle on Left, Ad Placeholder on Right --}}
+    <div class="columns is-vcentered mb-6">
+      {{!-- Left Column: Icon, Title, Subtitle --}}
+      <div class="column is-6-desktop is-two-thirds-tablet">
+        <div class="media is-align-items-center">
+          <div class="media-left">
+            <span class="icon is-large mr-2 has-text-primary is-flex is-align-items-center is-justify-content-center">
+              <i class="ph-duotone ph-tag is-size-1"></i>
+            </span>
+          </div>
+          <div class="media-content">
+            <h1 class="title is-3 mb-1">{{t "All Tags"}}</h1>
+            <p class="subtitle is-5  has-text-grey-dark mt-1">{{t "Explore content by category and discover new interests."}}</p>
+          </div>
+        </div>
+      </div>
+
+      {{!-- Right Column: AdSense Placeholder --}}
+      <div class="column is-6">
+        <div class="is-flex is-justify-content-center is-align-items-center" style="width: 100%; max-width: 728px; height: 90px; background-color: #f0f0f0; border: 1px dashed #cccccc; margin-left: auto; margin-right: auto;">
+          <div class="has-text-centered">
+            <p class="heading has-text-grey">Ad Space</p>
+            <p class="is-size-7 has-text-grey-light">728x90</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {{!-- Tag Grid --}}
+    {{#get "tags" limit="all" include="count.posts,feature_image,description" order="name asc" as |tags_collection|}}
+      {{#if tags_collection}}
+        <div class="columns is-multiline is-variable is-3 is-centered">
+          {{#foreach tags_collection as |tag_item|}}
+            <div class="column is-half-mobile is-one-third-tablet is-one-quarter-desktop">
+              <a href="{{tag_item.url}}" style="text-decoration: none; display: block; height: 100%;">
+                <div class="card is-fullheight is-shadowless has-background-white">
+                  {{#if tag_item.feature_image}}
+                    <div class="card-image">
+                      <figure class="image is-16by9">
+                        <img src="{{img_url tag_item.feature_image size="m"}}" alt="{{tag_item.name}}" style="object-fit: cover; width:100%; height:100%;">
+                      </figure>
+                    </div>
+                  {{else}}
+                    <div class="card-image">
+                        <figure class="image is-16by9 is-flex is-align-items-center is-justify-content-center" style="background-color: #f5f5f5; border-bottom: 1px solid #dbdbdb;">
+                            <span class="icon is-large has-text-grey-light">
+                                <i class="ph-duotone ph-tag" style="font-size: 3rem;"></i>
+                            </span>
+                        </figure>
+                    </div>
+                  {{/if}}
+                  <div class="card-content p-4 is-flex is-flex-direction-column">
+                    <p class="title is-5 mb-1 is-clipped">{{tag_item.name}}</p>
+                    
+                    {{#if tag_item.description}}
+                      {{!-- Using Bulma 'content' class for better paragraph styling and 'is-small' for smaller text --}}
+                      <div class="content is-small has-text-grey-dark mb-3 tag-card-description">
+                        {{!-- Description will be excerpted and wrap naturally. No custom ellipsis class needed here
+                             as per "only Bulma" if the multi-line JS-less ellipsis is too much. --}}
+                        <p class="is-size-7 has-text-grey">{{tag_item.description}}</p>
+                      </div>
+                    {{/if}}
+                    <div class="mt-auto"> {{!-- Pushes the post count to the bottom --}}
+                        <span class="tag is-light">
+                            <span class="icon mr-1"><i class="ph-duotone ph-files"></i></span>
+                            <span>{{tag_item.count.posts}} {{plural tag_item.count.posts empty=(t "No posts") singular=(t "post") plural=(t "posts")}}</span>
+                        </span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </div>
+          {{/foreach}}
+        </div>
+      {{else}}
+        <div class="notification is-light mt-5">
+            <p class="has-text-centered">{{t "No tags found."}}</p>
+        </div>
+      {{/if}}
+    {{/get}}
+
+    {{!-- Optional: "View All Posts" button or similar if this page doesn't list all posts but only tags --}}
+    {{!--
+    <div class="has-text-centered mt-6">
+      <a href="{{@site.url}}/archive/" class="button is-link is-medium">
+        <span class="icon"><i class="ph-duotone ph-list-bullets"></i></span>
+        <span>{{t "View All Articles"}}</span>
+      </a>
+    </div>
+    --}}
+
+  </div>
+</section>

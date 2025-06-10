@@ -1,0 +1,95 @@
+{{!< default}}
+{{!-- This tells Ghost to use your "default.hbs" layout file --}}
+
+<section class="section">
+  <div class="container">
+    <div class="columns is-vcentered is-centered">
+      <div class="column is-two-thirds-tablet is-half-desktop is-one-third-widescreen">
+
+        <div class="content has-text-centered mb-5"> {{!-- For the "Hero" text --}}
+          {{!-- Hero text logic from your original template --}}
+          <h1>
+            {{#page}}{{title}}{{else}}Sign up{{/page}} {{!-- Keeping page.title if available, else "Sign up" --}}
+          </h1>
+          {{#page}}
+            {{#if custom_excerpt}}
+              <p class="subtitle is-4">{{custom_excerpt}}</p>
+            {{/if}}
+          {{else}}
+            {{!-- Invite only. --}}
+            {{#if @site.members_invite_only}}
+              <p class="subtitle is-4">New registrations are temporarily closed. If you already have an account, please sign in to access your reading space.</p>
+
+            {{!-- Access. --}}
+            {{else if @site.members_enabled}}
+              <p class="subtitle is-4">Unlock full access and see the entire library of members-only content & updates.</p>
+
+            {{!-- Nobody. --}}
+            {{else}}
+              <p class="subtitle is-4">Our blog's authentication system is currently under maintenance. In the meantime, you can still enjoy our public articles.</p>
+            {{/if}}
+          {{/page}}
+        </div>
+
+
+        {{!-- Form: Only show if members are enabled AND NOT invite only --}}
+        {{#if @site.members_enabled}}
+          {{^if @site.members_invite_only}}
+            <div class="box">
+              <form data-members-form="signup">
+                <div class="field">
+                  <label class="label" for="name-input">Name</label>
+                  <div class="control has-icons-left">
+                    <input class="input" data-members-name placeholder="Your name" type="text" id="name-input" />
+                    <span class="icon is-small is-left">
+                      <i class="ph-duotone ph-user"></i> {{!-- Example Phosphor icon --}}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="label" for="email-input">Email</label>
+                  <div class="control has-icons-left">
+                    <input class="input" data-members-email placeholder="Your email" type="email" id="email-input" required />
+                    <span class="icon is-small is-left">
+                      <i class="ph-duotone ph-envelope"></i> {{!-- Example Phosphor icon --}}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="field mt-5">
+                  <div class="control">
+                    <button class="button is-primary is-fullwidth is-medium" type="submit">Sign up</button>
+                  </div>
+                </div>
+
+                {{!--
+                  Ghost's members script handles showing these messages.
+                --}}
+                <div class="form-messages mt-4">
+                  <p class="has-text-info has-text-centered loading-message" style="display:none;">Please hold while we check our collection.</p>
+                  <p data-members-error class="help is-danger has-text-centered"></p> {{!-- Ghost will populate this --}}
+                  <p class="has-text-success has-text-centered success-message" style="display:none;">Success! Check your inbox for our email.</p>
+                </div>
+              </form>
+            </div> {{!-- End .box --}}
+          {{/if}} {{!-- End {{^if @site.members_invite_only}} --}}
+
+          {{!-- "Already a member?" link: Shows if members are enabled, regardless of invite_only status for this link --}}
+          <hr class="mt-5 mb-4">
+          <p class="has-text-centered">
+            Already a member?
+            {{!-- Using Ghost's recommended way to get portal/signin links if available --}}
+            <a href="{{#if @member}}javascript:void(0);" data-portal="signin"{{else if @site.portal_button_style}}{{@site.url}}/signin/{{else}}#/portal/signin{{/if}}">Sign in</a>
+            {{!-- A simpler static alternative if the above is complex:
+            <a href="/signin/">Sign in</a>
+            OR if using Portal exclusively:
+            <a href="#/portal/signin">Sign in</a>
+            --}}
+          </p>
+        {{/if}} {{!-- End {{#if @site.members_enabled}} --}}
+
+      </div>
+    </div>
+  </div>
+</section>

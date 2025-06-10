@@ -1,0 +1,103 @@
+{{!< default}}
+{{!-- This tells Ghost to use your "default.hbs" layout file --}}
+
+{{!--
+  The original template had a {{#page}} ... {{else}} ... {{/page}} block.
+  For a dedicated sign-in page, we'll primarily use the logic that was in the {{else}} block,
+  as it's unlikely the sign-in page itself is a standard "page" with custom_excerpt etc.
+  If you DO want to use page context, you can adapt it.
+--}}
+
+<section class="section"> {{!-- You can add 'is-medium' or 'is-large' for more padding --}}
+  <div class="container">
+    <div class="columns is-vcentered is-centered"> {{!-- is-centered on columns will center the column block if it's not full width --}}
+      <div class="column is-two-thirds-tablet is-half-desktop is-one-third-widescreen"> {{!-- Adjust column responsiveness --}}
+
+        <div class="content has-text-centered mb-5"> {{!-- For the "Hero" text --}}
+          {{!-- Hero text logic from your original template --}}
+          <h1>
+            {{#page}}{{title}}{{else}}Sign in{{/page}} {{!-- Keeping page.title if available, else "Sign in" --}}
+          </h1>
+          {{#page}}
+            {{#if custom_excerpt}}
+              <p class="subtitle is-4">{{custom_excerpt}}</p>
+            {{/if}}
+          {{else}}
+            {{!-- Invite only. --}}
+            {{#if @site.members_invite_only}}
+              <p class="subtitle is-4">Welcome back to our blog! Sign in to access your saved articles, personal reading list, and join the discussion.</p>
+
+            {{!-- Access. --}}
+            {{else if @site.members_enabled}}
+              <p class="subtitle is-4">Sign into your account again and see the entire library of members-only content & updates.</p>
+
+            {{!-- Nobody. --}}
+            {{else}}
+              <p class="subtitle is-4">Our blog's authentication system is currently under maintenance. In the meantime, you can still enjoy our public articles.</p>
+            {{/if}}
+          {{/page}}
+        </div>
+
+
+        {{!-- Form: Only show if members are enabled --}}
+        {{#if @site.members_enabled}}
+          <div class="box">
+            <form data-members-form="signin">
+              <div class="field">
+                <label class="label" for="email-input">Email</label> {{!-- Good practice to have a label --}}
+                <div class="control has-icons-left"> {{!-- has-icons-left for potential icon --}}
+                  <input class="input" data-members-email placeholder="Your email" type="email" id="email-input" required />
+                  <span class="icon is-small is-left">
+                    <i class="ph-duotone ph-envelope"></i> {{!-- Example Phosphor icon --}}
+                  </span>
+                </div>
+              </div>
+
+              <div class="field mt-5">
+                <div class="control">
+                  <button class="button is-primary is-fullwidth is-medium" type="submit">Sign in</button>
+                </div>
+              </div>
+
+              {{!--
+                Ghost's members script handles showing these messages.
+                The 'p.loading' will be a class added to the form/button.
+                The 'p[data-members-error]' will be shown on error.
+                The 'p.success' will be shown on success before redirect.
+              --}}
+              <div class="form-messages mt-4">
+                {{!-- Ghost's JS usually adds a 'loading' class to the form or button,
+                     so a separate <p> for loading might not be needed if styled via CSS.
+                     However, if you want a specific text: --}}
+                <p class="has-text-info has-text-centered loading-message" style="display:none;">Please hold while we check our collection.</p>
+                <p data-members-error class="help is-danger has-text-centered"></p> {{!-- Ghost will populate this --}}
+                <p class="has-text-success has-text-centered success-message" style="display:none;">Success! Check your inbox for our email.</p>
+              </div>
+
+
+              {{^if @site.members_invite_only}}
+                <hr>
+                <p class="has-text-centered">
+                  Don't have an account?
+                  {{!-- Using Ghost's recommended way to get portal/signup links if available --}}
+                  <a href="{{#if @member}}javascript:void(0);" data-portal="signup"{{else if @site.portal_button_style}}{{@site.url}}/signup/{{else}}#/portal/signup{{/if}}">Sign up</a>
+                  {{!-- A simpler static alternative if the above is complex or not working as expected:
+                  <a href="/signup/">Sign up</a>
+                  OR if using Portal exclusively:
+                  <a href="#/portal/signup">Sign up</a>
+                  OR use the logic from your original template:
+                  <a href="{{#match (t "/signup/") "!=" "false"}}{{t "/signup/"}}{{else}}#/portal/signup{{/match}}">Sign up</a>
+                  (Since you said ignore `t`, let's simplify for now)
+                  <a href="#/portal/signup">Sign up</a>
+                  --}}
+                </p>
+              {{/if}}
+            </form>
+          </div>
+        {{/if}}
+        {{!-- End: Form --}}
+
+      </div>
+    </div>
+  </div>
+</section>
