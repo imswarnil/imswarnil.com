@@ -3,9 +3,7 @@
   <head>
     {{!-- Document Settings --}}
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-    {{!-- Page Meta --}}
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">    {{!-- Page Meta --}}
     <title>{{meta_title}}</title>
     
     {{!-- Mobile Meta --}}
@@ -13,8 +11,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <link rel="stylesheet" type="text/css" href="{{asset 'css/app.min.css'}}" />
-   
- 
+    <link rel="manifest" href="{{asset '/manifest.webmanifest'}}">
+  
     {{!-- Styles'n'Scripts --}}
     <link rel="stylesheet" type="text/css" href="{{asset 'css/app.min.css'}}" />
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/duotone/style.css"/>
@@ -22,21 +20,16 @@
     {{ghost_head}}
   </head>
   <body class="{{body_class}}">
-
     {{!-- Icons --}}
     <div class="is-hidden">
       {{> icon-sprite}}
     </div>
-
     {{> header}}
-
     <main class="main">
-      {{!-- All the main content gets inserted here, index.hbs, post.hbs, etc --}}\
-      <h1> This is Test</h1>
       {{{body}}}
     </main>
 
-    {{!-- The footer at the very bottom --}}
+   {{!-- The footer at the very bottom --}}
     {{> footer}}
 
     {{!-- Ghost outputs important scripts and data with this tag --}}
@@ -44,6 +37,13 @@
 
     {{!-- Main theme scripts --}}
     <script async src="{{asset 'js/app.min.js'}}"></script>
-
+    {{!-- Service Worker for PWA --}}
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js');
+    });
+  }
+</script>
   </body>
 </html>

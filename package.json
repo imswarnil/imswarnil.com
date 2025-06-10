@@ -69,6 +69,11 @@
         "type": "boolean",
         "default": false,
         "description": "When enabled, the main navigation bar will stick to the top of the page as you scroll."
+      },
+      "location": {
+        "type": "text",
+        "default": "",
+        "description": "Display your location, e.g., 'New York, USA', in the theme."
       }
     },
     "card_assets": true,
