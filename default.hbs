@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{@site.locale}}">
+<html lang="{{@site.locale}}" class="{{#if @custom.fixed_navbar}}has-navbar-fixed-top{{/if}}">
   <head>
     {{!-- Document Settings --}}
     <meta charset="utf-8">
@@ -31,7 +31,8 @@
     {{> header}}
 
     <main class="main">
-      {{!-- All the main content gets inserted here, index.hbs, post.hbs, etc --}}
+      {{!-- All the main content gets inserted here, index.hbs, post.hbs, etc --}}\
+      <h1> This is Test</h1>
       {{{body}}}
     </main>
 

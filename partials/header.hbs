@@ -1,5 +1,5 @@
 <header class="header">
-  <nav class="navbar is-transparent" role="navigation" aria-label="main navigation" id="mainNavbar">
+  <nav class="navbar is-transparent {{#if @custom.fixed_navbar}}is-fixed-top{{/if}}" role="navigation" aria-label="main navigation" id="mainNavbar">
     <div class="container is-fluid">
       <div class="navbar-brand">
         <a class="navbar-item py-1" href="{{@site.url}}" aria-label="Homepage - {{@site.title}}">
