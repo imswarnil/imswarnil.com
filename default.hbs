@@ -44,8 +44,62 @@
       navigator.serviceWorker.register('/sw.js');
     });
   }
+  /**
+ * Handles the logic for a dark mode theme toggle.
+ * It adds/removes a class to the <html> element and saves the
+ * user's preference to localStorage.
+ */
+(() => {
+    // --- Configuration ---
+    // The class your CSS uses to apply the dark theme.
+    const DARK_MODE_CLASS = 'is-dark-mode';
 
-  
+    // --- DOM Elements ---
+    const htmlElement = document.documentElement;
+    const themeToggle = document.getElementById('theme-toggle');
+    const sunIcon = document.getElementById('theme-icon-sun');
+    const moonIcon = document.getElementById('theme-icon-moon');
+
+    // If any of the required elements are missing, stop execution.
+    if (!themeToggle || !sunIcon || !moonIcon) {
+        console.warn('Dark mode toggle elements not found. The toggle will not be initialized.');
+        return;
+    }
+
+    // --- Functions ---
+    const applyTheme = (theme) => {
+        if (theme === 'dark') {
+            htmlElement.classList.add(DARK_MODE_CLASS);
+            sunIcon.classList.remove('is-hidden');
+            moonIcon.classList.add('is-hidden');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            htmlElement.classList.remove(DARK_MODE_CLASS);
+            sunIcon.classList.add('is-hidden');
+            moonIcon.classList.remove('is-hidden');
+            localStorage.setItem('theme', 'light');
+        }
+    };
+
+    // --- Initialization ---
+    // This part runs immediately to prevent a flash of incorrect theme.
+    const storedTheme = localStorage.getItem('theme');
+    const osPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = storedTheme ? storedTheme : (osPrefersDark ? 'dark' : 'light');
+
+    // Apply the initial theme as soon as the script loads.
+    applyTheme(initialTheme);
+    
+    // --- Event Listener ---
+    // This part runs after the full page has loaded.
+    document.addEventListener('DOMContentLoaded', () => {
+        themeToggle.addEventListener('click', () => {
+            const isDarkMode = htmlElement.classList.contains(DARK_MODE_CLASS);
+            applyTheme(isDarkMode ? 'light' : 'dark');
+        });
+    });
+
+})(); // The '()' at the end executes the function immediately. 
 </script>
   </body>
 </html>

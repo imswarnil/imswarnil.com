@@ -63,14 +63,16 @@
          
 
           {{!-- Dark Mode Toggle (More prominent) --}}
-          <div class="navbar-item">
-             <button class="" data-tooltip="Toggle Theme" id="darkModeToggleNavbar" aria-label="Toggle Dark Mode">
-                <span class="icon">
-                  <i class="ph-duotone ph-moon theme-icon-moon"></i>
-                  <i class="ph-duotone ph-sun theme-icon-sun is-hidden"></i>
-                </span>
-            </button>
-          </div>
+        <div class="navbar-item">
+    <button class="button is-ghost" id="theme-toggle" aria-label="Toggle Theme">
+        <span class="icon">
+            {{!-- This icon shows in light mode --}}
+            <i class="ph-duotone ph-moon" id="theme-icon-moon"></i>
+            {{!-- This icon shows in dark mode --}}
+            <i class="ph-duotone ph-sun is-hidden" id="theme-icon-sun"></i>
+        </span>
+    </button>
+</div>
 
            <div class="navbar-item">
             <a href="/search/" class="  has-tooltip-bottom" data-tooltip="Search Site" aria-label="Search">
