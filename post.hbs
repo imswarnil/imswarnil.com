@@ -1,269 +1,412 @@
 {{!< default}}
 
 {{#post}}
-<main class="content is-large">
+{{!-- ======================================================================= --}}
+{{!-- 1. TOP NAVIGATION & BREADCRUMB --}}
+{{!-- ======================================================================= --}}
+<section class="section pt-4 pb-4 has-background-light">
   <div class="container">
-    <div class="columns is-variable is-6-desktop">
-      {{!-- Main Content Column (Left) --}}
-      <div class="column is-two-thirds-desktop is-three-fifths-widescreen"> {{!-- Adjust column width as needed --}}
-        <article class="article post-article-main">
-          {{!-- 1. Post Title --}}
-          <header class="post-header">
-            <h1 class="title is-size-1-desktop is-size-2-tablet is-size-3-mobile has-text-weight-bold post-title">
-              {{title}}
-            </h1>
+    <nav class="breadcrumb" aria-label="breadcrumbs">
+      <ul>
+        <li><a href="{{@site.url}}">Home</a></li>
+        <li><a href="{{@site.url}}/blog/">Blog</a></li> {{!-- Adjust if your blog path is different --}}
+        <li class="is-active"><a href="{{url}}" aria-current="page">{{title}}</a></li>
+      </ul>
+    </nav>
+  </div>
+</section>
 
-            {{!-- Post Meta: Author, Date, Reading Time (Can be below title or elsewhere) --}}
-            <div class="post-meta level is-mobile is-size-6 has-text-grey mt-4 mb-5">
+
+<main class="content pt-6">
+  <div class="container">
+    <div class="columns is-variable is-8-desktop">
+
+      {{!-- ======================================================================= --}}
+      {{!-- 2. MAIN CONTENT COLUMN (LEFT) --}}
+      {{!-- ======================================================================= --}}
+      <div class="column is-two-thirds-desktop is-three-fifths-widescreen">
+        <article class="article post-article-main">
+
+          {{!-- POST HEADER --}}
+          <header class="post-header mb-6">
+            {{#if primary_tag}}
+              <a href="{{primary_tag.url}}" class="tag is-primary is-medium is-light mb-4">{{primary_tag.name}}</a>
+            {{/if}}
+            <h1 class="title is-size-1-desktop is-size-2-tablet is-size-3-mobile has-text-weight-bold post-title mb-4">{{title}}</h1>
+            {{#if custom_excerpt}}<p class="content post-excerpt is-size-4 has-text-grey-dark has-text-weight-light">{{custom_excerpt}}</p>{{/if}}
+            <div class="post-meta level is-mobile is-size-6 has-text-grey mt-5">
               <div class="level-left">
                 {{#primary_author}}
                   <div class="level-item author-meta">
-                    {{#if profile_image}}
-                      <figure class="image is-32x32 is-inline-block mr-2">
-                        <img class="is-rounded" src="{{img_url profile_image size="xs"}}" alt="{{name}}">
-                      </figure>
-                    {{/if}}
-                    <a href="{{url}}" class="has-text-link has-text-weight-medium">{{name}}</a>
+                    {{#if profile_image}}<figure class="image is-32x32 is-inline-block mr-2"><img class="is-rounded" src="{{img_url profile_image size="xs"}}" alt="{{name}}"></figure>{{/if}}
+                    <span class="has-text-weight-medium">By <a href="{{url}}" class="has-text-link">{{name}}</a></span>
                   </div>
                 {{/primary_author}}
               </div>
               <div class="level-right">
-                <div class="level-item">
-                  <time datetime="{{date format="YYYY-MM-DD"}}">{{date format="MMMM DD, YYYY"}}</time>
-                </div>
-                {{#if reading_time}}
-                  <div class="level-item">
-                    <span class="is-hidden-mobile">• </span>{{reading_time}}
-                  </div>
-                {{/if}}
+                <div class="level-item"><time datetime="{{date format="YYYY-MM-DD"}}">{{date format="MMMM DD, YYYY"}}</time></div>
+                {{#if reading_time}}<div class="level-item"><span class="is-hidden-mobile">• </span>{{reading_time}}</div>{{/if}}
               </div>
             </div>
-
-            {{!-- Tags - Placed after meta, before excerpt for context --}}
-            {{#if tags}}
-              <div class="tags post-header-tags are-medium mb-5">
-                {{#foreach tags}}
-                  <a class="tag is-light is-rounded tag-{{slug}} {{#if accent_color}}has-accent-bg{{/if}}"
-                     {{#if accent_color}}style="background-color: {{accent_color}}; color: {{#match @custom.contrast_color "dark"}}var(--enji-dark-text){{else}}var(--enji-white){{/match}};"{{/if}}
-                     href="{{url}}" title="{{name}}">{{name}}</a>
-                {{/foreach}}
-              </div>
-            {{/if}}
           </header>
 
-          {{!-- 2. Post Excerpt --}}
-          {{#if custom_excerpt}}
-            <div class="content post-excerpt is-size-5 has-text-weight-normal mb-5">
-              <p>{{custom_excerpt}}</p>
-            </div>
-          {{else if excerpt}}
-            <div class="content post-excerpt is-size-5 has-text-weight-normal mb-5">
-              <p>{{excerpt words="55"}}</p> {{!-- Slightly longer excerpt if shown prominently --}}
-            </div>
-          {{/if}}
-
-          {{!-- 3. Feature Image --}}
+          {{!-- FEATURE IMAGE --}}
           {{#if feature_image}}
-            <figure class="image is-16by9 post-feature-image mb-6">
-              <img src="{{img_url feature_image size="xl"}}" alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}" loading="lazy" class="has-radius">
-            </figure>
+            <figure class="image is-16by9 post-feature-image mb-6 has-radius-large"><img src="{{img_url feature_image size="xl"}}" alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}"></figure>
           {{/if}}
 
-          {{!-- Table of Contents (Optional - can be generated by JS or a Ghost helper) --}}
-          {{!-- If you have a TOC partial or logic, place it here or in the sidebar --}}
-          {{!-- Example: {{> "table-of-contents"}} --}}
-
-
-          {{!-- 4. Post Content --}}
-          <div class="content post-content-body is-medium"> {{!-- Bulma .content for typography --}}
+          {{!-- POST CONTENT BODY --}}
+          <div class="content post-content-body is-medium">
             {{#if access}}
+              {{!--
+                HOW TO ADD AFFILIATE PRODUCTS
+                To add an affiliate product showcase, switch to the HTML view in the Ghost Editor
+                and paste the HTML block from the "AFFILIATE PRODUCT SHOWCASE" comment at the bottom of this file
+                anywhere inside your content.
+              --}}
               {{content}}
             {{else}}
               {{html}}
-              <div class="post-access-cta notification is-warning mt-5">
-                  <h3 class="title is-4">This content is for subscribers only</h3>
-                  <p class="subtitle is-6">Unlock this post and more by subscribing.</p>
-                  <a href="/#/portal/signup" class="button is-primary is-large">Subscribe Now</a>
-                  <p class="has-text-centered is-size-7 mt-3">
-                      Already a member? <a href="/#/portal/signin">Sign in</a>
-                  </p>
+              <div class="post-access-cta notification is-warning mt-6 has-text-centered p-5">
+                <h3 class="title is-4">This content is for members only</h3>
+                <p class="subtitle is-6 mt-2">Unlock this post and get access to all content.</p>
+                <a href="/#/portal/signup" class="button is-primary is-large mt-3">Subscribe for full access</a>
+                <p class="is-size-7 mt-4">Already a member? <a href="/#/portal/signin" class="has-text-weight-bold">Sign in</a></p>
               </div>
             {{/if}}
           </div>
-
-          {{!-- Author Bio Section (after content) --}}
-          {{#primary_author}}
-          <section class="section author-box-main content mt-6 p-5 has-background-white-ter">
-              <div class="media">
-                  <div class="media-left">
-                      {{#if profile_image}}
-                          <figure class="image is-96x96">
-                              <img class="is-rounded" src="{{img_url profile_image size="s"}}" alt="{{name}}">
-                          </figure>
-                      {{/if}}
-                  </div>
-                  <div class="media-content">
-                      <p class="title is-4 author-name">{{name}}</p>
-                      {{#if bio}}
-                          <p class="subtitle is-6 author-bio">{{bio}}</p>
-                      {{/if}}
-                      <div class="author-meta-links is-size-7">
-                        {{#if location}}
-                            <span><i class="fas fa-map-marker-alt icon is-small"></i> {{location}}</span>
-                        {{/if}}
-                        {{#if website}}
-                            <span class="ml-3"><a href="{{website}}" target="_blank" rel="noopener noreferrer"><i class="fas fa-link icon is-small"></i> Website</a></span>
-                        {{/if}}
-                        {{!-- Add more social links here --}}
-                      </div>
-                  </div>
-              </div>
-          </section>
-          {{/primary_author}}
-
-          {{!-- Social Share (after content/author) --}}
-          {{> "social-share"}} {{!-- Assuming this partial exists --}}
-
         </article>
       </div>
 
-
-      {{!-- Sidebar Column (Right) --}}
+      {{!-- ======================================================================= --}}
+      {{!-- 3. SIDEBAR COLUMN (RIGHT) --}}
+      {{!-- ======================================================================= --}}
       <div class="column is-one-third-desktop is-two-fifths-widescreen">
-        <aside class="sidebar is-sticky">
+        <aside class="sidebar-sticky-container">
+          {{!-- ** All sidebar widgets are now included directly below ** --}}
 
-          {{!-- Widget 1: Table of Contents (Example) --}}
-          {{!-- You'll need JS to generate this or use a Ghost helper if available --}}
-          {{!-- For now, a placeholder. Your existing TOC script can target this. --}}
-          <div class="box sidebar-widget toc-widget mb-5">
-            <h3 class="title is-5 widget-title">Table of Contents</h3>
-            <div class="menu toc-menu-container">
-              {{!-- Your existing TOC script's .menu-list would go here --}}
-              <ul class="menu-list" id="toc-sidebar-list">
-                {{!-- Dynamically populated by JS --}}
-                <li><a href="#placeholder-for-js-toc">Section 1 (JS Populated)</a></li>
-              </ul>
-            </div>
+          {{!-- Widget 1: Table of Contents --}}
+          <div class="box sidebar-widget widget-animate mb-5">
+            <h3 class="title is-5 widget-title">In This Article</h3>
+            <div class="menu toc-menu-container"><ul class="menu-list" id="toc-sidebar-list"></ul></div>
           </div>
 
-
-           <div class="box sidebar-widget toc-widget mb-5">
-            <h3 class="title is-5 widget-title">Table of Contents</h3>
-            <div class="menu toc-menu-container">
-              {{!-- Your existing TOC script's .menu-list would go here --}}
-                       <!-- Square ( Responsive ) -->
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-1291242080282540"
-     data-ad-slot="7663977887"
-     data-ad-format="auto"
-     data-full-width-responsive="true"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
-            </div>
-          </div>
-
-
-
-
-          {{!-- Widget 2: Author Card (if different from main author box or for all posts) --}}
-          {{!-- This could be a generic site author or a featured author partial --}}
-          {{#if @site.primary_author}}
-            <div class="box sidebar-widget author-widget-sidebar mb-5">
-              <h3 class="title is-5 widget-title">About {{ @site.primary_author.name }}</h3>
-              <div class="media">
-                {{#if @site.primary_author.profile_image}}
-                <div class="media-left">
-                  <figure class="image is-64x64">
-                    <img src="{{img_url @site.primary_author.profile_image size="s"}}" alt="{{@site.primary_author.name}}" class="is-rounded">
-                  </figure>
-                </div>
-                {{/if}}
-                <div class="media-content">
-                  {{#if @site.primary_author.bio}}
-                    <p class="is-size-6">{{@site.primary_author.bio}}</p>
-                  {{else}}
-                    <p class="is-size-6">Read more posts by {{ @site.primary_author.name }}.</p>
-                  {{/if}}
-                  <a href="{{@site.primary_author.url}}" class="button is-small is-link is-outlined mt-3">View Profile</a>
-                </div>
-              </div>
+          {{!-- Widget 2: Newsletter Signup --}}
+          {{#if @site.members_enabled}}
+            <div class="box sidebar-widget widget-animate mb-5 has-text-centered p-5 has-background-primary-light">
+              <h3 class="title is-5 widget-title">Stay Updated</h3>
+              <p class="mb-4 is-size-6">Get the latest posts & updates delivered right to your inbox.</p>
+              <a href="/#/portal/signup" class="button is-primary is-fullwidth has-text-weight-bold">Subscribe Now</a>
             </div>
           {{/if}}
 
-          {{!-- Widget 3: Popular Posts (Placeholder - needs dynamic fetching) --}}
-          {{#get "posts" filter="featured:true" limit="5" as |popular|}}
+          {{!-- Widget 3: Featured Posts --}}
+          {{#get "posts" filter="featured:true" limit="3" include="authors" as |popular|}}
             {{#if popular}}
-            <div class="box sidebar-widget popular-posts-widget mb-5">
-              <h3 class="title is-5 widget-title">Popular Articles</h3>
-              <div class="content">
+            <div class="box sidebar-widget widget-animate mb-5">
+              <h3 class="title is-5 widget-title">Featured Articles</h3>
+              <div class="widget-post-list">
                 {{#foreach popular}}
-                  <article class="media is-align-items-center mb-3">
-                    {{#if feature_image}}
-                    <figure class="media-left image is-64x64">
-                      <img src="{{img_url feature_image size="xs"}}" alt="{{title}}" style="object-fit: cover; width: 64px; height: 64px; border-radius: 4px;">
-                    </figure>
-                    {{/if}}
-                    <div class="media-content">
-                      <h4 class="title is-6 mb-1"><a href="{{url}}">{{title}}</a></h4>
-                      <p class="subtitle is-size-7 has-text-grey">{{date format="MMMM DD, YYYY"}}</p>
-                    </div>
-                  </article>
-                  {{#unless @last}}<hr class="is-marginless my-2">{{/unless}}
+                  <a href="{{url}}" class="media is-align-items-center widget-post-item">
+                    {{#if feature_image}}<figure class="media-left"><p class="image is-64x64"><img src="{{img_url feature_image size="xs"}}" alt="{{title}}"></p></figure>{{/if}}
+                    <div class="media-content"><h4 class="title is-6 mb-1">{{title}}</h4><p class="subtitle is-size-7 has-text-grey">{{date format="MMMM DD"}}</p></div>
+                  </a>
                 {{/foreach}}
               </div>
             </div>
             {{/if}}
           {{/get}}
 
-          {{!-- Widget 4: Newsletter Signup (Placeholder) --}}
-          {{#if @site.members_enabled}}
-            <div class="box sidebar-widget newsletter-widget mb-5">
-              <h3 class="title is-5 widget-title">Stay Updated</h3>
-              <p class="mb-3 is-size-6">Get the latest posts delivered right to your inbox.</p>
-              {{!-- Use Ghost Portal for subscription or a custom form --}}
-              <a href="/#/portal/signup" class="button is-primary is-fullwidth">Subscribe</a>
-            </div>
-          {{/if}}
+          {{!-- Widget 4: Advertisement --}}
+          <div class="box sidebar-widget widget-animate mb-5 has-background-white-ter">
+            <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1291242080282540" data-ad-slot="7663977887" data-ad-format="auto" data-full-width-responsive="true"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+            <p class="has-text-centered is-size-7 has-text-grey-light mt-2">Advertisement</p>
+          </div>
 
-          {{!-- Widget 5: Advertisement (Placeholder) --}}
-          <div class="box sidebar-widget ad-widget">
-            <h3 class="title is-5 widget-title has-text-centered is-size-7 has-text-grey-light">Advertisement</h3>
-            <div class="ad-placeholder-sidebar" style="min-height: 250px; background: #f5f5f5; display: flex; align-items: center; justify-content: center;">
-              <span class="has-text-grey">Ad Placeholder (e.g., 300x250)</span>
+          {{!-- Widget 5: Social Follow --}}
+          {{#if @site.twitter}}
+          <div class="box sidebar-widget widget-animate mb-5">
+            <h3 class="title is-5 widget-title">Follow Us</h3>
+            <div class="buttons are-medium is-centered">
+              {{#if @site.twitter}}<a href="{{twitter_url @site.twitter}}" class="button is-light" target="_blank" rel="noopener"><span class="icon"><i class="fab fa-twitter"></i></span><span>Twitter</span></a>{{/if}}
+              {{#if @site.facebook}}<a href="{{facebook_url @site.facebook}}" class="button is-light" target="_blank" rel="noopener"><span class="icon"><i class="fab fa-facebook-f"></i></span><span>Facebook</span></a>{{/if}}
             </div>
           </div>
+          {{/if}}
 
         </aside>
       </div>
-
     </div>
   </div>
 </main>
 
-{{!-- Related Posts Section (Full Width Below Main Content and Sidebar) --}}
-{{#if @custom.show_related_posts}}
-  <section class="section related-posts-section-fullwidth">
-    <div class="container">
-      <h2 class="title is-3 has-text-centered mb-6">You Might Also Like</h2>
-      {{> "related-posts"}} {{!-- Ensure this partial is designed for this context --}}
-    </div>
-  </section>
-{{/if}}
+{{!-- ======================================================================= --}}
+{{!-- 4. FULL-WIDTH MONETIZATION & ENGAGEMENT SECTIONS --}}
+{{!-- ======================================================================= --}}
 
-{{!-- Comments Section (Full Width Below Everything) --}}
-{{#if comments}}
-<section class="section comments-section-fullwidth">
+{{!-- PARALLAX ADVERTISEMENT SECTION --}}
+<section class="section parallax-ad-section my-6" style="background-image: url('{{#if feature_image}}{{img_url feature_image size="xl"}}{{else}}https://images.unsplash.com/photo-1553729459-efe14ef6055d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80{{/if}}');">
+  <div class="parallax-overlay"></div>
+  <div class="container has-text-centered">
+    <div class="columns is-vcentered is-centered" style="min-height: 50vh;">
+      <div class="column is-8-desktop">
+          <h2 class="title is-2 has-text-white">Promote Your Product Here</h2>
+          <h3 class="subtitle is-4 has-text-white-ter">A high-impact, full-width call to action.</h3>
+          <a href="#" class="button is-primary is-large mt-4">
+            <span class="icon"><i class="fas fa-shopping-cart"></i></span>
+            <span>Learn More</span>
+          </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{{!-- AUTHOR, SHARE & TAGS SECTION --}}
+<section class="section">
     <div class="container">
         <div class="columns is-centered">
-            <div class="column is-three-quarters-desktop is-four-fifths-tablet">
-                <h2 class="title is-3 has-text-centered mb-5">Discussion</h2>
-                {{comments}}
+            <div class="column is-8-desktop is-10-tablet">
+                {{!-- Social Share --}}
+                {{!-- You should create a social-share.hbs partial or paste the HTML for it here --}}
+                <div class="mb-6 has-text-centered">
+                  <h3 class="title is-5">Share This Post</h3>
+                  <div class="buttons is-centered">
+                      <a class="button is-large" href="https://twitter.com/intent/tweet?text={{encode title}}&url={{url absolute="true"}}" target="_blank" rel="noopener">
+                          <span class="icon"><i class="fab fa-twitter"></i></span>
+                      </a>
+                      <a class="button is-large" href="https://www.facebook.com/sharer/sharer.php?u={{url absolute="true"}}" target="_blank" rel="noopener">
+                          <span class="icon"><i class="fab fa-facebook-f"></i></span>
+                      </a>
+                      <a class="button is-large" href="https://www.linkedin.com/shareArticle?mini=true&url={{url absolute="true"}}&title={{encode title}}" target="_blank" rel="noopener">
+                          <span class="icon"><i class="fab fa-linkedin-in"></i></span>
+                      </a>
+                  </div>
+                </div>
+
+                {{!-- Author Box --}}
+                {{#primary_author}}
+                <div class="box author-box-main">
+                    <div class="media is-align-items-center">
+                        <div class="media-left"><figure class="image is-96x96"><a href="{{url}}"><img class="is-rounded" src="{{img_url profile_image size="m"}}" alt="{{name}}"></a></figure></div>
+                        <div class="media-content">
+                            <p class="title is-4 author-name mb-1">About <a href="{{url}}">{{name}}</a></p>
+                            {{#if bio}}<p class="subtitle is-6 author-bio has-text-grey-dark">{{bio}}</p>{{/if}}
+                            <div class="author-meta-links is-size-7 mt-3">
+                                {{#if location}}<span><i class="fas fa-map-marker-alt icon is-small has-text-grey"></i> {{location}}</span>{{/if}}
+                                {{#if website}}<span class="ml-4"><a href="{{website}}" target="_blank" rel="noopener noreferrer"><i class="fas fa-link icon is-small"></i> Website</a></span>{{/if}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{/primary_author}}
             </div>
         </div>
     </div>
 </section>
+
+{{!-- "MORE IN [COLLECTION]" SECTION --}}
+{{#primary_tag}}
+<section class="section has-background-light">
+  <div class="container">
+    <h2 class="title is-3 has-text-centered mb-6">More in <a href="{{url}}">{{name}}</a></h2>
+    {{#get 'posts' filter="tags:{{slug}}+id:-{{../id}}" limit="3" include="authors,tags" as |more_posts|}}
+      <div class="columns is-variable is-5">
+        {{#foreach more_posts}}
+          <div class="column is-one-third-desktop is-full-tablet">
+            {{!-- ** The post-card code is now included directly below ** --}}
+            <div class="card post-card">
+              {{#if feature_image}}
+                <div class="card-image">
+                  <a href="{{url}}">
+                    <figure class="image is-3by2">
+                      <img src="{{img_url feature_image size="m"}}" loading="lazy" alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}">
+                    </figure>
+                  </a>
+                </div>
+              {{/if}}
+              <div class="card-content">
+                <div class="content">
+                  {{#if primary_tag}}
+                    <a href="{{primary_tag.url}}" class="tag is-light mb-3">{{primary_tag.name}}</a>
+                  {{/if}}
+                  <h3 class="title is-5"><a href="{{url}}">{{title}}</a></h3>
+                  <p class="is-size-6 has-text-grey">{{excerpt words="20"}}</p>
+                </div>
+              </div>
+              <div class="card-footer p-4">
+                <div class="media is-align-items-center">
+                    {{#primary_author}}
+                        {{#if profile_image}}
+                            <div class="media-left">
+                                <figure class="image is-32x32">
+                                    <img class="is-rounded" src="{{img_url profile_image size="xs"}}" alt="{{name}}">
+                                </figure>
+                            </div>
+                        {{/if}}
+                        <div class="media-content is-size-7">
+                            <p class="has-text-weight-bold">{{name}}</p>
+                            <p><time datetime="{{date format="YYYY-MM-DD"}}">{{date format="MMMM DD, YYYY"}}</time></p>
+                        </div>
+                    {{/primary_author}}
+                </div>
+              </div>
+            </div>
+          </div>
+        {{/foreach}}
+      </div>
+    {{/get}}
+  </div>
+</section>
+{{/primary_tag}}
+
+{{!-- COMMENTS SECTION --}}
+{{#if comments}}
+<section class="section comments-section">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-three-quarters-desktop is-full-tablet">
+        <h2 class="title is-3 has-text-centered mb-6">Join the Discussion</h2>
+        {{comments}}
+      </div>
+    </div>
+  </div>
+</section>
 {{/if}}
+
+
+{{!-- ======================================================================= --}}
+{{!-- HTML for Reusable Components (For copy-pasting into Ghost Editor) --}}
+{{!-- ======================================================================= --}}
+<!--
+
+  AFFILIATE PRODUCT SHOWCASE
+  Copy and paste the code below into the Ghost Editor using an HTML card
+  where you want this product box to appear.
+
+<div class="card affiliate-card my-6">
+    <div class="card-content">
+        <div class="media">
+            <div class="media-left">
+                <figure class="image is-96x96">
+                    <img src="https://via.placeholder.com/96" alt="Product Image">
+                </figure>
+            </div>
+            <div class="media-content">
+                <p class="title is-4">Affiliate Product Name</p>
+                <p class="subtitle is-6">A short, catchy tagline for the product.</p>
+            </div>
+        </div>
+        <div class="content">
+            This is where you write a compelling, short paragraph about why this product is great and why the reader should check it out. Keep it concise and benefit-focused.
+            <ul class="mt-3">
+                <li><span class="icon-text"><span class="icon"><i class="fas fa-check-circle has-text-success"></i></span><span>Feature #1</span></span></li>
+                <li><span class="icon-text"><span class="icon"><i class="fas fa-check-circle has-text-success"></i></span><span>Feature #2</span></span></li>
+            </ul>
+        </div>
+    </div>
+    <footer class="card-footer">
+        <a href="#" class="card-footer-item button is-primary is-fullwidth has-text-weight-bold">
+            <span class="icon"><i class="fas fa-shopping-cart"></i></span>
+            <span>Check Price & Reviews</span>
+        </a>
+    </footer>
+</div>
+
+-->
+
+
+{{!-- ======================================================================= --}}
+{{!-- SELF-CONTAINED STYLES FOR THIS TEMPLATE --}}
+{{!-- ======================================================================= --}}
+<style>
+  /* --- Main Content Enhancements --- */
+  .post-content-body { line-height: 1.7; }
+  .post-content-body img { border-radius: 8px; }
+
+  /* --- Parallax Ad Section --- */
+  .parallax-ad-section {
+    position: relative;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: white;
+  }
+  .parallax-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6); /* Dark overlay for text readability */
+    z-index: 1;
+  }
+  .parallax-ad-section .container { position: relative; z-index: 2; }
+
+  /* --- Affiliate Product Card --- */
+  .affiliate-card {
+    border: 1px solid #dbdbdb;
+    box-shadow: 0 8px 16px rgba(10, 10, 10, 0.05);
+    border-top: 4px solid var(--ghost-accent-color, #7949EF);
+  }
+  .affiliate-card .card-footer-item { border: none; padding: 1rem; }
+  .affiliate-card .button { height: auto; padding-top: 0.75rem; padding-bottom: 0.75rem; }
+
+  /* --- Sidebar Animation & Sticky Position --- */
+  @media (min-width: 1024px) {
+    .sidebar-sticky-container {
+      position: -webkit-sticky;
+      position: sticky;
+      top: 2rem;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .widget-animate {
+      opacity: 0;
+      animation: fadeInUp 0.6s ease-out forwards;
+    }
+    .sidebar-widget:nth-of-type(1) { animation-delay: 0.1s; }
+    .sidebar-widget:nth-of-type(2) { animation-delay: 0.2s; }
+    .sidebar-widget:nth-of-type(3) { animation-delay: 0.3s; }
+    .sidebar-widget:nth-of-type(4) { animation-delay: 0.4s; }
+    .sidebar-widget:nth-of-type(5) { animation-delay: 0.5s; }
+  }
+
+  /* --- Widget Styling --- */
+  .widget-title {
+    margin-bottom: 1.5rem !important; padding-bottom: 0.75rem;
+    border-bottom: 1px solid #dbdbdb; text-transform: uppercase;
+    font-size: 0.9rem !important; letter-spacing: 0.5px; font-weight: 700 !important;
+  }
+  .widget-post-item {
+    display: flex; padding: 0.75rem 0.5rem; border-radius: 8px;
+    transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+  }
+  .widget-post-item:not(:last-child) { margin-bottom: 0.5rem; }
+  .widget-post-item:hover { background-color: #f5f5f5; transform: translateX(5px); }
+  .widget-post-item .image img { border-radius: 6px; object-fit: cover; width: 64px; height: 64px; }
+  .widget-post-item h4 { color: var(--ghost-text-color, #363636); }
+
+  /* --- Collection/Related Post Card Styling --- */
+  .card.post-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-shadow: 0 8px 16px rgba(10, 10, 10, 0.05);
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .card.post-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 24px rgba(10, 10, 10, 0.1);
+  }
+  .card.post-card .card-image img { object-fit: cover; }
+  .card.post-card .card-content { flex-grow: 1; }
+  .card.post-card .card-footer { background-color: #fafafa; border-top: 1px solid #dbdbdb; }
+</style>
 
 {{/post}}

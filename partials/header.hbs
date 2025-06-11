@@ -1,9 +1,9 @@
-<header class="header">
-  <nav class="navbar is-transparent {{#if @custom.fixed_navbar}}is-fixed-top{{/if}}" role="navigation" aria-label="main navigation" id="mainNavbar">
+<header class="header" >
+  <nav style="border-bottom: 1px solid lightgrey;" class="navbar  {{#if @custom.fixed_navbar}}is-fixed-top{{/if}}" role="navigation" aria-label="main navigation" id="mainNavbar">
       <div class="navbar-brand">
         <a class="navbar-item py-1" href="{{@site.url}}" aria-label="Homepage - {{@site.title}}">
           {{#if @site.logo}}
-            <img src="{{@site.logo}}" alt="{{@site.title}} Logo" style="max-height: 2rem; width: auto;">  <span class="has-text-weight-bold is-size-6 has-text-dark">{{@site.title}}</span>
+            <img src="{{@site.logo}}" alt="{{@site.title}} Logo">  <span class="has-text-weight-bold is-size-6 has-text-dark">{{@site.title}}</span>
           {{else}}
             <span class="has-text-weight-bold is-size-3 has-text-white">{{@site.title}}</span>
           {{/if}}
@@ -18,7 +18,7 @@
       </div>
 
       <div id="navbarMenuMain" class="navbar-menu">
-        <div class="navbar-start">
+        <div class="navbar-start" style="margin: 0 auto;">
           {{!-- Category Dropdown (Top 5 Tags) --}}
           <div class="navbar-item has-dropdown is-hoverable mr-5 " id="categoryDropdownContainer">
             <a class="navbar-link  has-text-primary has-text-weight-bold">
@@ -53,38 +53,26 @@
               </a>
             </div>
           </div>
-
           {{!-- Main Navigation (JS will add icons) --}}
           {{navigation type="primary" active_class="is-active"}}
         </div>
 
         <div class="navbar-end">
           {{!-- Search (More prominent) --}}
-         
-
-          {{!-- Dark Mode Toggle (More prominent) --}}
-        <div class="navbar-item">
-    <button class="button is-ghost" id="theme-toggle" aria-label="Toggle Theme">
-        <span class="icon">
-            {{!-- This icon shows in light mode --}}
-            <i class="ph-duotone ph-moon" id="theme-icon-moon"></i>
-            {{!-- This icon shows in dark mode --}}
-            <i class="ph-duotone ph-sun is-hidden" id="theme-icon-sun"></i>
-        </span>
-    </button>
-</div>
-
            <div class="navbar-item">
             <a href="/search/" class="  has-tooltip-bottom" data-tooltip="Search Site" aria-label="Search">
-              <span class="icon"><i class="ph-duotone ph-magnifying-glass"></i></span>
+              <span class="icon"><i class="ph-duotone ph-magnifying-glass is-size-5"></i></span>
             </a>
           </div>
 
-
-          {{!-- Sign In/Account CTA --}}
+          {{!-- GitHub Link (as an icon button) --}}
+          <a href="https://github.com/YOUR_USERNAME_HERE" target="_blank" rel="noopener noreferrer" class="navbar-item has-text-white has-tooltip-bottom" data-tooltip="GitHub Profile" aria-label="GitHub Profile">
+            <span class="icon is-medium has-text-dark"><i class="ph-duotone ph-github-logo is-size-4"></i></span>
+          </a>
+            {{!-- Sign In/Account CTA --}}
           {{#if @member}}
             <div class="navbar-item has-dropdown is-hoverable">
-              <a class="navbar-link is-arrowless has-text-white has-tooltip-bottom" data-tooltip="My Account" aria-label="My Account">
+              <a class="navbar-link is-arrowless has-tooltip-bottom" data-tooltip="My Account" aria-label="My Account">
                 <span class="icon is-medium"><i class="ph-duotone ph-user-circle is-size-4"></i></span>
                 <span class="is-hidden-touch is-hidden-desktop-only ml-1 has-text-weight-medium">{{@member.name}}</span>
               </a>
@@ -116,255 +104,7 @@
             {{/if}}
           {{/if}}
 
-          {{!-- GitHub Link (as an icon button) --}}
-          <a href="https://github.com/YOUR_USERNAME_HERE" target="_blank" rel="noopener noreferrer" class="navbar-item has-text-white has-tooltip-bottom" data-tooltip="GitHub Profile" aria-label="GitHub Profile">
-            <span class="icon is-medium has-text-dark"><i class="ph-duotone ph-github-logo is-size-4"></i></span>
-          </a>
-
-          {{!-- Quick Access Button (remains similar) --}}
-          <div class="navbar-item">
-            <button class="button is-info is-rounded is-small has-text-weight-medium" id="quickAccessBtn" aria-label="Open Quick Access Menu">
-              <span class="icon is-small"><i class="ph-duotone ph-lightning"></i></span>
-              <span>Quick Access</span>
-            </button>
-          </div>
         </div>
       </div>
   </nav>
 </header>
-
-{{!-- Quick Access Modal (structure largely the same as previous, can be expanded) --}}
-<div class="modal" id="quickAccessModal">
-  <div class="modal-background" id="quickAccessModalBg"></div>
-  <div class="modal-card">
-    <header class="modal-card-head">
-      <p class="modal-card-title icon-text"><span class="icon"><i class="ph-duotone ph-lightning"></i></span><span>Quick Access</span></p>
-      <button class="delete" aria-label="close" id="quickAccessModalClose"></button>
-    </header>
-    <section class="modal-card-body">
-      {{!-- Bento Grid using Bulma Tiles --}}
-      <div class="tile is-ancestor">
-        <div class="tile is-vertical is-8">
-          <div class="tile">
-            <div class="tile is-parent is-vertical">
-              <article class="tile is-child box">
-                <p class="title is-5 icon-text"><span class="icon"><i class="ph-duotone ph-users-three"></i></span><span>Social Channels</span></p>
-                <div class="buttons are-small">
-                  {{#if @site.facebook_url}}<a href="{{@site.facebook_url}}" target="_blank" rel="noopener noreferrer" class="button is-light"><span class="icon"><i class="ph-brands ph-facebook-logo"></i></span><span>Facebook</span></a>{{/if}}
-                  {{#if @site.twitter_url}}<a href="{{@site.twitter_url}}" target="_blank" rel="noopener noreferrer" class="button is-light"><span class="icon"><i class="ph-brands ph-twitter-logo"></i></span><span>Twitter/X</span></a>{{/if}}
-                  <a href="https://github.com/YOUR_USERNAME_HERE" target="_blank" rel="noopener noreferrer" class="button is-light"><span class="icon"><i class="ph-brands ph-github-logo"></i></span><span>GitHub</span></a>
-                  {{!-- Add more social links here --}}
-                </div>
-              </article>
-              <article class="tile is-child box">
-                <p class="title is-5 icon-text"><span class="icon"><i class="ph-duotone ph-star"></i></span><span>Featured Content</span></p>
-                <div class="content">
-                  <ul>
-                    {{#get "posts" filter="featured:true" limit="3"}}
-                      {{#foreach posts}}
-                        <li><a href="{{url}}">{{title}}</a></li>
-                      {{/foreach}}
-                    {{else}}
-                     <li>No featured posts yet.</li>
-                    {{/get}}
-                  </ul>
-                </div>
-              </article>
-            </div>
-            <div class="tile is-parent">
-              <article class="tile is-child box">
-                <p class="title is-5 icon-text"><span class="icon"><i class="ph-duotone ph-compass-tool"></i></span><span>Site Navigation</span></p>
-                <div class="content modal-navigation-links">
-                  {{navigation type="primary" item_class="is-block py-1"}}
-                </div>
-              </article>
-            </div>
-          </div>
-        </div>
-        <div class="tile is-parent is-vertical">
-          <article class="tile is-child box">
-            <p class="title is-5 icon-text"><span class="icon"><i class="ph-duotone ph-tag"></i></span><span>Top Topics</span></p>
-            <div class="tags">
-              {{#get "tags" limit="7" include="count.posts" order="count.posts desc"}}
-                {{#foreach tags}}
-                  <a href="{{url}}" class="tag is-info is-light is-rounded mb-1">{{name}} ({{count.posts}})</a>
-                {{/foreach}}
-              {{/get}}
-            </div>
-          </article>
-          <article class="tile is-child box">
-            <p class="title is-5 icon-text"><span class="icon"><i class="ph-duotone ph-link-simple"></i></span><span>Useful Links</span></p>
-            <div class="content">
-              <p><a href="/about/">About Us</a></p>
-              <p><a href="/contact/">Contact</a></p>
-              <p><a href="/sitemap.xml" target="_blank">Sitemap</a></p>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-    <footer class="modal-card-foot is-justify-content-flex-end">
-        <button class="button" id="quickAccessModalCloseLower">Close</button>
-    </footer>
-  </div>
-</div>
-
-{{!-- JavaScript (includes logic for nav icons) --}}
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    // --- Navbar Burger ---
-    const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
-    if ($navbarBurgers.length > 0) {
-      $navbarBurgers.forEach(el => {
-        el.addEventListener('click', () => {
-          const target = el.dataset.target;
-          const $target = document.getElementById(target);
-          el.classList.toggle('is-active');
-          $target.classList.toggle('is-active');
-          el.setAttribute('aria-expanded', el.classList.contains('is-active'));
-        });
-      });
-    }
-
-    // --- Icons in Main Navigation ---
-    const mainNavLinks = document.querySelectorAll('#navbarMenuMain .navbar-start > .navbar-item > a[href]'); // Target links from {{navigation}}
-    // Define your icon map (CSS class from Ghost Nav : Phosphor class)
-    const iconMap = {
-      'ph-icon-newspaper-clipping': 'ph-duotone ph-newspaper-clipping',
-      'ph-icon-kanban': 'ph-duotone ph-kanban',
-      'ph-icon-briefcase': 'ph-duotone ph-briefcase',
-      'ph-icon-lightbulb': 'ph-duotone ph-lightbulb',
-      'ph-icon-phone': 'ph-duotone ph-phone',
-      // Add more mappings here as you define them in Ghost Admin
-    };
-
-    mainNavLinks.forEach(link => {
-      const linkClasses = link.parentElement.className; // Get classes from parent <li> which {{navigation}} adds to
-      let iconAdded = false;
-      for (const key in iconMap) {
-        if (linkClasses.includes(key.replace('ph-icon-', ''))) { // Check if the class (without ph-icon-) exists
-          const iconSpan = document.createElement('span');
-          iconSpan.classList.add('icon', 'is-small', 'mr-1'); // mr-1 for spacing
-          const iconI = document.createElement('i');
-          iconI.className = iconMap[key];
-          iconSpan.appendChild(iconI);
-          link.prepend(iconSpan);
-          iconAdded = true;
-          break;
-        }
-      }
-      // If no specific icon, maybe a default one? (Optional)
-      // if (!iconAdded) {
-      //   const iconSpan = document.createElement('span');
-      //   iconSpan.classList.add('icon', 'is-small', 'mr-1');
-      //   const iconI = document.createElement('i');
-      //   iconI.className = 'ph-duotone ph-link-simple'; // Default icon
-      //   iconSpan.appendChild(iconI);
-      //   link.prepend(iconSpan);
-      // }
-    });
-
-
-    // --- Quick Access Modal ---
-    const quickAccessBtn = document.getElementById('quickAccessBtn');
-    const quickAccessModal = document.getElementById('quickAccessModal');
-    const quickAccessModalBg = document.getElementById('quickAccessModalBg');
-    const quickAccessModalClose = document.getElementById('quickAccessModalClose');
-    const quickAccessModalCloseLower = document.getElementById('quickAccessModalCloseLower');
-
-    if (quickAccessBtn && quickAccessModal) {
-      const openModal = () => quickAccessModal.classList.add('is-active');
-      const closeModal = () => quickAccessModal.classList.remove('is-active');
-      quickAccessBtn.addEventListener('click', openModal);
-      if(quickAccessModalBg) quickAccessModalBg.addEventListener('click', closeModal);
-      if(quickAccessModalClose) quickAccessModalClose.addEventListener('click', closeModal);
-      if (quickAccessModalCloseLower) quickAccessModalCloseLower.addEventListener('click', closeModal);
-      document.addEventListener('keydown', (event) => {
-        if (event.key === "Escape" && quickAccessModal.classList.contains('is-active')) closeModal();
-      });
-    }
-
-    // --- Dark Mode Toggle ---
-    const darkModeToggleNavbar = document.getElementById('darkModeToggleNavbar');
-    const htmlElement = document.documentElement;
-    const moonIcon = darkModeToggleNavbar ? darkModeToggleNavbar.querySelector('.theme-icon-moon') : null;
-    const sunIcon = darkModeToggleNavbar ? darkModeToggleNavbar.querySelector('.theme-icon-sun') : null;
-
-    // Function to apply theme based on preference
-    const applyTheme = (theme) => {
-      if (theme === 'dark') {
-        htmlElement.classList.add('dark-mode-active'); // You'll need CSS for .dark-mode-active
-        if (moonIcon) moonIcon.classList.add('is-hidden');
-        if (sunIcon) sunIcon.classList.remove('is-hidden');
-      } else {
-        htmlElement.classList.remove('dark-mode-active');
-        if (moonIcon) moonIcon.classList.remove('is-hidden');
-        if (sunIcon) sunIcon.classList.add('is-hidden');
-      }
-    };
-
-    if (darkModeToggleNavbar) {
-      darkModeToggleNavbar.addEventListener('click', () => {
-        const isDarkMode = htmlElement.classList.contains('dark-mode-active');
-        if (isDarkMode) {
-          applyTheme('light');
-          localStorage.setItem('theme', 'light');
-        } else {
-          applyTheme('dark');
-          localStorage.setItem('theme', 'dark');
-        }
-      });
-
-      // Check for saved theme preference on load
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme) {
-        applyTheme(savedTheme);
-      } else {
-        // Optional: Check system preference
-        // const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        // if (prefersDark) applyTheme('dark'); else applyTheme('light');
-        applyTheme('light'); // Default to light if no preference
-      }
-    }
-
-    // --- Navbar Scroll Effect ---
-    const mainNavbar = document.getElementById('mainNavbar');
-    if (mainNavbar) {
-      const SNavbarBrandImg = mainNavbar.querySelector('.navbar-brand img');
-      const SNavbarBrandText = mainNavbar.querySelector('.navbar-brand .title, .navbar-brand .is-size-3, .navbar-brand .is-size-4');
-      const SNavbarBurger = mainNavbar.querySelector('.navbar-burger');
-      const SNavbarItems = mainNavbar.querySelectorAll('.navbar-menu .navbar-item > a, .navbar-menu .navbar-item > button .icon i, .navbar-menu .navbar-link'); // Selects text elements and icons
-
-      window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-          mainNavbar.classList.remove('is-transparent');
-          mainNavbar.classList.add('is-white', 'has-shadow');
-          if (SNavbarBrandImg) SNavbarBrandImg.style.filter = ''; // Reset filter if any
-          if (SNavbarBrandText) SNavbarBrandText.classList.remove('has-text-white');
-          if (SNavbarBurger) SNavbarBurger.classList.remove('has-text-white');
-          SNavbarItems.forEach(item => item.classList.remove('has-text-white'));
-
-        } else {
-          mainNavbar.classList.add('is-transparent');
-          mainNavbar.classList.remove('is-white', 'has-shadow');
-          // For logos that are dark and need to be inverted on dark backgrounds, or white for transparent:
-          // if (SNavbarBrandImg) SNavbarBrandImg.style.filter = 'invert(1) grayscale(100%) brightness(2)'; // Example to make dark logo white
-          if (SNavbarBrandText) SNavbarBrandText.classList.add('has-text-white');
-          if (SNavbarBurger) SNavbarBurger.classList.add('has-text-white');
-          SNavbarItems.forEach(item => item.classList.add('has-text-white'));
-        }
-      });
-      // Initial check in case page loads scrolled
-      if (window.scrollY > 50) {
-          mainNavbar.classList.remove('is-transparent');
-          mainNavbar.classList.add('is-white', 'has-shadow');
-          if (SNavbarBrandImg) SNavbarBrandImg.style.filter = '';
-          if (SNavbarBrandText) SNavbarBrandText.classList.remove('has-text-white');
-          if (SNavbarBurger) SNavbarBurger.classList.remove('has-text-white');
-          SNavbarItems.forEach(item => item.classList.remove('has-text-white'));
-      } else {
-         SNavbarItems.forEach(item => item.classList.add('has-text-white')); // Ensure items start white
-      }
-    }
-  });
-</script>

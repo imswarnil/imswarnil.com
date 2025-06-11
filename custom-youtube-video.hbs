@@ -1,0 +1,103 @@
+{{!< default}}
+
+{{#post}}
+<main class="section post-page-layout">
+  <div class="container">
+    <div class="columns is-variable is-6-desktop">
+
+      {{!-- ======== Main Content Column (Left) ======== --}}
+      <div class="column is-8-desktop">
+        <article class="post-article-main">
+          
+          <header class="post-header mb-5">
+            <h1 class="title is-size-1-desktop is-size-2-tablet is-size-3-mobile has-text-weight-bold post-title">
+              {{title}}
+            </h1>
+            <div class="is-size-6 has-text-grey mt-4">
+              By <a href="{{primary_author.url}}">{{primary_author.name}}</a> on <time datetime="{{date format="YYYY-MM-DD"}}">{{date format="MMMM DD, YYYY"}}</time>
+            </div>
+          </header>
+
+          {{!-- The YouTube iframe is embedded directly in a responsive container --}}
+          <figure class="image is-16by9 mb-6">
+            <iframe 
+                class="has-ratio"
+                src="https://www.youtube.com/embed/{{custom_excerpt}}?rel=0" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+            </iframe>
+          </figure>
+
+          {{!-- In-Article Ad Placeholder --}}
+          <div class="notification is-light has-text-centered my-6">
+            <p class="has-text-grey-light">Advertisement</p>
+          </div>
+
+          {{!-- The post content from the editor renders here --}}
+          <div class="content post-content-body is-medium">
+            {{content}}
+          </div>
+          
+        </article>
+      </div>
+
+      {{!-- ======== Sidebar Column (Right) ======== --}}
+      <div class="column is-4-desktop">
+        {{!-- 'is-sticky-top-on-desktop' is a placeholder class for the JS snippet below --}}
+        <aside class="is-sticky-top-on-desktop">
+
+          {{!-- WIDGET 1: Placeholder for Timestamps --}}
+          {{!-- This is the space you will target with JavaScript later --}}
+          <div class="panel mb-5">
+            <p class="panel-heading">Timestamps</p>
+            <div class="panel-block">
+              <p class="has-text-grey">Timestamps will be generated here.</p>
+            </div>
+          </div>
+
+          {{!-- WIDGET 2: Related Videos --}}
+          {{#get "posts" filter="tags:hash-video+id:-{{id}}" limit="3" as |related|}}
+            {{#if related}}
+            <div class="box mb-5">
+              <h3 class="title is-5">Related Videos</h3>
+                {{#foreach related}}
+                  <a href="{{url}}" class="media is-align-items-center mb-4">
+                    <figure class="media-left">
+                        <p class="image is-128x72">
+                            {{!-- The thumbnail is generated from the related post's excerpt (its video ID) --}}
+                            <img src="https://i.ytimg.com/vi/{{custom_excerpt}}/mqdefault.jpg" alt="{{title}}" loading="lazy">
+                        </p>
+                    </figure>
+                    <div class="media-content">
+                        <p class="is-size-6 has-text-weight-semibold has-text-dark">{{title}}</p>
+                    </div>
+                  </a>
+                {{/foreach}}
+            </div>
+            {{/if}}
+          {{/get}}
+
+          {{!-- WIDGET 3: Sidebar Advertisement Placeholder --}}
+          <div class="notification is-light has-text-centered">
+            <p class="has-text-grey-light">Advertisement</p>
+          </div>
+
+        </aside>
+      </div>
+    </div>
+  </div>
+</main>
+
+
+{{!-- This small, embedded script makes the sidebar sticky on desktop without custom CSS --}}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const sidebar = document.querySelector('.is-sticky-top-on-desktop');
+    if (sidebar && window.innerWidth >= 1024) {
+        sidebar.style.position = 'sticky';
+        sidebar.style.top = '2rem'; // Adjust based on your navbar height
+    }
+});
+</script>
+{{/post}}

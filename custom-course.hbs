@@ -1,0 +1,255 @@
+{{!< default}}
+
+{{#post}}
+<style>
+:root {
+  --brand-green: #04A853;
+  --brand-green-dark: #038B45;
+  --brand-dark-blue: #212832;
+  --text-primary: #1D2B36;
+  --text-secondary: #647589;
+  --border-color: #E9EAF0;
+  --background-light: #F8F9FA;
+}
+.course-hero {
+  background: linear-gradient(105deg, #EAF7F1 0%, #D8F2E6 100%);
+}
+.course-hero .title {
+  font-size: 3.2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+.course-hero .subtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin-top: 1.5rem;
+}
+.course-hero .buttons .button.is-primary {
+  background-color: var(--brand-green);
+  font-weight: 600;
+  padding: 1.5em 2em;
+}
+.course-hero .buttons .button.is-primary:hover {
+  background-color: var(--brand-green-dark);
+}
+.course-hero .buttons .button.is-light {
+  padding: 1.5em 2em;
+}
+.course-hero .hero-image-container img {
+  border-radius: 12px;
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.2);
+}
+.course-content-area .content h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+  margin: 3rem 0 1.5rem 0;
+}
+.course-content-area .content h2:first-of-type {
+  margin-top: 0;
+}
+.course-curriculum-accordion summary {
+  padding: 1.25rem 0.5rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+}
+.course-curriculum-accordion summary::-webkit-details-marker {
+  display: none;
+}
+.course-curriculum-accordion summary::after {
+  content: '+';
+  font-size: 1.5rem;
+  font-weight: 300;
+  transition: transform 0.2s ease;
+}
+.course-curriculum-accordion details[open] summary {
+  color: var(--brand-green);
+}
+.course-curriculum-accordion details[open] summary::after {
+  transform: rotate(45deg);
+}
+.course-curriculum-accordion .lesson-list {
+  padding: 0.5rem 0 1rem 0;
+}
+.course-curriculum-accordion .lesson-list a {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  color: var(--text-secondary);
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+.course-curriculum-accordion .lesson-list a:hover {
+  background-color: var(--background-light);
+  color: var(--text-primary);
+}
+.course-curriculum-accordion .lesson-list a .icon {
+  margin-right: 0.75rem;
+  color: var(--brand-green);
+}
+.sticky-sidebar {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 2rem;
+}
+.price-card .card-content .title {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+.price-card .button.is-primary {
+  background-color: var(--brand-green);
+}
+.price-card .course-stats {
+  list-style: none;
+  margin: 1.5rem 0 0 0;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+.price-card .course-stats li {
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  padding: 0.6rem 0;
+}
+.price-card .course-stats li .stat-value {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.instructor-card .media-content .title {
+  margin-bottom: 0.5rem;
+}
+@media screen and (max-width: 1023px) {
+  .course-hero .hero-body { text-align: center; }
+  .course-hero .buttons { justify-content: center; }
+  .course-hero .hero-image-container { margin-top: 3rem; }
+}
+</style>
+
+<section class="hero is-medium course-hero">
+  <div class="hero-body">
+    <div class="container">
+      <div class="columns is-vcentered">
+        <div class="column is-6-desktop">
+          <h1 class="title is-size-1-desktop is-size-2-tablet">{{title}}</h1>
+          {{#if custom_excerpt}}
+            <p class="subtitle is-size-5">{{custom_excerpt}}</p>
+          {{/if}}
+          <div class="buttons is-large">
+            <a href="/#/portal/signup" class="button is-primary">Start Learning</a>
+            <a href="{{primary_tag.url}}" class="button is-light">View Courses</a>
+          </div>
+        </div>
+        <div class="column is-6-desktop hero-image-container">
+          {{#if feature_image}}
+            <figure class="image is-5by4">
+              <img src="{{feature_image}}" alt="{{title}}">
+            </figure>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="columns is-variable is-8">
+      <div class="column is-7-desktop is-8-tablet">
+        <div class="box">
+          <div class="content course-content-area">
+            {{content}}
+            {{#if primary_tag}}
+              <h2 class="title is-4">Course Content</h2>
+              {{#get "posts" filter="primary_tag:{{primary_tag.slug}}" order="published_at asc" limit="all" as |lessons|}}
+                <div class="course-curriculum-accordion">
+                  <details open>
+                    <summary>Course Curriculum</summary>
+                    <ul class="lesson-list">
+                      {{#foreach lessons}}
+                      <li>
+                        <a href="{{url}}">
+                          <span class="icon"><i class="fas fa-play-circle"></i></span>
+                          <span>{{title}}</span>
+                        </a>
+                      </li>
+                      {{/foreach}}
+                    </ul>
+                  </details>
+                </div>
+              {{/get}}
+            {{/if}}
+          </div>
+        </div>
+      </div>
+
+      <div class="column is-5-desktop is-4-tablet">
+        <aside class="sticky-sidebar">
+          <div class="card price-card mb-5">
+            <div class="card-content">
+              <h3 class="title is-2">Free</h3>
+              <a href="/#/portal/signup" class="button is-primary is-fullwidth is-large">Enroll Now</a>
+              <ul class="course-stats">
+                <li><span><i class="fas fa-film icon mr-2"></i>Lectures</span><span class="stat-value" id="lesson-count-stat">0</span></li>
+                <li><span><i class="far fa-clock icon mr-2"></i>Duration</span><span class="stat-value">8h 21m</span></li>
+                <li><span><i class="fas fa-user-friends icon mr-2"></i>Enrolled</span><span class="stat-value">2,500</span></li>
+                <li><span><i class="fas fa-globe icon mr-2"></i>Language</span><span class="stat-value">English</span></li>
+              </ul>
+            </div>
+          </div>
+
+          {{#primary_author}}
+          <div class="box instructor-card mb-5">
+            <h4 class="title is-5 mb-4">Instructor</h4>
+            <div class="media">
+              <div class="media-left">
+                {{#if profile_image}}
+                <figure class="image is-64x64">
+                  <img class="is-rounded" src="{{profile_image}}" alt="{{name}}">
+                </figure>
+                {{/if}}
+              </div>
+              <div class="media-content">
+                <p class="title is-6">{{name}}</p>
+                {{#if bio}}
+                  <p class="subtitle is-size-7 has-text-grey">{{bio}}</p>
+                {{/if}}
+              </div>
+            </div>
+          </div>
+          {{/primary_author}}
+
+          <div class="box ad-placeholder">
+             <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-1234567890" data-ad-slot="12345" data-ad-format="auto" data-full-width-responsive="true"></ins>
+             <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+{{#get "posts" filter="primary_tag:{{primary_tag.slug}}" limit="all" as |lessons|}}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const lessonCount = {{lessons.length}};
+    const lessonCountEl = document.getElementById('lesson-count-stat');
+    if (lessonCountEl) {
+      lessonCountEl.innerText = lessonCount;
+    }
+  });
+</script>
+{{/get}}
+
+{{/post}}
