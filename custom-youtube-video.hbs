@@ -2,59 +2,56 @@
 
 {{#post}}
 <style>
-    /* Add a subtle, professional background pattern to the hero */
+    /* Hero background for a premium feel */
     .post-hero-video {
         background-color: #2c3e50;
-        background-image: linear-gradient(rgba(10, 10, 10, 0.8), rgba(10, 10, 10, 0.8)),
-                          url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        background-image: linear-gradient(rgba(10, 10, 10, 0.85), rgba(10, 10, 10, 0.85)),
+                          url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
     }
 
     /* Styles for the mobile timestamp accordion */
-    #timestamps-widget-mobile .panel-content {
-        display: none;
-        border-top: 1px solid #dbdbdb;
-    }
-    #timestamps-widget-mobile.is-active .panel-content {
-        display: block;
-    }
-    #timestamps-widget-mobile.is-active .panel-heading .icon {
-        transform: rotate(180deg);
-    }
+    #timestamps-widget-mobile .panel-content { display: none; border-top: 1px solid #dbdbdb; }
+    #timestamps-widget-mobile.is-active .panel-content { display: block; }
+    #timestamps-widget-mobile.is-active .panel-heading .icon.is-angle { transform: rotate(180deg); }
 
     /* Responsive visibility for desktop vs mobile timestamps */
-    @media (min-width: 769px) { /* Bulma's 'tablet' breakpoint */
+    @media (min-width: 1024px) { /* Bulma's 'desktop' breakpoint */
         #timestamps-widget-mobile { display: none !important; }
     }
-    @media (max-width: 768px) {
+    @media (max-width: 1023px) {
         #timestamps-widget-desktop { display: none !important; }
+    }
+
+    /* Styles for the share buttons */
+    .share-buttons a {
+        transition: transform 0.2s ease-out;
+    }
+    .share-buttons a:hover {
+        transform: translateY(-3px);
     }
 </style>
 
-{{!-- Cinematic Hero Section --}}
+{{!-- Cinematic Hero Section with Rich Meta Details --}}
 <section class="hero is-dark post-hero-video">
   <div class="hero-body">
     <div class="container">
-      <div class="media is-align-items-center mb-4">
-        {{#if primary_author.profile_image}}
-          <figure class="media-left">
-            <p class="image is-48x48">
-              <img class="is-rounded" src="{{primary_author.profile_image}}" alt="{{primary_author.name}}">
-            </p>
-          </figure>
+      <div class="mb-4">
+        {{#if tags}}
+          <div class="tags">
+            {{#foreach tags}}
+              <a class="tag is-primary is-light" href="{{url}}">{{name}}</a>
+            {{/foreach}}
+          </div>
         {{/if}}
-        <div class="media-content">
-          <p class="is-size-6 has-text-weight-bold">{{primary_author.name}}</p>
-          <p class="is-size-7 has-text-grey-light">
-            Published on <time datetime="{{date format="YYYY-MM-DD"}}">{{date format="MMMM DD, YYYY"}}</time>
-          </p>
-        </div>
       </div>
       <h1 class="title is-size-1-desktop is-size-2-tablet is-size-3-mobile has-text-weight-bold post-title">
         {{title}}
       </h1>
-      {{#if custom_excerpt}}
-        <p class="subtitle is-size-5 has-text-grey-light">{{excerpt}}</p>
-      {{/if}}
+      <div class="is-size-6 has-text-grey-light mt-4">
+        By <a href="{{primary_author.url}}" class="has-text-white has-text-weight-semibold">{{primary_author.name}}</a> •
+        <time datetime="{{date format="YYYY-MM-DD"}}">{{date format="MMMM DD, YYYY"}}</time> •
+        <span>{{reading_time}}</span>
+      </div>
     </div>
   </div>
 </section>
@@ -63,54 +60,93 @@
   <div class="container">
     <div class="columns is-variable is-8-desktop">
 
-      {{!-- ======== Main Content Column (Left) ======== --}}
-      <div class="column is-8">
+      {{!-- ======== Main Content Column (Wider) ======== --}}
+      <div class="column is-9">
         <div class="box p-4 p-5-tablet">
-          {{!-- The YouTube iframe now has rounded corners --}}
+          {{!-- The YouTube iframe player --}}
           <figure class="image is-16by9 mb-6" style="border-radius: 8px; overflow: hidden;">
-            <iframe 
-                id="youtube-player" {{!-- ID is crucial for the JS API --}}
-                class="has-ratio"
-                src="https://www.youtube.com/embed/{{custom_excerpt}}?rel=0&enablejsapi=1" {{!-- enablejsapi=1 is required --}}
-                frameborder="0" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowfullscreen>
-            </iframe>
+            <iframe id="youtube-player" class="has-ratio" src="https://www.youtube.com/embed/{{custom_excerpt}}?rel=0&enablejsapi=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
           </figure>
           
-          {{!-- WIDGET: Mobile Timestamp Accordion (hidden on desktop) --}}
+          {{!-- Mobile Timestamp Accordion (hidden on desktop) --}}
           <div id="timestamps-widget-mobile" class="panel is-link mb-6">
             <p class="panel-heading is-clickable">
-              <span class="icon-text">
-                <span class="icon"><i class="fas fa-list-ol"></i></span>
-                <span>Video Timestamps</span>
-              </span>
-              <span class="icon"><i class="fas fa-angle-down"></i></span>
+              <span class="icon-text"><span class="icon"><i class="fas fa-list-ol"></i></span><span>Video Timestamps</span></span>
+              <span class="icon is-angle"><i class="fas fa-angle-down"></i></span>
             </p>
             <div class="panel-content" id="timestamps-target-mobile"></div>
           </div>
+          
+          {{!-- In-Article AdSense Placeholder --}}
+          <div class="box has-background-light has-text-centered my-6">
+            <p class="has-text-grey">AdSense Unit (e.g., In-article ad)</p>
+          </div>
 
-          {{!-- The post content from the editor renders here --}}
+          {{!-- Main post content --}}
           <div class="content post-content-body is-medium gh-content">
             {{content}}
           </div>
+          
+          <hr>
+          
+          {{!-- Share Buttons --}}
+          <div class="share-buttons has-text-centered my-6">
+            <p class="title is-5 mb-4">Share this video</p>
+            <div class="buttons is-centered">
+              <a class="button is-large is-twitter" data-social="twitter"><span class="icon"><i class="fab fa-twitter"></i></span></a>
+              <a class="button is-large is-facebook" data-social="facebook"><span class="icon"><i class="fab fa-facebook-f"></i></span></a>
+              <a class="button is-large is-linkedin" data-social="linkedin"><span class="icon"><i class="fab fa-linkedin-in"></i></span></a>
+              <a class="button is-large is-whatsapp" data-social="whatsapp"><span class="icon"><i class="fab fa-whatsapp"></i></span></a>
+            </div>
+          </div>
+          
+          {{!-- Author Bio Box --}}
+          {{#primary_author}}
+            <div class="box has-background-light">
+              <article class="media">
+                {{#if profile_image}}
+                  <figure class="media-left">
+                    <p class="image is-96x96">
+                      <img class="is-rounded" src="{{profile_image}}" alt="{{name}}">
+                    </p>
+                  </figure>
+                {{/if}}
+                <div class="media-content">
+                  <div class="content">
+                    <p class="title is-4">{{name}}</p>
+                    <p class="subtitle is-6">{{location}}</p>
+                    <p>{{bio}}</p>
+                    <a href="{{url}}" class="button is-link is-outlined is-small">More posts by this author</a>
+                  </div>
+                </div>
+              </article>
+            </div>
+          {{/primary_author}}
+
+          {{!-- Ghost Portal Comments --}}
+          <div class="mt-6">{{comments}}</div>
         </div>
       </div>
 
-      {{!-- ======== Sidebar Column (Right) ======== --}}
-      <div class="column is-4">
+      {{!-- ======== Sidebar Column (Narrower) ======== --}}
+      <div class="column is-3">
         <aside class="post-sidebar-sticky">
         
-          {{!-- WIDGET 1: Desktop Timestamps (hidden on mobile) --}}
-          <div id="timestamps-widget-desktop" class="panel is-link mb-5">
+          {{!-- Desktop Timestamps (hidden on mobile) --}}
+          <div id="timestamps-widget-desktop" class="panel is-link mb-5" style="display: none;">
             <p class="panel-heading">Timestamps</p>
             <div id="timestamps-target-desktop"></div>
           </div>
 
-          {{!-- WIDGET 2: Related Videos --}}
+          {{!-- Sidebar AdSense Placeholder --}}
+          <div class="box has-background-light has-text-centered mb-5">
+            <p class="has-text-grey">AdSense Unit (e.g., Display ad)</p>
+          </div>
+
+          {{!-- Related Videos --}}
           {{#get "posts" filter="tags:hash-video+id:-{{id}}" limit="3" as |related|}}
             {{#if related}}
-            <div class="box mb-5">
+            <div class="box">
               <h3 class="title is-5 mb-4">Related Videos</h3>
                 {{#foreach related}}
                   <a href="{{url}}" class="is-block mb-4">
@@ -127,11 +163,6 @@
             </div>
             {{/if}}
           {{/get}}
-
-          {{!-- WIDGET 3: Sidebar Advertisement --}}
-          <div class="box has-background-light has-text-centered">
-            <p class="has-text-grey">Advertisement</p>
-          </div>
         </aside>
       </div>
     </div>
@@ -140,112 +171,107 @@
 
 
 {{!-- ================== JAVASCRIPT & SEO ================== --}}
-{{!-- 1. Load the YouTube IFrame Player API --}}
 <script src="https://www.youtube.com/iframe_api"></script>
-
 <script>
-    // ---- Global variable for the player ----
-    let player;
-
-    // ---- This function is called by the YouTube API when it's ready ----
+    let player; // Make player globally accessible
+    
+    // This function is called by the YouTube API script
     function onYouTubeIframeAPIReady() {
         player = new YT.Player('youtube-player', {
-            events: {
-                'onReady': onPlayerReady
-            }
+            events: { 'onReady': onPlayerReady }
         });
     }
 
-    // ---- Helper function to parse time strings (e.g., "1:23") into seconds ----
-    function parseTimeToSeconds(timeStr) {
-        const parts = timeStr.split(':').map(part => parseInt(part, 10));
-        let seconds = 0;
-        if (parts.length === 3) { // HH:MM:SS
-            seconds += parts[0] * 3600;
-            seconds += parts[1] * 60;
-            seconds += parts[2];
-        } else if (parts.length === 2) { // MM:SS
-            seconds += parts[0] * 60;
-            seconds += parts[1];
-        }
-        return seconds;
-    }
-
-    // ---- The main logic runs after the player is ready and the DOM is loaded ----
+    // Function to set up timestamp click listeners once player is ready
     function onPlayerReady(event) {
-        document.addEventListener('DOMContentLoaded', () => {
-            // ---- 1. Make Sidebar Sticky ----
-            const sidebar = document.querySelector('.post-sidebar-sticky');
-            if (sidebar && window.innerWidth >= 769) {
-                sidebar.style.position = 'sticky';
-                sidebar.style.top = '2rem';
-            }
+        document.querySelectorAll('a.timestamp-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const time = parseFloat(link.dataset.time);
+                if (player && typeof player.seekTo === 'function') {
+                    player.seekTo(time, true);
+                    player.playVideo();
+                }
+            });
+        });
+    }
+    
+    // Main script execution on DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', () => {
+        // ---- 1. Sticky Sidebar ----
+        const sidebar = document.querySelector('.post-sidebar-sticky');
+        if (sidebar && window.innerWidth >= 1024) {
+            sidebar.style.position = 'sticky';
+            sidebar.style.top = '2rem';
+        }
 
-            // ---- 2. Dynamic Timestamp Generation ----
+        // ---- 2. Dynamic Timestamps (robust logic) ----
+        const generateTimestamps = () => {
+            const sourceTable = document.querySelector('.gh-content table');
+            const desktopWidget = document.getElementById('timestamps-widget-desktop');
+            const mobileWidget = document.getElementById('timestamps-widget-mobile');
+            if (!sourceTable || !desktopWidget || !mobileWidget) return;
+
             const desktopTarget = document.getElementById('timestamps-target-desktop');
             const mobileTarget = document.getElementById('timestamps-target-mobile');
-            const mobileWidget = document.getElementById('timestamps-widget-mobile');
-            const sourceTable = document.querySelector('.gh-content table');
-
-            if (!desktopTarget || !mobileTarget || !sourceTable) {
-                // If there's no table, hide the timestamp widgets completely
-                document.getElementById('timestamps-widget-desktop').style.display = 'none';
-                mobileWidget.style.display = 'none';
-                return;
-            }
-
             const rows = sourceTable.querySelectorAll('tbody tr');
+            
+            if (rows.length === 0) return;
+            
             const fragment = document.createDocumentFragment();
-
             rows.forEach(row => {
                 const cells = row.querySelectorAll('td, th');
                 if (cells.length < 2) return;
 
-                const timeStr = cells[0].textContent.trim().split(' ')[0]; // Handle "0:00 - 0:04"
-                const seconds = parseTimeToSeconds(timeStr);
+                const timeStr = cells[0].textContent.trim().split(' ')[0];
+                const parts = timeStr.split(':').map(part => parseInt(part, 10));
+                let seconds = 0;
+                if (parts.length === 3) seconds = parts[0] * 3600 + parts[1] * 60 + parts[2];
+                else if (parts.length === 2) seconds = parts[0] * 60 + parts[1];
                 
                 const link = document.createElement('a');
-                link.className = 'panel-block is-flex is-justify-content-space-between';
-                link.href = '#'; // Prevent page jump
-                link.dataset.time = seconds; // Store seconds in a data attribute
-
-                link.innerHTML = `
-                    <span class="has-text-weight-semibold">${cells[0].textContent.trim()}</span>
-                    <span class="has-text-right is-size-7">${cells[1].textContent.trim()}</span>
-                `;
+                link.className = 'panel-block is-flex is-justify-content-space-between timestamp-link';
+                link.href = `#t=${seconds}`;
+                link.dataset.time = seconds;
+                link.innerHTML = `<span>${cells[0].textContent.trim()}</span><span class="has-text-right is-size-7">${cells[1].textContent.trim()}</span>`;
                 fragment.appendChild(link);
             });
             
-            // Populate both desktop and mobile targets
             desktopTarget.appendChild(fragment.cloneNode(true));
             mobileTarget.appendChild(fragment);
-
-            // Hide the original table
-            sourceTable.style.display = 'none';
-
-            // ---- 3. Add Click Listeners for Timestamps and Accordion ----
-            function handleTimestampClick(e) {
-                e.preventDefault();
-                const targetLink = e.target.closest('a.panel-block');
-                if (targetLink && targetLink.dataset.time) {
-                    const time = parseFloat(targetLink.dataset.time);
-                    player.seekTo(time, true);
-                    player.playVideo();
-                }
-            }
             
-            desktopTarget.addEventListener('click', handleTimestampClick);
-            mobileTarget.addEventListener('click', handleTimestampClick);
+            desktopWidget.style.display = 'block';
+            sourceTable.style.display = 'none';
 
             mobileWidget.querySelector('.panel-heading').addEventListener('click', () => {
                 mobileWidget.classList.toggle('is-active');
             });
-        });
-    }
+        };
+        
+        // ---- 3. Share Buttons ----
+        const setupShareButtons = () => {
+            const url = encodeURIComponent(window.location.href);
+            const title = encodeURIComponent(document.title);
+            document.querySelectorAll('.share-buttons a').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    let shareUrl = '';
+                    const social = button.dataset.social;
+                    if(social === 'twitter') shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${title}`;
+                    if(social === 'facebook') shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+                    if(social === 'linkedin') shareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${title}`;
+                    if(social === 'whatsapp') shareUrl = `https://api.whatsapp.com/send?text=${title}%20${url}`;
+                    window.open(shareUrl, 'share-window', 'height=450,width=550,toolbar=0,location=0,menubar=0,directories=0,scrollbars=0');
+                });
+            });
+        };
+        
+        generateTimestamps();
+        setupShareButtons();
+    });
 </script>
 
-
-{{!-- 2. Dynamic JSON-LD SEO Schema for VideoObject --}}
+{{!-- SEO: Dynamic JSON-LD VideoObject Schema --}}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -253,12 +279,16 @@
   "name": "{{title}}",
   "description": "{{excerpt}}",
   "uploadDate": "{{date format="YYYY-MM-DDTHH:mm:ss.SSSZ"}}",
+  "duration": "PT0M0S", {{!-- Placeholder: Manually update or use API for duration --}}
   "embedUrl": "https://www.youtube.com/embed/{{custom_excerpt}}",
-  {{#if feature_image}}
-    "thumbnailUrl": "{{feature_image}}"
-  {{else}}
-    "thumbnailUrl": "https://i.ytimg.com/vi/{{custom_excerpt}}/maxresdefault.jpg"
-  {{/if}},
+  "thumbnailUrl": [
+    {{#if feature_image}}
+      "{{feature_image}}"
+    {{else}}
+      "https://i.ytimg.com/vi/{{custom_excerpt}}/maxresdefault.jpg",
+      "https://i.ytimg.com/vi/{{custom_excerpt}}/hqdefault.jpg"
+    {{/if}}
+  ],
   "author": {
     "@type": "Person",
     "name": "{{primary_author.name}}"
