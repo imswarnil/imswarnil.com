@@ -1,97 +1,73 @@
 {{!< default}}
 
 {{!-- This template assumes you have a default.hbs that includes:
-    - <head> with Font Awesome and a modern viewport.
-    - <body> tag opening.
-    - Bulma CSS link.
+    - A modern viewport meta tag.
+    - The Bulma CSS link.
+    - Your FitVids.js script (likely in Code Injection).
 --}}
 
-{{!-- Google Font for superior readability --}}
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
-
 <style>
-    /* 
-    This is the ONLY custom CSS, focused on enhancing Bulma's defaults for a premium feel.
-    It doesn't create new components, only refines existing ones.
+    /*
+    This minimal CSS block controls RESPONSIVE BEHAVIOR only.
+    It does not style fonts, colors, or components, adhering to the "Pure Bulma" philosophy.
     */
-    .post-body, .button, .input, .textarea, .title, .subtitle {
-        font-family: 'Inter', sans-serif;
-    }
-    html {
-        font-size: 17px;
-        background-color: #f7f7fa; /* A soft, modern background */
-    }
-    @media screen and (max-width: 768px) {
-        html { font-size: 16px; }
-    }
 
-    /* Style for the responsive, mobile-first timestamp accordion */
-    #timestamps-accordion {
-        display: none; /* Hidden on desktop */
-    }
-    #timestamps-accordion .panel-content {
-        display: none;
-        border-top: 1px solid #dbdbdb;
-    }
-    #timestamps-accordion.is-active .panel-content {
-        display: block;
-    }
-    #timestamps-accordion.is-active .panel-heading .icon.is-angle {
-        transform: rotate(180deg);
-    }
+    /* Mobile-first timestamp accordion behavior */
+    #timestamps-accordion { display: none; } /* Hidden on desktop by default */
+    #timestamps-accordion .panel-content { display: none; border-top: 1px solid #dbdbdb; }
+    #timestamps-accordion.is-active .panel-content { display: block; }
+    #timestamps-accordion.is-active .panel-heading .icon.is-angle { transform: rotate(180deg); }
+
+    /* Show/hide widgets based on screen size */
     @media screen and (max-width: 1023px) {
         #timestamps-accordion { display: block; }
         #timestamps-sidebar { display: none !important; }
     }
 
-    /* JavaScript-controlled behavior (not static styling) */
+    /* JavaScript-controlled behavior */
     .post-sidebar-sticky { position: static; }
     .is-sticky { position: sticky; top: 2rem; }
     .gh-content table { display: none; } /* Always hide the source table */
 </style>
 
 {{#post}}
-<main class="section post-body">
+<main class="section">
   <div class="container">
     <div class="columns is-variable is-8-desktop">
 
       {{!-- ======== Main Content Column ======== --}}
       <div class="column is-8">
         
-        {{!-- The YouTube Video Player --}}
-        <figure class="image is-16by9 has-background-black" style="border-radius: 12px; overflow: hidden; box-shadow: 0 1rem 3rem -1rem rgba(0,0,0,0.2);">
-            <iframe id="youtube-player" class="has-ratio" src="https://www.youtube.com/embed/{{custom_excerpt}}?rel=0&enablejsapi=1&color=white" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        </figure>
+        {{!-- The YouTube Video Player - Now FitVids.js compatible --}}
+        <div class="video-container mb-6">
+            <iframe id="youtube-player" src="https://www.youtube.com/embed/{{custom_excerpt}}?rel=0&enablejsapi=1&color=white" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
 
         {{!-- Title, Meta, and Channel Info Block --}}
-        <div class="box mt-6">
-            <div class="p-4">
-                {{#if tags}}
-                    <div class="tags mb-4">
-                        {{#foreach tags limit="3"}}<a class="tag is-primary is-light" href="{{url}}">{{name}}</a>{{/foreach}}
-                    </div>
-                {{/if}}
-                <h1 class="title is-size-2-desktop is-size-3-mobile has-text-weight-bold post-title mb-4">{{title}}</h1>
-                <hr class="my-5">
-                {{!-- Channel & Subscribe Widget --}}
-                <div class="level is-mobile">
-                    <div class="level-left">
-                        <a href="{{primary_author.url}}" class="media is-align-items-center">
-                            <figure class="media-left"><p class="image is-48x48"><img class="is-rounded" src="{{primary_author.profile_image}}" alt="{{primary_author.name}}"></p></figure>
-                            <div class="media-content">
-                                <p class="title is-6">{{primary_author.name}}</p>
-                                <p class="subtitle is-7 has-text-grey">{{excerpt}} subscribers</p>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="level-right">
-                        <a href="#" class="button is-danger is-rounded has-text-weight-bold">
-                            <span class="icon"><i class="fab fa-youtube"></i></span>
-                            <span class="is-hidden-mobile">Subscribe</span>
-                        </a>
-                    </div>
+        <div class="box p-5">
+            {{#if tags}}
+                <div class="tags mb-4">
+                    {{#foreach tags limit="3"}}<a class="tag is-primary is-light" href="{{url}}">{{name}}</a>{{/foreach}}
+                </div>
+            {{/if}}
+            <h1 class="title is-size-2-desktop is-size-3-mobile has-text-weight-bold post-title mb-4">{{title}}</h1>
+            <hr class="my-5">
+            {{!-- Channel & Subscribe Widget --}}
+            <div class="level is-mobile">
+                <div class="level-left">
+                    <a href="{{primary_author.url}}" class="media is-align-items-center">
+                        <figure class="media-left"><p class="image is-48x48"><img class="is-rounded" src="{{primary_author.profile_image}}" alt="{{primary_author.name}}"></p></figure>
+                        <div class="media-content">
+                            <p class="title is-6">{{primary_author.name}}</p>
+                            <p class="subtitle is-7 has-text-grey">{{excerpt}} subscribers</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="level-right">
+                    <a href="#" class="button is-danger is-rounded has-text-weight-bold">
+                        <span class="icon"><i class="fab fa-youtube"></i></span>
+                        <span class="is-hidden-mobile">Subscribe</span>
+                    </a>
                 </div>
             </div>
         </div>
@@ -132,7 +108,7 @@
                 {{#foreach related}}
                   <a href="{{url}}" class="is-block mb-5">
                     <figure class="image is-16by9 mb-3"><img class="is-rounded" src="{{#if feature_image}}{{feature_image}}{{else}}https://i.ytimg.com/vi/{{custom_excerpt}}/hqdefault.jpg{{/if}}" alt="{{title}}" loading="lazy"></figure>
-                    <p class="is-size-6 has-text-weight-bold has-text-dark" style="line-height: 1.4;">{{title}}</p>
+                    <p class="is-size-6 has-text-weight-bold" style="line-height: 1.4;">{{title}}</p>
                   </a>
                 {{/foreach}}
             </div>
@@ -152,14 +128,12 @@
     let player;
     let timestampDataForSeo = [];
 
-    // This function is required by the YouTube API
     function onYouTubeIframeAPIReady() {
         if (document.getElementById('youtube-player')) {
             player = new YT.Player('youtube-player', { events: { 'onReady': onPlayerReady } });
         }
     }
 
-    // This function runs once the player is ready, attaching click events.
     function onPlayerReady(event) {
         document.querySelectorAll('a.timestamp-link').forEach(link => {
             link.addEventListener('click', (e) => {
@@ -174,13 +148,11 @@
     }
     
     document.addEventListener('DOMContentLoaded', () => {
-        // ---- 1. Sticky Sidebar ----
         const sidebar = document.querySelector('.post-sidebar-sticky');
         if (sidebar && window.innerWidth >= 1024) {
             sidebar.classList.add('is-sticky');
         }
 
-        // ---- 2. Dynamic Timestamps (for Desktop and Mobile) ----
         const generateTimestamps = () => {
             const sourceTable = document.querySelector('.gh-content table');
             const desktopWidget = document.getElementById('timestamps-sidebar');
@@ -213,16 +185,14 @@
                 timestampDataForSeo.push({"@type": "Clip", "name": cells[1].textContent.trim(), "startOffset": seconds, "url": window.location.href + `#t=${seconds}`});
             });
             
-            desktopTarget.appendChild(fragment.cloneNode(true)); // Use a clone for desktop
-            mobileTarget.appendChild(fragment); // Use the original for mobile
+            desktopTarget.appendChild(fragment.cloneNode(true));
+            mobileTarget.appendChild(fragment);
             
-            // Toggle for mobile accordion
             mobileWidget.querySelector('.panel-heading').addEventListener('click', () => {
                 mobileWidget.classList.toggle('is-active');
             });
         };
         
-        // ---- 3. Dynamic JSON-LD Injection ----
         const injectSeoData = () => {
             const schemaScript = document.getElementById('video-schema');
             if (!schemaScript) return;
