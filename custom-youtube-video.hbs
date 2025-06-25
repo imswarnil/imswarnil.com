@@ -56,26 +56,44 @@
           </div>
 
           {{!-- WIDGET 2: Related Videos --}}
-          {{#get "posts" filter="tags:hash-video+id:-{{id}}" limit="3" as |related|}}
-            {{#if related}}
-            <div class="box mb-5">
-              <h3 class="title is-5">Related Videos</h3>
-                {{#foreach related}}
-                  <a href="{{url}}" class="media is-align-items-center mb-4">
-                    <figure class="p-5">
-                        <p class="image">
-                            {{!-- The thumbnail is generated from the related post's excerpt (its video ID) --}}
-                            <img src="https://i.ytimg.com/vi/{{custom_excerpt}}/maxresdefault.jpg" alt="{{title}}" loading="lazy">
-                        </p>
-                    </figure>
-                    <div class="media-content">
-                        <p class="is-size-6 has-text-weight-semibold has-text-dark">{{title}}</p>
-                    </div>
-                  </a>
-                {{/foreach}}
+          {{!-- WIDGET 2: Related Videos (Compact List Style) --}}
+{{#get "posts" filter="tags:hash-video+id:-{{id}}" limit="3" as |related|}}
+  {{#if related}}
+  <div class="box">
+    <h3 class="title is-5">Related Videos</h3>
+      {{#foreach related}}
+        <a href="{{url}}" class="media mb-4">
+          {{!-- 1. Media Left: The Image (with conditional logic) --}}
+          <figure class="media-left">
+            {{!-- is-128x72 is a 16:9 aspect ratio --}}
+            <p class="image is-128x72">
+              {{#if feature_image}}
+                {{!-- If a feature image exists, use it. --}}
+                <img src="{{feature_image}}" alt="{{title}}" loading="lazy" style="border-radius: 6px;">
+              {{else}}
+                {{!-- Otherwise, use the YouTube thumbnail from the custom excerpt. --}}
+                <img src="https://i.ytimg.com/vi/{{custom_excerpt}}/hqdefault.jpg" alt="{{title}}" loading="lazy" style="border-radius: 6px;">
+              {{/if}}
+            </p>
+          </figure>
+
+          {{!-- 2. Media Content: The Title and Author --}}
+          <div class="media-content">
+            <div class="content">
+              <p>
+                <strong class="has-text-dark">{{title}}</strong>
+                <br>
+                {{#if primary_author}}
+                  <small class="has-text-grey">{{primary_author.name}}</small>
+                {{/if}}
+              </p>
             </div>
-            {{/if}}
-          {{/get}}
+          </div>
+        </a>
+      {{/foreach}}
+  </div>
+  {{/if}}
+{{/get}}
 
           {{!-- WIDGET 3: Sidebar Advertisement Placeholder --}}
           <div class="notification is-light has-text-centered">
