@@ -1,25 +1,40 @@
 {{!< default}}
 
-{{!-- This template assumes your default.hbs provides Bulma CSS and your FitVids.js script. --}}
-{{!-- You must add the Phosphor Icons CDN to your site's Code Injection (Header) --}}
-{{!-- <link href="https://unpkg.com/@phosphor-icons/web@2.0.3/src/css/icons.css" rel="stylesheet" /> --}}
+{{!-- This template assumes your default.hbs provides Bulma CSS, Phosphor Icons, and your FitVids.js script. --}}
 
 <style>
     /*
-    This minimal, namespaced CSS block enables advanced UX features and refines the design.
-    It does not style base components, colors, or fonts.
+    This minimal, namespaced CSS block enables ADVANCED BEHAVIORS.
+    It does not style components, colors, or fonts, adhering to the "Pure Bulma" philosophy.
     */
-    .video-main-container {
-        background-color: #f7f7fa; /* A soft, modern background */
-    }
+    .video-main-container { background-color: #f9f9f9; }
 
-    /* Styles for the Picture-in-Picture player */
+    /* Collapsible Description Box Behavior */
+    .video-description-content {
+        max-height: 100px; /* Initial collapsed height */
+        overflow: hidden;
+        position: relative;
+        transition: max-height 0.4s ease-out;
+    }
+    .video-description-content.is-expanded {
+        max-height: 2000px; /* Large value for full expansion */
+    }
+    /* Fade-out effect for collapsed description */
+    .video-description-content:not(.is-expanded)::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 50px;
+        background: linear-gradient(to bottom, transparent, #f9f9f9);
+    }
+    
+    /* Picture-in-Picture Player Behavior */
     .video-pip-player {
         position: fixed;
-        bottom: 1.5rem;
-        right: 1.5rem;
-        width: 352px; /* 16:9 ratio at 198px height */
-        max-width: 90vw;
+        bottom: 1.5rem; right: 1.5rem;
+        width: 352px; max-width: 90vw;
         z-index: 1000;
         border-radius: 12px;
         overflow: hidden;
@@ -27,20 +42,13 @@
         transform: translateY(200%);
         transition: transform 0.4s ease-in-out;
     }
-    .video-pip-player.is-active {
-        transform: translateY(0);
-    }
-    .video-pip-player .video-pip-close {
-        position: absolute;
-        top: 0.5rem;
-        right: 0.5rem;
-        z-index: 1001;
-    }
+    .video-pip-player.is-active { transform: translateY(0); }
+    .video-pip-player .video-pip-close { position: absolute; top: 0.5rem; right: 0.5rem; z-index: 1001; }
 
-    /* Behavior for the sticky sidebar and hidden source table */
+    /* JS-Controlled Behavior */
+    .gh-content table { display: none; }
     .video-sidebar-sticky { position: static; }
     .is-sticky { position: sticky; top: 2rem; }
-    .gh-content table { display: none; }
 </style>
 
 {{#post}}
@@ -51,41 +59,41 @@
       {{!-- ======== Main Content Column ======== --}}
       <div class="column is-8">
         
-        {{!-- The YouTube Video Player - Ready for FitVids.js --}}
-        <div id="video-main-player-wrapper" class="video-container mb-6">
+        <div class="video-container mb-4">
             <iframe id="youtube-player" src="https://www.youtube.com/embed/{{custom_excerpt}}?rel=0&enablejsapi=1&color=white" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
 
-        {{!-- Title, Meta, and Channel Info Block --}}
-        <div class="box p-5">
-            <h1 class="title is-size-2-desktop is-size-3-mobile has-text-weight-bold post-title mb-4">{{title}}</h1>
-            <hr class="my-5">
-            <div class="level is-mobile">
-                <div class="level-left">
-                    <a href="{{primary_author.url}}" class="media is-align-items-center">
-                        <figure class="media-left"><p class="image is-48x48"><img class="is-rounded" src="{{primary_author.profile_image}}" alt="{{primary_author.name}}"></p></figure>
-                        <div class="media-content">
-                            <p class="title is-6">{{primary_author.name}}</p>
-                            <p class="subtitle is-7 has-text-grey">{{excerpt}} subscribers</p>
-                        </div>
-                    </a>
-                </div>
-                <div class="level-right">
-                    <a href="#" class="button is-danger is-rounded has-text-weight-bold">
-                        <span class="icon"><i class="ph ph-youtube-logo"></i></span>
-                        <span class="is-hidden-mobile">Subscribe</span>
-                    </a>
+        <h1 class="title is-size-3-desktop is-size-4-mobile has-text-weight-bold post-title mb-3">{{title}}</h1>
+        
+        {{!-- Channel Info & Actions --}}
+        <div class="level is-mobile">
+            <div class="level-left">
+                <a href="{{primary_author.url}}" class="media is-align-items-center">
+                    <figure class="media-left"><p class="image is-48x48"><img class="is-rounded" src="{{primary_author.profile_image}}" alt="{{primary_author.name}}"></p></figure>
+                    <div class="media-content">
+                        <p class="title is-6">{{primary_author.name}}</p>
+                        <p class="subtitle is-7 has-text-grey">{{excerpt}} subscribers</p>
+                    </div>
+                </a>
+            </div>
+            <div class="level-right">
+                <a href="#" class="button is-dark is-rounded has-text-weight-bold">
+                    <span class="icon"><i class="ph ph-youtube-logo"></i></span>
+                    <span class="is-hidden-mobile">Subscribe</span>
+                </a>
+            </div>
+        </div>
+
+        {{!-- Collapsible Description Box --}}
+        <div class="box has-background-light mt-5">
+            <div class="video-description-content" id="description-wrapper">
+                <div class="content is-medium gh-content">
+                    {{content}}
                 </div>
             </div>
+            <a class="is-size-7 has-text-weight-semibold" id="description-toggle-btn">SHOW MORE</a>
         </div>
         
-        {{!-- Main Description Box --}}
-        <div class="box p-6 mt-6">
-            <p class="title is-5 mb-4">Description</p>
-            <div class="content is-medium gh-content">
-                {{content}}
-            </div>
-        </div>
       </div>
 
       {{!-- ======== Sidebar Column ======== --}}
@@ -98,31 +106,22 @@
             <div id="timestamps-target" style="max-height: 40vh; overflow-y: auto;"></div>
           </div>
           
-          {{!-- WIDGET 2: YouTube Schedule --}}
-          <div class="box p-5 mb-6">
-              <p class="title is-5 mb-4">Upload Schedule</p>
-              <div class="content is-small">
-                  <p class="icon-text mb-2"><span class="icon has-text-info"><i class="ph ph-video-camera"></i></span><span><strong>New Videos:</strong> Every Tuesday & Friday</span></p>
-                  <p class="icon-text"><span class="icon has-text-danger"><i class="ph ph-broadcast"></i></span><span><strong>Live Streams:</strong> First Sunday of the month</span></p>
-              </div>
-          </div>
-
-          {{!-- WIDGET 3: Related Videos (YouTube Style) --}}
-          {{#get "posts" filter="tags:hash-video+id:-{{id}}" limit="3" as |related|}}
+          {{!-- WIDGET 2: Related Videos (YouTube Style) --}}
+          {{#get "posts" filter="tags:hash-video+id:-{{id}}" limit="5" as |related|}}
             {{#if related}}
-            <div class="box p-5">
-              <p class="title is-5 mb-5">Related Videos</p>
+            <div class="mb-6">
                 {{#foreach related}}
                   {{!-- The classic rectangular thumbnail layout --}}
-                  <a href="{{url}}" class="media mb-5">
+                  <a href="{{url}}" class="media mb-4">
                     <figure class="media-left">
-                      <p class="image is-128x72">
-                        <img src="{{#if feature_image}}{{feature_image}}{{else}}https://i.ytimg.com/vi/{{custom_excerpt}}/hqdefault.jpg{{/if}}" alt="{{title}}" loading="lazy" style="border-radius: 6px;">
+                      <p class="image is-160x90">
+                        {{!-- No is-rounded class for a clean, sharp look --}}
+                        <img src="{{#if feature_image}}{{feature_image}}{{else}}https://i.ytimg.com/vi/{{custom_excerpt}}/hqdefault.jpg{{/if}}" alt="{{title}}" loading="lazy" style="border-radius: 8px;">
                       </p>
                     </figure>
                     <div class="media-content">
-                      <p class="is-size-6 has-text-weight-bold" style="line-height: 1.4;">{{title}}</p>
-                      <p class="is-size-7 has-text-grey">{{primary_author.name}}</p>
+                      <p class="is-size-6 has-text-weight-bold" style="line-height: 1.3;">{{title}}</p>
+                      <p class="is-size-7 has-text-grey mt-1">{{primary_author.name}}</p>
                     </div>
                   </a>
                 {{/foreach}}
@@ -146,12 +145,8 @@
 {{!-- ================== JAVASCRIPT & SEO ================== --}}
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-    let player;
-    let pipPlayer;
-    let timestampDataForSeo = [];
-    let isPipActive = false;
+    let player, pipPlayer, isPipActive = false, timestampDataForSeo = [];
 
-    // This function is required by the YouTube API
     function onYouTubeIframeAPIReady() {
         if (document.getElementById('youtube-player')) {
             player = new YT.Player('youtube-player', { events: { 'onReady': onPlayerReady } });
@@ -159,17 +154,13 @@
     }
 
     function onPlayerReady(event) {
-        // Prepare timestamps as soon as the player is ready
         generateTimestamps();
-        // Set up the PIP observer
         setupIntersectionObserver();
     }
     
     document.addEventListener('DOMContentLoaded', () => {
         const sidebar = document.querySelector('.video-sidebar-sticky');
-        if (sidebar && window.innerWidth >= 1024) {
-            sidebar.classList.add('is-sticky');
-        }
+        if (sidebar && window.innerWidth >= 1024) sidebar.classList.add('is-sticky');
 
         const generateTimestamps = () => {
             const sourceTable = document.querySelector('.gh-content table');
@@ -190,71 +181,57 @@
                 
                 const link = document.createElement('a');
                 link.className = 'panel-block is-clickable';
-                link.dataset.time = seconds;
-                link.innerHTML = `<span class="panel-icon"><i class="ph ph-play-circle"></i></span><span class="is-flex-grow-1">${cells[1].textContent.trim()}</span>`;
+                link.addEventListener('click', e => { e.preventDefault(); player?.seekTo(seconds, true); player?.playVideo(); });
                 
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    if (player && typeof player.seekTo === 'function') {
-                        player.seekTo(seconds, true);
-                        player.playVideo();
-                    }
-                });
+                link.innerHTML = `<span class="panel-icon"><i class="ph ph-play-circle"></i></span><span class="is-flex-grow-1">${cells[1].textContent.trim()}</span>`;
                 target.appendChild(link);
-                timestampDataForSeo.push({"@type": "Clip", "name": cells[1].textContent.trim(), "startOffset": seconds, "url": window.location.href + `#t=${seconds}`});
+                timestampDataForSeo.push({"@type": "Clip", "name": cells[1].textContent.trim(), "startOffset": seconds, "url": `${window.location.href.split('#')[0]}#t=${seconds}`});
             });
             widget.style.display = 'block';
             injectSeoData();
         };
 
+        const setupDescriptionToggle = () => {
+            const wrapper = document.getElementById('description-wrapper');
+            const toggleBtn = document.getElementById('description-toggle-btn');
+            if (!wrapper || !toggleBtn) return;
+            if (wrapper.scrollHeight <= 100) {
+                toggleBtn.style.display = 'none';
+            } else {
+                toggleBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    wrapper.classList.toggle('is-expanded');
+                    toggleBtn.textContent = wrapper.classList.contains('is-expanded') ? 'SHOW LESS' : 'SHOW MORE';
+                });
+            }
+        };
+
         const setupIntersectionObserver = () => {
-            const mainPlayerWrapper = document.getElementById('video-main-player-wrapper');
+            const mainPlayerWrapper = document.querySelector('.video-container');
             const pipWrapper = document.getElementById('video-pip-player');
             const pipTarget = document.getElementById('video-pip-target');
             const pipCloseBtn = document.getElementById('video-pip-close');
-
             if (!mainPlayerWrapper || !pipWrapper) return;
 
-            pipCloseBtn.addEventListener('click', () => {
-                hidePipPlayer();
-                if (player && typeof player.pauseVideo === 'function') player.pauseVideo();
-            });
+            pipCloseBtn.addEventListener('click', () => { hidePipPlayer(); player?.pauseVideo(); });
 
             const showPipPlayer = () => {
                 if (isPipActive || !player || player.getPlayerState() !== YT.PlayerState.PLAYING) return;
                 isPipActive = true;
-                if (document.pictureInPictureEnabled && player.getIframe().requestPictureInPicture) {
-                    player.getIframe().requestPictureInPicture();
-                } else {
-                    // Fallback for browsers without PiP API
-                    const iframe = document.getElementById('youtube-player');
-                    pipTarget.appendChild(iframe);
-                    pipWrapper.classList.add('is-active');
-                }
+                const iframe = document.getElementById('youtube-player');
+                pipTarget.appendChild(iframe);
+                pipWrapper.classList.add('is-active');
             };
 
             const hidePipPlayer = () => {
                 if (!isPipActive) return;
                 isPipActive = false;
-                if (document.pictureInPictureElement) {
-                    document.exitPictureInPicture();
-                } else {
-                    const iframe = document.getElementById('youtube-player');
-                    mainPlayerWrapper.appendChild(iframe);
-                    pipWrapper.classList.remove('is-active');
-                }
+                const iframe = document.getElementById('youtube-player');
+                mainPlayerWrapper.appendChild(iframe);
+                pipWrapper.classList.remove('is-active');
             };
             
-            const observer = new IntersectionObserver(
-                ([entry]) => {
-                    if (!entry.isIntersecting) {
-                        showPipPlayer();
-                    } else {
-                        hidePipPlayer();
-                    }
-                },
-                { threshold: 0.5 } // Trigger when 50% of the player is out of view
-            );
+            const observer = new IntersectionObserver(([entry]) => { entry.isIntersecting ? hidePipPlayer() : showPipPlayer(); }, { threshold: 0.5 });
             observer.observe(mainPlayerWrapper);
         };
         
@@ -266,9 +243,8 @@
             schemaScript.textContent = JSON.stringify(schema, null, 2);
         };
         
-        // Initial setup calls
-        generateTimestamps();
-        // onPlayerReady will call setupIntersectionObserver
+        setupDescriptionToggle();
+        // The YouTube API's onReady will call generateTimestamps and setupIntersectionObserver
     });
 </script>
 
