@@ -56,38 +56,35 @@
           </div>
 
           {{!-- WIDGET 2: Related Videos --}}
-          {{!-- WIDGET 2: Related Videos (Compact List Style) --}}
-{{#get "posts" filter="tags:hash-video+id:-{{id}}" limit="3" as |related|}}
+          {{!-- WIDGET 2: Related Videos (Optimized for Narrow Sidebar) --}}
+{{#get "posts" filter="tags:hash-video+id:-{{id}}" limit="4" as |related|}}
   {{#if related}}
-  <div class="box">
-    <h3 class="title is-5">Related Videos</h3>
+  <div>
+    <h3 class="title is-5 mb-4">Related Videos</h3>
       {{#foreach related}}
-        <a href="{{url}}" class="media mb-4">
-          {{!-- 1. Media Left: The Image (with conditional logic) --}}
-          <figure class="media-left">
-            {{!-- is-128x72 is a 16:9 aspect ratio --}}
-            <p class="image is-128x72">
-              {{#if feature_image}}
-                {{!-- If a feature image exists, use it. --}}
-                <img src="{{feature_image}}" alt="{{title}}" loading="lazy" style="border-radius: 6px;">
-              {{else}}
-                {{!-- Otherwise, use the YouTube thumbnail from the custom excerpt. --}}
-                <img src="https://i.ytimg.com/vi/{{custom_excerpt}}/hqdefault.jpg" alt="{{title}}" loading="lazy" style="border-radius: 6px;">
-              {{/if}}
-            </p>
+        {{!-- Each item is a clickable block. This is key for good UX. --}}
+        <a href="{{url}}" class="is-block mb-4">
+          
+          {{!-- 1. The Thumbnail --}}
+          {{!-- The mb-2 adds a little space between the image and the title --}}
+          <figure class="image is-16by9 mb-2">
+            {{#if feature_image}}
+              {{!-- If a feature image exists, use it --}}
+              <img src="{{feature_image}}" alt="{{title}}" loading="lazy" style="border-radius: 4px;">
+            {{else}}
+              {{!-- Otherwise, use the YouTube thumbnail from the custom excerpt. --}}
+              {{!-- hqdefault.jpg is a reliable and fast-loading choice for sidebars. --}}
+              <img src="https://i.ytimg.com/vi/{{custom_excerpt}}/hqdefault.jpg" alt="{{title}}" loading="lazy" style="border-radius: 4px;">
+            {{/if}}
           </figure>
 
-          {{!-- 2. Media Content: The Title and Author --}}
-          <div class="media-content">
-            <div class="content">
-              <p>
-                <strong class="has-text-dark">{{title}}</strong>
-                <br>
-                {{#if primary_author}}
-                  <small class="has-text-grey">{{primary_author.name}}</small>
-                {{/if}}
-              </p>
-            </div>
+          {{!-- 2. The Text Content --}}
+          <div>
+            {{!-- Using a smaller font size that's appropriate for a sidebar --}}
+            <p class="is-size-6 has-text-weight-semibold has-text-dark" style="line-height: 1.3;">{{title}}</p>
+            {{#if primary_author}}
+              <p class="is-size-7 has-text-grey">{{primary_author.name}}</p>
+            {{/if}}
           </div>
         </a>
       {{/foreach}}
