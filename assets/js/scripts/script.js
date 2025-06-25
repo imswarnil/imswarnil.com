@@ -9,7 +9,6 @@ var callback = function(){
   // =======
   // fitvids
   // =======
-  fitvids();
 
   // ===========
   // Navbar Menu
