@@ -129,8 +129,8 @@
                 {{#foreach related}}
                   {{!-- The classic rectangular thumbnail layout --}}
                   <a href="{{url}}" class="media mb-5">
-                    <figure class="media-left">
-                      <p class="image is-128x72">
+                    <figure class="">
+                      <p class="image">
                         {{!-- No is-rounded class for a clean, sharp look --}}
                         <img src="{{#if feature_image}}{{feature_image}}{{else}}https://i.ytimg.com/vi/{{custom_excerpt}}/hqdefault.jpg{{/if}}" alt="{{title}}" loading="lazy" style="border-radius: 8px;">
                       </p>
