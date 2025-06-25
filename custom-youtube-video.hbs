@@ -4,31 +4,7 @@
 <style>
     /* Main layout and color scheme */
     body { background-color: #f9f9f9; }
-    .video-main-content .box, .video-sidebar .box { box-shadow: 0 1px 4px rgba(0,0,0,0.04); border: 1px solid #e5e5e5; }
-
-    /* The collapsible description box */
-    .description-box-content {
-        max-height: 150px; /* Initial collapsed height */
-        overflow: hidden;
-        position: relative;
-        transition: max-height 0.5s ease-in-out;
-    }
-    .description-box-content::after { /* The "fade out" effect when collapsed */
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 60px;
-        background: linear-gradient(to bottom, transparent, #ffffff);
-        pointer-events: none;
-    }
-    .description-box-content.is-expanded {
-        max-height: 2000px; /* A large value to allow full expansion */
-    }
-    .description-box-content.is-expanded::after {
-        display: none; /* Remove the fade when expanded */
-    }
+    .video-main-content .box, .video-sidebar .box, .video-sidebar .panel { box-shadow: 0 1px 4px rgba(0,0,0,0.04); border: 1px solid #e5e5e5; }
 
     /* Ad placeholder styling */
     .ad-placeholder { background-color: #f0f0f0; border: 2px dashed #dcdcdc; color: #b5b5b5; display: flex; align-items: center; justify-content: center; text-align: center; }
@@ -61,7 +37,7 @@
             <h1 class="title is-size-3-desktop is-size-4-mobile has-text-weight-bold post-title mb-3">{{title}}</h1>
             <div class="level is-mobile">
                 <div class="level-left">
-                    <p class="is-size-7 has-text-grey">{{!-- Example: 1.2M views • --}} <time datetime="{{date format="YYYY-MM-DD"}}">{{date format="MMMM DD, YYYY"}}</time></p>
+                    <p class="is-size-7 has-text-grey"><time datetime="{{date format="YYYY-MM-DD"}}">{{date format="MMMM DD, YYYY"}}</time></p>
                 </div>
                 <div class="level-right">
                     <div class="share-buttons buttons has-addons">
@@ -103,37 +79,17 @@
             <p class="is-size-7">AdSense Responsive Ad Unit</p>
         </div>
 
-        {{!-- Description Box with Timestamps --}}
+        {{!-- Main Description Box (No Timestamps) --}}
         <div class="box p-5">
-            <div class="description-box-content" id="description-wrapper">
-                {{!-- The post content, including your timestamp table, goes here --}}
-                <div class="content is-medium gh-content">
-                    {{content}}
-                </div>
+            <p class="title is-5">Description</p>
+            <div class="content is-medium gh-content">
+                {{content}} {{!-- The script will hide the table inside this --}}
             </div>
-            <button class="button is-small is-fullwidth mt-4" id="show-more-btn">Show More</button>
         </div>
 
         {{!-- MONETIZATION: 3. In-Article Ad --}}
         <div class="ad-placeholder my-6" style="min-height: 250px;">
             <p class="is-size-7">AdSense In-article Ad Unit</p>
-        </div>
-
-        {{!-- Author Bio Box --}}
-        {{#primary_author}}
-        <div class="box">
-            <p class="title is-5 mb-4">About the Author</p>
-            <article class="media">
-                <div class="media-content">
-                    <div class="content"><p>{{bio}}</p></div>
-                </div>
-            </article>
-        </div>
-        {{/primary_author}}
-
-        {{!-- MONETIZATION: 4. Second In-Article Ad --}}
-        <div class="ad-placeholder my-6" style="min-height: 250px;">
-            <p class="is-size-7">AdSense Matched Content or In-article Ad</p>
         </div>
         
         {{!-- Ghost Portal Comments --}}
@@ -144,62 +100,59 @@
       <div class="column is-3 video-sidebar">
         <aside class="post-sidebar-sticky">
         
-          {{!-- MONETIZATION: 5. Sidebar Top Ad --}}
+          {{!-- MONETIZATION: 4. Sidebar Top Ad --}}
           <div class="ad-placeholder box mb-5" style="min-height: 280px;">
             <p class="is-size-7">AdSense Display Ad (300x250)</p>
           </div>
+          
+          {{!-- WIDGET 1: Timestamps (Moved to Sidebar) --}}
+          <div id="timestamps-widget" class="panel is-link mb-5" style="display: none;"> {{!-- Initially hidden --}}
+            <p class="panel-heading">Timestamps</p>
+            <div id="timestamps-target" style="max-height: 400px; overflow-y: auto;">
+              {{!-- The JS will inject clickable panel blocks here --}}
+            </div>
+          </div>
 
-          {{!-- Related Videos Widget --}}
+          {{!-- WIDGET 2: Related Videos (Correct Vertical Layout) --}}
           {{#get "posts" filter="tags:hash-video+id:-{{id}}" limit="4" as |related|}}
             {{#if related}}
             <div class="box mb-5">
               <h3 class="title is-6 mb-4">Related Videos</h3>
                 {{#foreach related}}
-                  <a href="{{url}}" class="media mb-4">
-                      <figure class="media-left"><p class="image is-128x72"><img src="{{#if feature_image}}{{feature_image}}{{else}}https://i.ytimg.com/vi/{{custom_excerpt}}/hqdefault.jpg{{/if}}" alt="{{title}}" loading="lazy"></p></figure>
-                      <div class="media-content"><p class="is-size-7 has-text-weight-bold has-text-dark" style="line-height: 1.4;">{{title}}</p></div>
+                  {{!-- Vertical stack: image on top, text below. --}}
+                  <a href="{{url}}" class="is-block mb-4">
+                    <figure class="image is-16by9 mb-2">
+                        <img src="{{#if feature_image}}{{feature_image}}{{else}}https://i.ytimg.com/vi/{{custom_excerpt}}/hqdefault.jpg{{/if}}" alt="{{title}}" loading="lazy" style="border-radius: 6px;">
+                    </figure>
+                    <p class="is-size-7 has-text-weight-bold has-text-dark" style="line-height: 1.4;">{{title}}</p>
                   </a>
                 {{/foreach}}
             </div>
             {{/if}}
           {{/get}}
 
-          {{!-- MONETIZATION: 6. Native Ad Placeholder --}}
+          {{!-- MONETIZATION: 5. Native Ad Placeholder --}}
           <div class="box mb-5">
             <h3 class="title is-6 mb-4 has-text-grey-light">Sponsored</h3>
-            <a href="#" class="media mb-4">
-              <figure class="media-left"><p class="image is-128x72"><img class="ad-placeholder" alt="Native Ad"></p></figure>
-              <div class="media-content"><p class="is-size-7 has-text-weight-bold has-text-dark" style="line-height: 1.4;">This is a Native Ad That Looks Like a Related Post</p></div>
+            <a href="#" class="is-block mb-4">
+                <figure class="image is-16by9 mb-2 ad-placeholder" alt="Native Ad"></figure>
+                <p class="is-size-7 has-text-weight-bold has-text-dark" style="line-height: 1.4;">This is a Native Ad That Looks Like a Related Post</p>
             </a>
           </div>
 
-          {{!-- Latest Posts Widget --}}
-          {{#get "posts" limit="3" filter="id:-{{id}}" as |latest|}}
-            {{#if latest}}
-            <div class="box mb-5">
-              <h3 class="title is-6 mb-4">Latest Posts</h3>
-                {{#foreach latest}}
-                  <a href="{{url}}" class="media mb-4">
-                      <div class="media-content"><p class="is-size-7 has-text-weight-bold has-text-dark" style="line-height: 1.4;">{{title}}</p></div>
-                  </a>
-                {{/foreach}}
-            </div>
-            {{/if}}
-          {{/get}}
-
-          {{!-- Categories Widget --}}
+          {{!-- WIDGET 3: Categories --}}
           {{#get "tags" limit="10" include="count.posts" order="count.posts desc"}}
             {{#if tags}}
             <div class="box mb-5">
                 <h3 class="title is-6 mb-4">Popular Categories</h3>
-                <div class="tags are-medium">
+                <div class="tags">
                     {{#foreach tags}}<a href="{{url}}" class="tag">{{name}}</a>{{/foreach}}
                 </div>
             </div>
             {{/if}}
           {{/get}}
 
-          {{!-- MONETIZATION: 7. Sidebar Bottom Ad --}}
+          {{!-- MONETIZATION: 6. Sidebar Bottom Ad --}}
           <div class="ad-placeholder box" style="min-height: 600px;">
             <p class="is-size-7">AdSense Skyscraper Ad (300x600)</p>
           </div>
@@ -222,7 +175,6 @@
     }
 
     function onPlayerReady(event) {
-        // Attach click listeners only when the player is ready
         document.querySelectorAll('a.timestamp-link').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -243,43 +195,39 @@
             sidebar.style.top = '2rem';
         }
 
-        // ---- 2. Description Box Toggle and Timestamp Parsing ----
-        const descriptionWrapper = document.getElementById('description-wrapper');
-        const showMoreBtn = document.getElementById('show-more-btn');
-        const sourceTable = descriptionWrapper.querySelector('.gh-content table');
+        // ---- 2. Dynamic Timestamps (Moved to Sidebar) ----
+        const generateTimestamps = () => {
+            const sourceTable = document.querySelector('.gh-content table');
+            const timestampWidget = document.getElementById('timestamps-widget');
+            const timestampTarget = document.getElementById('timestamps-target');
+            if (!sourceTable || !timestampWidget || !timestampTarget) return;
 
-        if (sourceTable) {
             const rows = sourceTable.querySelectorAll('tbody tr');
+            if (rows.length === 0) return;
+            
+            const fragment = document.createDocumentFragment();
             rows.forEach(row => {
                 const cells = row.querySelectorAll('td, th');
                 if (cells.length < 2) return;
-                const timeCell = cells[0];
-                const timeStr = timeCell.textContent.trim().split(' ')[0];
+                
+                const timeStr = cells[0].textContent.trim().split(' ')[0];
                 const parts = timeStr.split(':').map(part => parseInt(part, 10));
                 let seconds = 0;
                 if (parts.length === 3) seconds = parts[0] * 3600 + parts[1] * 60 + parts[2];
                 else if (parts.length === 2) seconds = parts[0] * 60 + parts[1];
                 
-                // Make the timestamp cell a clickable link
-                timeCell.innerHTML = `<a href="#t=${seconds}" class="timestamp-link" data-time="${seconds}">${timeCell.innerHTML}</a>`;
+                const link = document.createElement('a');
+                link.className = 'panel-block is-flex is-justify-content-space-between timestamp-link';
+                link.href = `#t=${seconds}`;
+                link.dataset.time = seconds;
+                link.innerHTML = `<span class="is-size-7">${cells[0].textContent.trim()}</span><span class="has-text-right is-size-7">${cells[1].textContent.trim()}</span>`;
+                fragment.appendChild(link);
             });
-        }
-        
-        if (showMoreBtn && descriptionWrapper) {
-            // Hide button if content isn't overflowing
-            if (descriptionWrapper.scrollHeight <= 150) {
-                showMoreBtn.style.display = 'none';
-            } else {
-                showMoreBtn.addEventListener('click', () => {
-                    descriptionWrapper.classList.toggle('is-expanded');
-                    if (descriptionWrapper.classList.contains('is-expanded')) {
-                        showMoreBtn.textContent = 'Show Less';
-                    } else {
-                        showMoreBtn.textContent = 'Show More';
-                    }
-                });
-            }
-        }
+            
+            timestampTarget.appendChild(fragment);
+            timestampWidget.style.display = 'block'; // Show the widget in the sidebar
+            sourceTable.style.display = 'none'; // Hide the original table from the content
+        };
         
         // ---- 3. Share Buttons ----
         const setupShareButtons = () => {
@@ -297,6 +245,8 @@
                 });
             });
         };
+        
+        generateTimestamps();
         setupShareButtons();
     });
 </script>
