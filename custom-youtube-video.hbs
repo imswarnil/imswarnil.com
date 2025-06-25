@@ -1,72 +1,63 @@
 {{!< default}}
 
-{{!-- This template assumes your default.hbs provides Bulma CSS, Phosphor Icons, and your FitVids.js script. --}}
+{{!-- This template assumes your default.hbs provides Bulma CSS and your FitVids.js script. --}}
 
 <style>
     /*
-    This minimal, namespaced CSS block enables ADVANCED BEHAVIORS.
-    It does not style components, colors, or fonts, adhering to the "Pure Bulma" philosophy.
+    This minimal, namespaced CSS block adds premium visual refinements.
+    It does not create new components, only enhances them.
     */
-    .video-main-container { background-color: #f9f9f9; }
+    .video-page-body {
+        background-color: #f9f9f9; /* A clean, YouTube-like background */
+    }
 
-    /* Collapsible Description Box Behavior */
-    .video-description-content {
-        max-height: 100px; /* Initial collapsed height */
-        overflow: hidden;
-        position: relative;
-        transition: max-height 0.4s ease-out;
-    }
-    .video-description-content.is-expanded {
-        max-height: 2000px; /* Large value for full expansion */
-    }
-    /* Fade-out effect for collapsed description */
-    .video-description-content:not(.is-expanded)::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 50px;
-        background: linear-gradient(to bottom, transparent, #f9f9f9);
-    }
-    
-    /* Picture-in-Picture Player Behavior */
-    .video-pip-player {
-        position: fixed;
-        bottom: 1.5rem; right: 1.5rem;
-        width: 352px; max-width: 90vw;
-        z-index: 1000;
+    /* Adds a professional shadow and rounded corners to the video player */
+    .video-player-wrapper {
         border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 1rem 3rem -1rem rgba(0, 0, 0, 0.4);
-        transform: translateY(200%);
-        transition: transform 0.4s ease-in-out;
+        box-shadow: 0 1rem 2.5rem -1rem rgba(0, 0, 0, 0.15);
+        background-color: #000; /* Black background for the player */
     }
-    .video-pip-player.is-active { transform: translateY(0); }
-    .video-pip-player .video-pip-close { position: absolute; top: 0.5rem; right: 0.5rem; z-index: 1001; }
 
-    /* JS-Controlled Behavior */
-    .gh-content table { display: none; }
-    .video-sidebar-sticky { position: static; }
-    .is-sticky { position: sticky; top: 2rem; }
+    /* Provides the sticky behavior for the sidebar on desktop */
+    .video-sidebar-sticky {
+        position: -webkit-sticky; /* For Safari */
+        position: sticky;
+        top: 2rem;
+    }
+    
+    /* Adds a subtle hover effect to the clickable timestamp links */
+    .video-timestamp-link:hover {
+        background-color: hsl(0, 0%, 98%); /* Bulma's 'is-white-ter' color */
+    }
 </style>
 
 {{#post}}
-<main class="section video-main-container">
+<main class="section video-page-body">
   <div class="container is-fluid">
     <div class="columns is-variable is-8-desktop">
 
       {{!-- ======== Main Content Column ======== --}}
       <div class="column is-8">
         
-        <div class="video-container mb-4">
-            <iframe id="youtube-player" src="https://www.youtube.com/embed/{{custom_excerpt}}?rel=0&enablejsapi=1&color=white" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        {{!-- The YouTube Video Player - Wrapped for styling and FitVids.js compatibility --}}
+        <div class="video-player-wrapper mb-5">
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/{{custom_excerpt}}?rel=0&color=white" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
         </div>
 
-        <h1 class="title is-size-3-desktop is-size-4-mobile has-text-weight-bold post-title mb-3">{{title}}</h1>
-        
-        {{!-- Channel Info & Actions --}}
-        <div class="level is-mobile">
+        {{!-- Title & Meta --}}
+        <h1 class="title is-size-2-desktop is-size-3-mobile has-text-weight-bold post-title mb-3">{{title}}</h1>
+        <div class="is-size-7 has-text-grey mb-4">
+            {{!-- Example view count, you can manually add this if desired --}}
+            <span>1,234,567 views</span> •
+            <time datetime="{{date format="YYYY-MM-DD"}}">{{date format="MMMM DD, YYYY"}}</time>
+        </div>
+        <hr class="mt-4 mb-5">
+
+        {{!-- Channel Info & Subscribe Button --}}
+        <div class="level is-mobile mb-6">
             <div class="level-left">
                 <a href="{{primary_author.url}}" class="media is-align-items-center">
                     <figure class="media-left"><p class="image is-48x48"><img class="is-rounded" src="{{primary_author.profile_image}}" alt="{{primary_author.name}}"></p></figure>
@@ -77,21 +68,15 @@
                 </a>
             </div>
             <div class="level-right">
-                <a href="#" class="button is-dark is-rounded has-text-weight-bold">
-                    <span class="icon"><i class="ph ph-youtube-logo"></i></span>
-                    <span class="is-hidden-mobile">Subscribe</span>
-                </a>
+                <a href="#" class="button is-dark is-rounded has-text-weight-bold">Subscribe</a>
             </div>
         </div>
-
-        {{!-- Collapsible Description Box --}}
-        <div class="box has-background-light mt-5">
-            <div class="video-description-content" id="description-wrapper">
-                <div class="content is-medium gh-content">
-                    {{content}}
-                </div>
+        
+        {{!-- Main Description Box --}}
+        <div class="box has-background-light p-5">
+            <div class="content is-medium gh-content">
+                {{content}}
             </div>
-            <a class="is-size-7 has-text-weight-semibold" id="description-toggle-btn">SHOW MORE</a>
         </div>
         
       </div>
@@ -100,22 +85,42 @@
       <div class="column is-4">
         <aside class="video-sidebar-sticky">
         
-          {{!-- WIDGET 1: Timestamps for Desktop --}}
-          <div id="timestamps-widget" class="panel is-link mb-6" style="display: none;">
+          {{!-- ====================================================================== --}}
+          {{!-- WIDGET 1: Manual Timestamps - EDIT THIS SECTION DIRECTLY --}}
+          {{!-- ====================================================================== --}}
+          <div class="panel is-link mb-6">
             <p class="panel-heading">Timestamps</p>
-            <div id="timestamps-target" style="max-height: 40vh; overflow-y: auto;"></div>
+            <div style="max-height: 45vh; overflow-y: auto;">
+              {{!-- To add a timestamp, copy a line and edit the href, title, and time. --}}
+              <a href="https://www.youtube.com/watch?v={{custom_excerpt}}&t=0s" target="_blank" class="panel-block video-timestamp-link">
+                  <span class="panel-icon"><i class="far fa-play-circle"></i></span>
+                  <span class="is-flex-grow-1">Introduction</span>
+                  <span class="has-text-grey is-size-7">0:00</span>
+              </a>
+              <a href="https://www.youtube.com/watch?v={{custom_excerpt}}&t=30s" target="_blank" class="panel-block video-timestamp-link">
+                  <span class="panel-icon"><i class="far fa-play-circle"></i></span>
+                  <span class="is-flex-grow-1">Core Concept</span>
+                  <span class="has-text-grey is-size-7">0:30</span>
+              </a>
+              <a href="https://www.youtube.com/watch?v={{custom_excerpt}}&t=125s" target="_blank" class="panel-block video-timestamp-link">
+                  <span class="panel-icon"><i class="far fa-play-circle"></i></span>
+                  <span class="is-flex-grow-1">First Example</span>
+                  <span class="has-text-grey is-size-7">2:05</span>
+              </a>
+            </div>
           </div>
-          
-          {{!-- WIDGET 2: Related Videos (YouTube Style) --}}
+
+          {{!-- WIDGET 2: Related Videos --}}
           {{#get "posts" filter="tags:hash-video+id:-{{id}}" limit="5" as |related|}}
             {{#if related}}
-            <div class="mb-6">
+            <div class="related-videos-container">
+              <p class="title is-5 mb-4">Up next</p>
                 {{#foreach related}}
-                  {{!-- The classic rectangular thumbnail layout --}}
+                  {{!-- The classic YouTube rectangular thumbnail layout --}}
                   <a href="{{url}}" class="media mb-4">
                     <figure class="media-left">
-                      <p class="image is-160x90">
-                        {{!-- No is-rounded class for a clean, sharp look --}}
+                      <p class="image is-128x72">
+                        {{!-- NO is-rounded class for a clean, sharp look --}}
                         <img src="{{#if feature_image}}{{feature_image}}{{else}}https://i.ytimg.com/vi/{{custom_excerpt}}/hqdefault.jpg{{/if}}" alt="{{title}}" loading="lazy" style="border-radius: 8px;">
                       </p>
                     </figure>
@@ -134,133 +139,4 @@
     </div>
   </div>
 </main>
-
-{{!-- Picture-in-Picture Player (Hidden by default) --}}
-<div id="video-pip-player" class="video-pip-player">
-    <button id="video-pip-close" class="delete video-pip-close"></button>
-    <div id="video-pip-target"></div>
-</div>
-
-
-{{!-- ================== JAVASCRIPT & SEO ================== --}}
-<script src="https://www.youtube.com/iframe_api"></script>
-<script>
-    let player, pipPlayer, isPipActive = false, timestampDataForSeo = [];
-
-    function onYouTubeIframeAPIReady() {
-        if (document.getElementById('youtube-player')) {
-            player = new YT.Player('youtube-player', { events: { 'onReady': onPlayerReady } });
-        }
-    }
-
-    function onPlayerReady(event) {
-        generateTimestamps();
-        setupIntersectionObserver();
-    }
-    
-    document.addEventListener('DOMContentLoaded', () => {
-        const sidebar = document.querySelector('.video-sidebar-sticky');
-        if (sidebar && window.innerWidth >= 1024) sidebar.classList.add('is-sticky');
-
-        const generateTimestamps = () => {
-            const sourceTable = document.querySelector('.gh-content table');
-            const target = document.getElementById('timestamps-target');
-            const widget = document.getElementById('timestamps-widget');
-            if (!sourceTable || !target || !widget) return;
-
-            const rows = sourceTable.querySelectorAll('tbody tr');
-            if (rows.length === 0) return;
-            
-            rows.forEach(row => {
-                const cells = row.querySelectorAll('td, th');
-                if (cells.length < 2) return;
-                
-                const timeStr = cells[0].textContent.trim().split(' ')[0];
-                const parts = timeStr.split(':').map(part => parseInt(part, 10));
-                let seconds = parts.length > 1 ? parts.reduce((acc, val) => acc * 60 + val, 0) : parts[0] || 0;
-                
-                const link = document.createElement('a');
-                link.className = 'panel-block is-clickable';
-                link.addEventListener('click', e => { e.preventDefault(); player?.seekTo(seconds, true); player?.playVideo(); });
-                
-                link.innerHTML = `<span class="panel-icon"><i class="ph ph-play-circle"></i></span><span class="is-flex-grow-1">${cells[1].textContent.trim()}</span>`;
-                target.appendChild(link);
-                timestampDataForSeo.push({"@type": "Clip", "name": cells[1].textContent.trim(), "startOffset": seconds, "url": `${window.location.href.split('#')[0]}#t=${seconds}`});
-            });
-            widget.style.display = 'block';
-            injectSeoData();
-        };
-
-        const setupDescriptionToggle = () => {
-            const wrapper = document.getElementById('description-wrapper');
-            const toggleBtn = document.getElementById('description-toggle-btn');
-            if (!wrapper || !toggleBtn) return;
-            if (wrapper.scrollHeight <= 100) {
-                toggleBtn.style.display = 'none';
-            } else {
-                toggleBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    wrapper.classList.toggle('is-expanded');
-                    toggleBtn.textContent = wrapper.classList.contains('is-expanded') ? 'SHOW LESS' : 'SHOW MORE';
-                });
-            }
-        };
-
-        const setupIntersectionObserver = () => {
-            const mainPlayerWrapper = document.querySelector('.video-container');
-            const pipWrapper = document.getElementById('video-pip-player');
-            const pipTarget = document.getElementById('video-pip-target');
-            const pipCloseBtn = document.getElementById('video-pip-close');
-            if (!mainPlayerWrapper || !pipWrapper) return;
-
-            pipCloseBtn.addEventListener('click', () => { hidePipPlayer(); player?.pauseVideo(); });
-
-            const showPipPlayer = () => {
-                if (isPipActive || !player || player.getPlayerState() !== YT.PlayerState.PLAYING) return;
-                isPipActive = true;
-                const iframe = document.getElementById('youtube-player');
-                pipTarget.appendChild(iframe);
-                pipWrapper.classList.add('is-active');
-            };
-
-            const hidePipPlayer = () => {
-                if (!isPipActive) return;
-                isPipActive = false;
-                const iframe = document.getElementById('youtube-player');
-                mainPlayerWrapper.appendChild(iframe);
-                pipWrapper.classList.remove('is-active');
-            };
-            
-            const observer = new IntersectionObserver(([entry]) => { entry.isIntersecting ? hidePipPlayer() : showPipPlayer(); }, { threshold: 0.5 });
-            observer.observe(mainPlayerWrapper);
-        };
-        
-        const injectSeoData = () => {
-            const schemaScript = document.getElementById('video-schema');
-            if (!schemaScript) return;
-            let schema = JSON.parse(schemaScript.textContent);
-            if (timestampDataForSeo.length > 0) schema.hasPart = timestampDataForSeo;
-            schemaScript.textContent = JSON.stringify(schema, null, 2);
-        };
-        
-        setupDescriptionToggle();
-        // The YouTube API's onReady will call generateTimestamps and setupIntersectionObserver
-    });
-</script>
-
-{{!-- SEO: The single, definitive VideoObject Schema --}}
-<script id="video-schema" type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "VideoObject",
-  "name": "{{title}}",
-  "description": "{{excerpt words="50"}}",
-  "uploadDate": "{{date format="YYYY-MM-DDTHH:mm:ss.SSSZ"}}",
-  "embedUrl": "https://www.youtube.com/embed/{{custom_excerpt}}",
-  "thumbnailUrl": [
-    {{#if feature_image}}"{{feature_image}}"{{else}}"https://i.ytimg.com/vi/{{custom_excerpt}}/maxresdefault.jpg"{{/if}}
-  ],
-  "author": { "@type": "Person", "name": "{{primary_author.name}}" }
-}
-</script>
 {{/post}}
