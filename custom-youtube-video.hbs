@@ -1,32 +1,59 @@
 {{!< default}}
 
-{{#post}}
+{{!-- This template assumes you have a default.hbs that includes:
+    - <head> with Font Awesome and a modern viewport.
+    - <body> tag opening.
+    - Bulma CSS link.
+--}}
+
 {{!-- Google Font for superior readability --}}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
 
 <style>
-    /* Apply the new font and set a base font size for better readability */
-    body, .button, .input, .textarea, .title, .subtitle {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    /* 
+    This is the ONLY custom CSS, focused on enhancing Bulma's defaults for a premium feel.
+    It doesn't create new components, only refines existing ones.
+    */
+    .post-body, .button, .input, .textarea, .title, .subtitle {
+        font-family: 'Inter', sans-serif;
     }
     html {
         font-size: 17px;
+        background-color: #f7f7fa; /* A soft, modern background */
     }
     @media screen and (max-width: 768px) {
         html { font-size: 16px; }
     }
 
+    /* Style for the responsive, mobile-first timestamp accordion */
+    #timestamps-accordion {
+        display: none; /* Hidden on desktop */
+    }
+    #timestamps-accordion .panel-content {
+        display: none;
+        border-top: 1px solid #dbdbdb;
+    }
+    #timestamps-accordion.is-active .panel-content {
+        display: block;
+    }
+    #timestamps-accordion.is-active .panel-heading .icon.is-angle {
+        transform: rotate(180deg);
+    }
+    @media screen and (max-width: 1023px) {
+        #timestamps-accordion { display: block; }
+        #timestamps-sidebar { display: none !important; }
+    }
+
     /* JavaScript-controlled behavior (not static styling) */
-    .post-sidebar-sticky { position: static; } /* Default state */
+    .post-sidebar-sticky { position: static; }
     .is-sticky { position: sticky; top: 2rem; }
-    .gh-content table, #toc-widget:not(.has-content) { display: none; }
+    .gh-content table { display: none; } /* Always hide the source table */
 </style>
 
-<body class="has-background-white-bis">
-
-<main class="section">
+{{#post}}
+<main class="section post-body">
   <div class="container">
     <div class="columns is-variable is-8-desktop">
 
@@ -39,40 +66,43 @@
         </figure>
 
         {{!-- Title, Meta, and Channel Info Block --}}
-        <div class="box has-background-dark has-text-white mt-6">
+        <div class="box mt-6">
             <div class="p-4">
                 {{#if tags}}
                     <div class="tags mb-4">
-                        {{#foreach tags limit="3"}}<a class="tag is-primary" href="{{url}}">{{name}}</a>{{/foreach}}
+                        {{#foreach tags limit="3"}}<a class="tag is-primary is-light" href="{{url}}">{{name}}</a>{{/foreach}}
                     </div>
                 {{/if}}
-                <h1 class="title is-size-3-desktop is-size-4-mobile has-text-white has-text-weight-bold post-title mb-4">{{title}}</h1>
-                <p class="is-size-6 has-text-grey-light"><time datetime="{{date format="YYYY-MM-DD"}}">{{date format="MMMM DD, YYYY"}}</time> • <span>{{reading_time}}</span></p>
-                <hr class="has-background-grey-darker my-5">
+                <h1 class="title is-size-2-desktop is-size-3-mobile has-text-weight-bold post-title mb-4">{{title}}</h1>
+                <hr class="my-5">
                 {{!-- Channel & Subscribe Widget --}}
                 <div class="level is-mobile">
                     <div class="level-left">
-                        <div class="media is-align-items-center">
+                        <a href="{{primary_author.url}}" class="media is-align-items-center">
                             <figure class="media-left"><p class="image is-48x48"><img class="is-rounded" src="{{primary_author.profile_image}}" alt="{{primary_author.name}}"></p></figure>
                             <div class="media-content">
-                                <p class="title is-6 has-text-white">{{primary_author.name}}</p>
-                                <p class="subtitle is-7 has-text-grey-light">{{excerpt}} subscribers</p>
+                                <p class="title is-6">{{primary_author.name}}</p>
+                                <p class="subtitle is-7 has-text-grey">{{excerpt}} subscribers</p>
                             </div>
-                        </div>
+                        </a>
                     </div>
                     <div class="level-right">
                         <a href="#" class="button is-danger is-rounded has-text-weight-bold">
                             <span class="icon"><i class="fab fa-youtube"></i></span>
-                            <span>Subscribe</span>
+                            <span class="is-hidden-mobile">Subscribe</span>
                         </a>
                     </div>
                 </div>
             </div>
         </div>
         
-        {{!-- MONETIZATION: 1. Below Player Ad --}}
-        <div class="box has-background-grey-lighter has-text-centered my-6">
-            <p class="has-text-grey-light p-5">AdSense Responsive Ad Unit</p>
+        {{!-- WIDGET: Mobile Timestamp Accordion (hidden on desktop) --}}
+        <div id="timestamps-accordion" class="panel is-link my-6">
+            <p class="panel-heading is-clickable">
+                <span class="icon-text"><span class="icon"><i class="fas fa-list-ol"></i></span><span>Video Timestamps</span></span>
+                <span class="icon is-angle"><i class="fas fa-angle-down"></i></span>
+            </p>
+            <div class="panel-content" id="timestamps-target-mobile"></div>
         </div>
 
         {{!-- Main Description Box --}}
@@ -82,39 +112,26 @@
             </div>
         </div>
         
-        {{!-- Ghost Portal Comments --}}
-        <div class="mt-6">{{comments}}</div>
       </div>
 
       {{!-- ======== Sidebar Column ======== --}}
       <div class="column is-4">
         <aside class="post-sidebar-sticky">
         
-          {{!-- MONETIZATION: 2. Sidebar Top Ad --}}
-          <div class="box has-background-grey-lighter has-text-centered mb-5">
-            <p class="has-text-grey-light p-6">AdSense Display Ad (300x250)</p>
-          </div>
-          
-          {{!-- WIDGET 1: Timestamps --}}
-          <div id="timestamps-widget" class="panel is-link mb-5" style="display: none;">
+          {{!-- WIDGET 1: Timestamps for Desktop --}}
+          <div id="timestamps-sidebar" class="panel is-link mb-6">
             <p class="panel-heading">Timestamps</p>
-            <div id="timestamps-target" style="max-height: 350px; overflow-y: auto;"></div>
-          </div>
-          
-          {{!-- WIDGET 2: Table of Contents (Auto-Generated) --}}
-          <div id="toc-widget" class="panel is-info mb-5">
-            <p class="panel-heading">In this Article</p>
-            <div id="toc-target"></div>
+            <div id="timestamps-target-desktop" style="max-height: 45vh; overflow-y: auto;"></div>
           </div>
 
-          {{!-- WIDGET 3: Related Videos --}}
+          {{!-- WIDGET 2: Related Videos --}}
           {{#get "posts" filter="tags:hash-video+id:-{{id}}" limit="3" as |related|}}
             {{#if related}}
-            <div class="box p-5 mb-5">
+            <div class="box p-5">
               <p class="title is-5 mb-5">Related Videos</p>
                 {{#foreach related}}
-                  <a href="{{url}}" class="is-block mb-4">
-                    <figure class="image is-16by9 mb-2"><img class="is-rounded" src="{{#if feature_image}}{{feature_image}}{{else}}https://i.ytimg.com/vi/{{custom_excerpt}}/hqdefault.jpg{{/if}}" alt="{{title}}" loading="lazy"></figure>
+                  <a href="{{url}}" class="is-block mb-5">
+                    <figure class="image is-16by9 mb-3"><img class="is-rounded" src="{{#if feature_image}}{{feature_image}}{{else}}https://i.ytimg.com/vi/{{custom_excerpt}}/hqdefault.jpg{{/if}}" alt="{{title}}" loading="lazy"></figure>
                     <p class="is-size-6 has-text-weight-bold has-text-dark" style="line-height: 1.4;">{{title}}</p>
                   </a>
                 {{/foreach}}
@@ -122,19 +139,6 @@
             {{/if}}
           {{/get}}
 
-          {{!-- MONETIZATION: 3. Native Ad Placeholder --}}
-          <div class="box p-5 mb-5">
-            <p class="title is-6 has-text-grey-light mb-4">Sponsored</p>
-            <a href="#" class="is-block">
-                <figure class="image is-16by9 mb-2 has-background-grey-lighter is-rounded"></figure>
-                <p class="is-size-6 has-text-weight-bold has-text-dark" style="line-height: 1.4;">This is a Native Ad That Looks Like a Related Post</p>
-            </a>
-          </div>
-
-          {{!-- MONETIZATION: 4. Sidebar Bottom Ad --}}
-          <div class="box has-background-grey-lighter has-text-centered">
-            <p class="has-text-grey-light p-6" style="min-height: 500px;">AdSense Skyscraper Ad (300x600)</p>
-          </div>
         </aside>
       </div>
     </div>
@@ -176,13 +180,15 @@
             sidebar.classList.add('is-sticky');
         }
 
-        // ---- 2. Dynamic Timestamps ----
+        // ---- 2. Dynamic Timestamps (for Desktop and Mobile) ----
         const generateTimestamps = () => {
             const sourceTable = document.querySelector('.gh-content table');
-            const timestampWidget = document.getElementById('timestamps-widget');
-            const timestampTarget = document.getElementById('timestamps-target');
-            if (!sourceTable || !timestampWidget || !timestampTarget) return;
+            const desktopWidget = document.getElementById('timestamps-sidebar');
+            const mobileWidget = document.getElementById('timestamps-accordion');
+            if (!sourceTable || !desktopWidget || !mobileWidget) return;
 
+            const desktopTarget = document.getElementById('timestamps-target-desktop');
+            const mobileTarget = document.getElementById('timestamps-target-mobile');
             const rows = sourceTable.querySelectorAll('tbody tr');
             if (rows.length === 0) return;
             
@@ -201,41 +207,22 @@
                 link.className = 'panel-block is-flex is-justify-content-space-between timestamp-link';
                 link.href = `#t=${seconds}`;
                 link.dataset.time = seconds;
-                link.innerHTML = `<span>${cells[0].textContent.trim()}</span><span class="has-text-right is-size-7">${cells[1].textContent.trim()}</span>`;
+                link.innerHTML = `<span class="is-size-6">${cells[0].textContent.trim()}</span><span class="has-text-right is-size-7">${cells[1].textContent.trim()}</span>`;
                 fragment.appendChild(link);
 
                 timestampDataForSeo.push({"@type": "Clip", "name": cells[1].textContent.trim(), "startOffset": seconds, "url": window.location.href + `#t=${seconds}`});
             });
             
-            timestampTarget.appendChild(fragment);
-            timestampWidget.style.display = 'block';
-        };
-        
-        // ---- 3. Dynamic Table of Contents ----
-        const generateToc = () => {
-            const content = document.querySelector('.gh-content');
-            const tocWidget = document.getElementById('toc-widget');
-            const tocTarget = document.getElementById('toc-target');
-            const headings = content.querySelectorAll('h2, h3');
-            if (headings.length < 2 || !tocWidget || !tocTarget) return;
-
-            const fragment = document.createDocumentFragment();
-            headings.forEach(heading => {
-                const id = heading.textContent.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
-                heading.id = id;
-
-                const link = document.createElement('a');
-                link.href = `#${id}`;
-                link.className = `panel-block ${heading.tagName === 'H3' ? 'pl-5' : ''}`;
-                link.textContent = heading.textContent;
-                fragment.appendChild(link);
+            desktopTarget.appendChild(fragment.cloneNode(true)); // Use a clone for desktop
+            mobileTarget.appendChild(fragment); // Use the original for mobile
+            
+            // Toggle for mobile accordion
+            mobileWidget.querySelector('.panel-heading').addEventListener('click', () => {
+                mobileWidget.classList.toggle('is-active');
             });
-            tocTarget.appendChild(fragment);
-            tocWidget.classList.add('has-content');
-            tocWidget.style.display = 'block';
         };
         
-        // ---- 4. Dynamic JSON-LD Injection ----
+        // ---- 3. Dynamic JSON-LD Injection ----
         const injectSeoData = () => {
             const schemaScript = document.getElementById('video-schema');
             if (!schemaScript) return;
@@ -245,7 +232,6 @@
         };
         
         generateTimestamps();
-        generateToc();
         injectSeoData();
     });
 </script>
@@ -265,5 +251,4 @@
   "author": { "@type": "Person", "name": "{{primary_author.name}}" }
 }
 </script>
-</body>
 {{/post}}
