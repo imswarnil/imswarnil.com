@@ -1,59 +1,65 @@
 {{!< default}}
 
 {{!-- This template assumes your default.hbs provides Bulma CSS and your FitVids.js script. --}}
+{{!-- You must add the Phosphor Icons CDN to your site's Code Injection (Header) --}}
+{{!-- <link href="https://unpkg.com/@phosphor-icons/web@2.0.3/src/css/icons.css" rel="stylesheet" /> --}}
 
 <style>
-    /* 
-    This minimal, namespaced CSS block adds premium visual refinements.
-    It does not create new components, only enhances them.
+    /*
+    This minimal, namespaced CSS block enables advanced UX features and refines the design.
+    It does not style base components, colors, or fonts.
     */
+    .video-main-container {
+        background-color: #f7f7fa; /* A soft, modern background */
+    }
 
-    /* Adds a professional shadow and rounded corners to the video player */
-    .video-player-wrapper {
+    /* Styles for the Picture-in-Picture player */
+    .video-pip-player {
+        position: fixed;
+        bottom: 1.5rem;
+        right: 1.5rem;
+        width: 352px; /* 16:9 ratio at 198px height */
+        max-width: 90vw;
+        z-index: 1000;
         border-radius: 12px;
         overflow: hidden;
-        box-shadow: 0 1rem 3rem -1rem rgba(0, 0, 0, 0.2);
-        background-color: #000; /* Black background for the player */
+        box-shadow: 0 1rem 3rem -1rem rgba(0, 0, 0, 0.4);
+        transform: translateY(200%);
+        transition: transform 0.4s ease-in-out;
+    }
+    .video-pip-player.is-active {
+        transform: translateY(0);
+    }
+    .video-pip-player .video-pip-close {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        z-index: 1001;
     }
 
-    /* Provides the sticky behavior for the sidebar on desktop */
-    .video-sidebar-sticky {
-        position: -webkit-sticky; /* For Safari */
-        position: sticky;
-        top: 2rem;
-    }
-    
-    /* Adds a subtle hover effect to the clickable timestamp links */
-    .video-timestamp-link:hover {
-        background-color: hsl(0, 0%, 98%); /* Bulma's 'is-white-ter' color */
-    }
+    /* Behavior for the sticky sidebar and hidden source table */
+    .video-sidebar-sticky { position: static; }
+    .is-sticky { position: sticky; top: 2rem; }
+    .gh-content table { display: none; }
 </style>
 
 {{#post}}
-<main class="section">
+<main class="section video-main-container">
   <div class="container is-fluid">
     <div class="columns is-variable is-8-desktop">
 
       {{!-- ======== Main Content Column ======== --}}
       <div class="column is-8">
         
-        {{!-- The YouTube Video Player - Wrapped for styling and FitVids.js compatibility --}}
-        <div class="video-player-wrapper mb-6">
-            <div class="video-container">
-                <iframe src="https://www.youtube.com/embed/{{custom_excerpt}}?rel=0&color=white" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
+        {{!-- The YouTube Video Player - Ready for FitVids.js --}}
+        <div id="video-main-player-wrapper" class="video-container mb-6">
+            <iframe id="youtube-player" src="https://www.youtube.com/embed/{{custom_excerpt}}?rel=0&enablejsapi=1&color=white" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
 
         {{!-- Title, Meta, and Channel Info Block --}}
         <div class="box p-5">
-            {{#if tags}}
-                <div class="tags mb-4">
-                    {{#foreach tags limit="3"}}<a class="tag is-primary is-light" href="{{url}}">{{name}}</a>{{/foreach}}
-                </div>
-            {{/if}}
             <h1 class="title is-size-2-desktop is-size-3-mobile has-text-weight-bold post-title mb-4">{{title}}</h1>
             <hr class="my-5">
-            {{!-- Channel & Subscribe Widget --}}
             <div class="level is-mobile">
                 <div class="level-left">
                     <a href="{{primary_author.url}}" class="media is-align-items-center">
@@ -66,7 +72,7 @@
                 </div>
                 <div class="level-right">
                     <a href="#" class="button is-danger is-rounded has-text-weight-bold">
-                        <span class="icon"><i class="fab fa-youtube"></i></span>
+                        <span class="icon"><i class="ph ph-youtube-logo"></i></span>
                         <span class="is-hidden-mobile">Subscribe</span>
                     </a>
                 </div>
@@ -80,58 +86,44 @@
                 {{content}}
             </div>
         </div>
-        
       </div>
 
       {{!-- ======== Sidebar Column ======== --}}
       <div class="column is-4">
         <aside class="video-sidebar-sticky">
         
-          {{!-- ====================================================================== --}}
-          {{!-- WIDGET 1: Manual Timestamps - EDIT THIS SECTION DIRECTLY --}}
-          {{!-- ====================================================================== --}}
-          {{!-- Since there is no JS, you must add your timestamps here manually. --}}
-          {{!-- Just copy a `<a>` block for each new timestamp. --}}
-          <div class="panel is-link mb-6">
+          {{!-- WIDGET 1: Timestamps for Desktop --}}
+          <div id="timestamps-widget" class="panel is-link mb-6" style="display: none;">
             <p class="panel-heading">Timestamps</p>
-            <div style="max-height: 45vh; overflow-y: auto;">
-              <a href="https://www.youtube.com/watch?v={{custom_excerpt}}&t=0s" target="_blank" class="panel-block video-timestamp-link">
-                  <span class="panel-icon"><i class="far fa-play-circle"></i></span>
-                  <span class="is-flex-grow-1">Introduction</span>
-                  <span class="has-text-grey is-size-7">0:00</span>
-              </a>
-              <a href="https://www.youtube.com/watch?v={{custom_excerpt}}&t=30s" target="_blank" class="panel-block video-timestamp-link">
-                  <span class="panel-icon"><i class="far fa-play-circle"></i></span>
-                  <span class="is-flex-grow-1">Core Concept</span>
-                  <span class="is-size-7 has-text-grey">0:30</span>
-              </a>
-              <a href="https://www.youtube.com/watch?v={{custom_excerpt}}&t=125s" target="_blank" class="panel-block video-timestamp-link">
-                  <span class="panel-icon"><i class="far fa-play-circle"></i></span>
-                  <span class="is-flex-grow-1">First Example</span>
-                  <span class="is-size-7 has-text-grey">2:05</span>
-              </a>
-              <a href="https://www.youtube.com/watch?v={{custom_excerpt}}&t=300s" target="_blank" class="panel-block video-timestamp-link">
-                  <span class="panel-icon"><i class="far fa-play-circle"></i></span>
-                  <span class="is-flex-grow-1">Advanced Technique</span>
-                  <span class="is-size-7 has-text-grey">5:00</span>
-              </a>
-              <a href="https://www.youtube.com/watch?v={{custom_excerpt}}&t=540s" target="_blank" class="panel-block video-timestamp-link">
-                  <span class="panel-icon"><i class="far fa-play-circle"></i></span>
-                  <span class="is-flex-grow-1">Conclusion</span>
-                  <span class="is-size-7 has-text-grey">9:00</span>
-              </a>
-            </div>
+            <div id="timestamps-target" style="max-height: 40vh; overflow-y: auto;"></div>
+          </div>
+          
+          {{!-- WIDGET 2: YouTube Schedule --}}
+          <div class="box p-5 mb-6">
+              <p class="title is-5 mb-4">Upload Schedule</p>
+              <div class="content is-small">
+                  <p class="icon-text mb-2"><span class="icon has-text-info"><i class="ph ph-video-camera"></i></span><span><strong>New Videos:</strong> Every Tuesday & Friday</span></p>
+                  <p class="icon-text"><span class="icon has-text-danger"><i class="ph ph-broadcast"></i></span><span><strong>Live Streams:</strong> First Sunday of the month</span></p>
+              </div>
           </div>
 
-          {{!-- WIDGET 2: Related Videos --}}
+          {{!-- WIDGET 3: Related Videos (YouTube Style) --}}
           {{#get "posts" filter="tags:hash-video+id:-{{id}}" limit="3" as |related|}}
             {{#if related}}
             <div class="box p-5">
               <p class="title is-5 mb-5">Related Videos</p>
                 {{#foreach related}}
-                  <a href="{{url}}" class="is-block mb-5">
-                    <figure class="image is-16by9 mb-3"><img class="is-rounded" src="{{#if feature_image}}{{feature_image}}{{else}}https://i.ytimg.com/vi/{{custom_excerpt}}/hqdefault.jpg{{/if}}" alt="{{title}}" loading="lazy"></figure>
-                    <p class="is-size-6 has-text-weight-bold">{{title}}</p>
+                  {{!-- The classic rectangular thumbnail layout --}}
+                  <a href="{{url}}" class="media mb-5">
+                    <figure class="media-left">
+                      <p class="image is-128x72">
+                        <img src="{{#if feature_image}}{{feature_image}}{{else}}https://i.ytimg.com/vi/{{custom_excerpt}}/hqdefault.jpg{{/if}}" alt="{{title}}" loading="lazy" style="border-radius: 6px;">
+                      </p>
+                    </figure>
+                    <div class="media-content">
+                      <p class="is-size-6 has-text-weight-bold" style="line-height: 1.4;">{{title}}</p>
+                      <p class="is-size-7 has-text-grey">{{primary_author.name}}</p>
+                    </div>
                   </a>
                 {{/foreach}}
             </div>
@@ -143,4 +135,156 @@
     </div>
   </div>
 </main>
+
+{{!-- Picture-in-Picture Player (Hidden by default) --}}
+<div id="video-pip-player" class="video-pip-player">
+    <button id="video-pip-close" class="delete video-pip-close"></button>
+    <div id="video-pip-target"></div>
+</div>
+
+
+{{!-- ================== JAVASCRIPT & SEO ================== --}}
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+    let player;
+    let pipPlayer;
+    let timestampDataForSeo = [];
+    let isPipActive = false;
+
+    // This function is required by the YouTube API
+    function onYouTubeIframeAPIReady() {
+        if (document.getElementById('youtube-player')) {
+            player = new YT.Player('youtube-player', { events: { 'onReady': onPlayerReady } });
+        }
+    }
+
+    function onPlayerReady(event) {
+        // Prepare timestamps as soon as the player is ready
+        generateTimestamps();
+        // Set up the PIP observer
+        setupIntersectionObserver();
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        const sidebar = document.querySelector('.video-sidebar-sticky');
+        if (sidebar && window.innerWidth >= 1024) {
+            sidebar.classList.add('is-sticky');
+        }
+
+        const generateTimestamps = () => {
+            const sourceTable = document.querySelector('.gh-content table');
+            const target = document.getElementById('timestamps-target');
+            const widget = document.getElementById('timestamps-widget');
+            if (!sourceTable || !target || !widget) return;
+
+            const rows = sourceTable.querySelectorAll('tbody tr');
+            if (rows.length === 0) return;
+            
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td, th');
+                if (cells.length < 2) return;
+                
+                const timeStr = cells[0].textContent.trim().split(' ')[0];
+                const parts = timeStr.split(':').map(part => parseInt(part, 10));
+                let seconds = parts.length > 1 ? parts.reduce((acc, val) => acc * 60 + val, 0) : parts[0] || 0;
+                
+                const link = document.createElement('a');
+                link.className = 'panel-block is-clickable';
+                link.dataset.time = seconds;
+                link.innerHTML = `<span class="panel-icon"><i class="ph ph-play-circle"></i></span><span class="is-flex-grow-1">${cells[1].textContent.trim()}</span>`;
+                
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (player && typeof player.seekTo === 'function') {
+                        player.seekTo(seconds, true);
+                        player.playVideo();
+                    }
+                });
+                target.appendChild(link);
+                timestampDataForSeo.push({"@type": "Clip", "name": cells[1].textContent.trim(), "startOffset": seconds, "url": window.location.href + `#t=${seconds}`});
+            });
+            widget.style.display = 'block';
+            injectSeoData();
+        };
+
+        const setupIntersectionObserver = () => {
+            const mainPlayerWrapper = document.getElementById('video-main-player-wrapper');
+            const pipWrapper = document.getElementById('video-pip-player');
+            const pipTarget = document.getElementById('video-pip-target');
+            const pipCloseBtn = document.getElementById('video-pip-close');
+
+            if (!mainPlayerWrapper || !pipWrapper) return;
+
+            pipCloseBtn.addEventListener('click', () => {
+                hidePipPlayer();
+                if (player && typeof player.pauseVideo === 'function') player.pauseVideo();
+            });
+
+            const showPipPlayer = () => {
+                if (isPipActive || !player || player.getPlayerState() !== YT.PlayerState.PLAYING) return;
+                isPipActive = true;
+                if (document.pictureInPictureEnabled && player.getIframe().requestPictureInPicture) {
+                    player.getIframe().requestPictureInPicture();
+                } else {
+                    // Fallback for browsers without PiP API
+                    const iframe = document.getElementById('youtube-player');
+                    pipTarget.appendChild(iframe);
+                    pipWrapper.classList.add('is-active');
+                }
+            };
+
+            const hidePipPlayer = () => {
+                if (!isPipActive) return;
+                isPipActive = false;
+                if (document.pictureInPictureElement) {
+                    document.exitPictureInPicture();
+                } else {
+                    const iframe = document.getElementById('youtube-player');
+                    mainPlayerWrapper.appendChild(iframe);
+                    pipWrapper.classList.remove('is-active');
+                }
+            };
+            
+            const observer = new IntersectionObserver(
+                ([entry]) => {
+                    if (!entry.isIntersecting) {
+                        showPipPlayer();
+                    } else {
+                        hidePipPlayer();
+                    }
+                },
+                { threshold: 0.5 } // Trigger when 50% of the player is out of view
+            );
+            observer.observe(mainPlayerWrapper);
+        };
+        
+        const injectSeoData = () => {
+            const schemaScript = document.getElementById('video-schema');
+            if (!schemaScript) return;
+            let schema = JSON.parse(schemaScript.textContent);
+            if (timestampDataForSeo.length > 0) schema.hasPart = timestampDataForSeo;
+            schemaScript.textContent = JSON.stringify(schema, null, 2);
+        };
+        
+        // Initial setup calls
+        generateTimestamps();
+        // onPlayerReady will call setupIntersectionObserver
+    });
+</script>
+
+{{!-- SEO: The single, definitive VideoObject Schema --}}
+<script id="video-schema" type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VideoObject",
+  "name": "{{title}}",
+  "description": "{{excerpt words="50"}}",
+  "uploadDate": "{{date format="YYYY-MM-DDTHH:mm:ss.SSSZ"}}",
+  "embedUrl": "https://www.youtube.com/embed/{{custom_excerpt}}",
+  "thumbnailUrl": [
+    {{#if feature_image}}"{{feature_image}}"{{else}}"https://i.ytimg.com/vi/{{custom_excerpt}}/maxresdefault.jpg"{{/if}}
+  ],
+  "author": { "@type": "Person", "name": "{{primary_author.name}}" }
+}
+</script>
 {{/post}}
