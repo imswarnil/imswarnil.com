@@ -18,10 +18,10 @@
 
     <div class="columns is-variable is-6-desktop">
 
-      {{!-- ======== Main Content Column (Expansive 9-column width) ======== --}}
+      {{!-- ======== Main Content Column ======== --}}
       <div class="column is-9">
         
-        {{!-- The YouTube Video Player - Wrapped in a simple div for FitVids.js --}}
+        {{!-- The YouTube Video Player - Ready for FitVids.js --}}
         <div class="video-container mb-6">
             <iframe id="youtube-player" src="https://www.youtube.com/embed/{{custom_excerpt}}?rel=0&enablejsapi=1&color=white" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
@@ -76,15 +76,15 @@
 
       {{!-- ======== Sidebar Column ======== --}}
       <div class="column is-3">
-        <aside class="post-sidebar-sticky">
+        <aside class="post-sidebar-sticky" style="position: static;">
         
           {{!-- MONETIZATION: 3. Sidebar Top Ad --}}
           <div class="box has-background-white-ter has-text-centered mb-6">
             <p class="has-text-grey p-6">AdSense Display Ad (300x250)</p>
           </div>
           
-          {{!-- WIDGET 1: Timestamps (Rendered as a beautiful table) --}}
-          <div id="timestamps-widget" class="box p-4 mb-6" style="display: none;"> {{!-- JS controls visibility --}}
+          {{!-- WIDGET 1: Timestamps (as a beautiful table) --}}
+          <div id="timestamps-widget" class="box p-4 mb-6" style="display: none;">
             <p class="title is-5 mb-4">Timestamps</p>
             <div id="timestamps-target" class="table-container">
               {{!-- JS will inject a styled Bulma table here --}}
@@ -108,21 +108,12 @@
                 {{#foreach related}}
                   <a href="{{url}}" class="is-block mb-5">
                     <figure class="image is-16by9 mb-3"><img class="is-rounded" src="{{#if feature_image}}{{feature_image}}{{else}}https://i.ytimg.com/vi/{{custom_excerpt}}/hqdefault.jpg{{/if}}" alt="{{title}}" loading="lazy"></figure>
-                    <p class="is-size-6 has-text-weight-bold" style="line-height: 1.4;">{{title}}</p>
+                    <p class="is-size-6 has-text-weight-bold">{{title}}</p>
                   </a>
                 {{/foreach}}
             </div>
             {{/if}}
           {{/get}}
-
-          {{!-- MONETIZATION: 4. Native Ad Placeholder --}}
-          <div class="box p-5">
-            <p class="title is-6 has-text-grey-light mb-4">Sponsored</p>
-            <a href="#" class="is-block">
-                <figure class="image is-16by9 mb-3 has-background-grey-lighter is-rounded"></figure>
-                <p class="is-size-6 has-text-weight-bold">This is a Native Ad That Looks Like a Related Post</p>
-            </a>
-          </div>
         </aside>
       </div>
     </div>
@@ -143,28 +134,18 @@
     }
 
     function onPlayerReady(event) {
-        // This function attaches event listeners AFTER the new timestamp table is built and in the DOM.
-        document.querySelectorAll('a.timestamp-link').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (!player || typeof player.seekTo !== 'function') return;
-                const time = parseFloat(link.dataset.time);
-                player.seekTo(time, true);
-                player.playVideo();
-            });
-        });
+        // Player is ready. The main script has already attached listeners.
     }
     
     document.addEventListener('DOMContentLoaded', () => {
         // ---- 1. Sticky Sidebar (Behavioral JS) ----
-        // This is a necessary piece of JS as Bulma does not have a native sticky class.
         const sidebar = document.querySelector('.post-sidebar-sticky');
         if (sidebar && window.innerWidth >= 1024) {
             sidebar.style.position = 'sticky';
             sidebar.style.top = '2rem';
         }
 
-        // ---- 2. Dynamic Timestamps (Rendered as a Table) ----
+        // ---- 2. Dynamic Timestamps (Rendered as a Clickable Table) ----
         const generateTimestamps = () => {
             const sourceTable = document.querySelector('.gh-content table');
             const timestampWidget = document.getElementById('timestamps-widget');
@@ -174,7 +155,6 @@
             const rows = sourceTable.querySelectorAll('tbody tr');
             if (rows.length === 0) return;
             
-            // Create a new, styled Bulma table
             const newTable = document.createElement('table');
             newTable.className = 'table is-fullwidth is-striped is-hoverable is-narrow';
             const tableBody = document.createElement('tbody');
@@ -189,12 +169,14 @@
                 if (parts.length === 3) seconds = parts[0] * 3600 + parts[1] * 60 + parts[2];
                 else if (parts.length === 2) seconds = parts[0] * 60 + parts[1];
                 
-                // Create the new table row and cells
                 const newRow = document.createElement('tr');
+                newRow.className = 'is-clickable'; // Makes the whole row clickable
+                newRow.dataset.time = seconds; // Store time on the row itself
+                
                 const timeCell = document.createElement('td');
+                timeCell.innerHTML = `<span class="has-text-weight-semibold">${cells[0].textContent.trim()}</span>`;
+                
                 const descCell = document.createElement('td');
-
-                timeCell.innerHTML = `<a href="#t=${seconds}" class="timestamp-link has-text-weight-semibold" data-time="${seconds}">${cells[0].textContent.trim()}</a>`;
                 descCell.textContent = cells[1].textContent.trim();
 
                 newRow.appendChild(timeCell);
@@ -204,10 +186,22 @@
                 timestampDataForSeo.push({"@type": "Clip", "name": descCell.textContent, "startOffset": seconds, "url": window.location.href + `#t=${seconds}`});
             });
             
+            // Add a single event listener to the table body for efficiency
+            tableBody.addEventListener('click', (e) => {
+                const clickedRow = e.target.closest('tr');
+                if (!clickedRow || !clickedRow.dataset.time) return;
+
+                const time = parseFloat(clickedRow.dataset.time);
+                if (player && typeof player.seekTo === 'function') {
+                    player.seekTo(time, true);
+                    player.playVideo();
+                }
+            });
+
             newTable.appendChild(tableBody);
             timestampTarget.appendChild(newTable);
-            timestampWidget.style.display = 'block'; // Show the widget
-            sourceTable.style.display = 'none'; // Hide the original table from the main content
+            timestampWidget.style.display = 'block';
+            sourceTable.style.display = 'none';
         };
         
         // ---- 3. Dynamic JSON-LD Injection ----
@@ -224,7 +218,7 @@
     });
 </script>
 
-{{!-- SEO: Dynamic JSON-LD VideoObject Schema --}}
+{{!-- SEO: The single, definitive VideoObject Schema --}}
 <script id="video-schema" type="application/ld+json">
 {
   "@context": "https://schema.org",
