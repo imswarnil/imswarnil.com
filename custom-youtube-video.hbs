@@ -1,88 +1,85 @@
 {{!< default}}
 
 {{#post}}
-{{!-- No <style> block is used. All styling is from pure Bulma classes. --}}
+{{!-- Google Font for superior readability --}}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
 
-<body class="has-background-light">
+<style>
+    /* Apply the new font and set a base font size for better readability */
+    body, .button, .input, .textarea, .title, .subtitle {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    }
+    html {
+        font-size: 17px;
+    }
+    @media screen and (max-width: 768px) {
+        html { font-size: 16px; }
+    }
+
+    /* JavaScript-controlled behavior (not static styling) */
+    .post-sidebar-sticky { position: static; } /* Default state */
+    .is-sticky { position: sticky; top: 2rem; }
+    .gh-content table, #toc-widget:not(.has-content) { display: none; }
+</style>
+
+<body class="has-background-white-bis">
 
 <main class="section">
   <div class="container">
-    {{!-- MONETIZATION: 1. Top Leaderboard Ad --}}
-    <div class="box has-background-grey-lighter has-text-centered mb-5 is-hidden-mobile">
-        <p class="has-text-grey-light">AdSense Leaderboard (728x90)</p>
-    </div>
-
     <div class="columns is-variable is-8-desktop">
 
-      {{!-- ======== Main Content Column (Wider) ======== --}}
-      <div class="column is-9">
+      {{!-- ======== Main Content Column ======== --}}
+      <div class="column is-8">
         
         {{!-- The YouTube Video Player --}}
-        <figure class="image is-16by9 mb-4">
-            <iframe id="youtube-player" class="has-ratio" src="https://www.youtube.com/embed/{{custom_excerpt}}?rel=0&enablejsapi=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <figure class="image is-16by9 has-background-black" style="border-radius: 12px; overflow: hidden; box-shadow: 0 1rem 3rem -1rem rgba(0,0,0,0.2);">
+            <iframe id="youtube-player" class="has-ratio" src="https://www.youtube.com/embed/{{custom_excerpt}}?rel=0&enablejsapi=1&color=white" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </figure>
 
-        {{!-- Title, Meta, and Share Block --}}
-        <div class="box p-5">
-            {{#if tags}}
-                <div class="tags mb-3">
-                    {{#foreach tags limit="3"}}<a class="tag is-info" href="{{url}}">{{name}}</a>{{/foreach}}
-                </div>
-            {{/if}}
-            <h1 class="title is-size-3-desktop is-size-4-mobile has-text-weight-bold post-title mb-3">{{title}}</h1>
-            <div class="level is-mobile">
-                <div class="level-left">
-                    <p class="is-size-7 has-text-grey"><time datetime="{{date format="YYYY-MM-DD"}}">{{date format="MMMM DD, YYYY"}}</time></p>
-                </div>
-                <div class="level-right">
-                    <div class="share-buttons buttons has-addons">
-                        <a class="button is-small" data-social="twitter"><span class="icon"><i class="fab fa-twitter"></i></span><span>Share</span></a>
-                        <a class="button is-small" data-social="facebook"><span class="icon"><i class="fab fa-facebook-f"></i></span></a>
-                        <a class="button is-small" data-social="whatsapp"><span class="icon"><i class="fab fa-whatsapp"></i></span></a>
+        {{!-- Title, Meta, and Channel Info Block --}}
+        <div class="box has-background-dark has-text-white mt-6">
+            <div class="p-4">
+                {{#if tags}}
+                    <div class="tags mb-4">
+                        {{#foreach tags limit="3"}}<a class="tag is-primary" href="{{url}}">{{name}}</a>{{/foreach}}
                     </div>
-                </div>
-            </div>
-            <hr class="my-4">
-            {{!-- YouTube Channel Subscribe Widget --}}
-            <div class="level is-mobile">
-                <div class="level-left">
-                    <div class="media is-align-items-center">
-                        <figure class="media-left">
-                            <p class="image is-48x48">
-                                <img class="is-rounded" src="{{primary_author.profile_image}}" alt="{{primary_author.name}}">
-                            </p>
-                        </figure>
-                        <div class="media-content">
-                            <p class="title is-6">{{primary_author.name}}</p>
-                            <p class="subtitle is-7 has-text-grey">{{excerpt}} subscribers</p>
+                {{/if}}
+                <h1 class="title is-size-3-desktop is-size-4-mobile has-text-white has-text-weight-bold post-title mb-4">{{title}}</h1>
+                <p class="is-size-6 has-text-grey-light"><time datetime="{{date format="YYYY-MM-DD"}}">{{date format="MMMM DD, YYYY"}}</time> • <span>{{reading_time}}</span></p>
+                <hr class="has-background-grey-darker my-5">
+                {{!-- Channel & Subscribe Widget --}}
+                <div class="level is-mobile">
+                    <div class="level-left">
+                        <div class="media is-align-items-center">
+                            <figure class="media-left"><p class="image is-48x48"><img class="is-rounded" src="{{primary_author.profile_image}}" alt="{{primary_author.name}}"></p></figure>
+                            <div class="media-content">
+                                <p class="title is-6 has-text-white">{{primary_author.name}}</p>
+                                <p class="subtitle is-7 has-text-grey-light">{{excerpt}} subscribers</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="level-right">
-                    <a href="#" class="button is-danger is-rounded has-text-weight-bold">
-                        <span class="icon"><i class="fab fa-youtube"></i></span>
-                        <span>Subscribe</span>
-                    </a>
+                    <div class="level-right">
+                        <a href="#" class="button is-danger is-rounded has-text-weight-bold">
+                            <span class="icon"><i class="fab fa-youtube"></i></span>
+                            <span>Subscribe</span>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
         
-        {{!-- MONETIZATION: 2. Below Player Ad --}}
-        <div class="box has-background-grey-lighter has-text-centered my-5">
+        {{!-- MONETIZATION: 1. Below Player Ad --}}
+        <div class="box has-background-grey-lighter has-text-centered my-6">
             <p class="has-text-grey-light p-5">AdSense Responsive Ad Unit</p>
         </div>
 
         {{!-- Main Description Box --}}
-        <div class="box p-5">
-            <p class="title is-5">Description</p>
+        <div class="box p-6">
             <div class="content is-medium gh-content">
-                {{content}} {{!-- JS will hide the table inside this --}}
+                {{content}}
             </div>
-        </div>
-
-        {{!-- MONETIZATION: 3. In-Article Ad --}}
-        <div class="box has-background-grey-lighter has-text-centered my-5">
-            <p class="has-text-grey-light p-6">AdSense In-article Ad Unit</p>
         </div>
         
         {{!-- Ghost Portal Comments --}}
@@ -90,47 +87,51 @@
       </div>
 
       {{!-- ======== Sidebar Column ======== --}}
-      <div class="column is-3">
+      <div class="column is-4">
         <aside class="post-sidebar-sticky">
         
-          {{!-- MONETIZATION: 4. Sidebar Top Ad --}}
+          {{!-- MONETIZATION: 2. Sidebar Top Ad --}}
           <div class="box has-background-grey-lighter has-text-centered mb-5">
             <p class="has-text-grey-light p-6">AdSense Display Ad (300x250)</p>
           </div>
           
           {{!-- WIDGET 1: Timestamps --}}
-          <div id="timestamps-widget" class="panel is-link mb-5" style="display: none;"> {{!-- JS controls visibility --}}
+          <div id="timestamps-widget" class="panel is-link mb-5" style="display: none;">
             <p class="panel-heading">Timestamps</p>
-            <div id="timestamps-target" style="max-height: 400px; overflow-y: auto;"></div>
+            <div id="timestamps-target" style="max-height: 350px; overflow-y: auto;"></div>
+          </div>
+          
+          {{!-- WIDGET 2: Table of Contents (Auto-Generated) --}}
+          <div id="toc-widget" class="panel is-info mb-5">
+            <p class="panel-heading">In this Article</p>
+            <div id="toc-target"></div>
           </div>
 
-          {{!-- WIDGET 2: Related Videos --}}
-          {{#get "posts" filter="tags:hash-video+id:-{{id}}" limit="4" as |related|}}
+          {{!-- WIDGET 3: Related Videos --}}
+          {{#get "posts" filter="tags:hash-video+id:-{{id}}" limit="3" as |related|}}
             {{#if related}}
-            <div class="box p-4 mb-5">
-              <p class="title is-6 mb-4">Related Videos</p>
+            <div class="box p-5 mb-5">
+              <p class="title is-5 mb-5">Related Videos</p>
                 {{#foreach related}}
                   <a href="{{url}}" class="is-block mb-4">
-                    <figure class="image is-16by9 mb-2">
-                        <img class="is-rounded" src="{{#if feature_image}}{{feature_image}}{{else}}https://i.ytimg.com/vi/{{custom_excerpt}}/hqdefault.jpg{{/if}}" alt="{{title}}" loading="lazy">
-                    </figure>
-                    <p class="is-size-7 has-text-weight-bold has-text-dark" style="line-height: 1.4;">{{title}}</p>
+                    <figure class="image is-16by9 mb-2"><img class="is-rounded" src="{{#if feature_image}}{{feature_image}}{{else}}https://i.ytimg.com/vi/{{custom_excerpt}}/hqdefault.jpg{{/if}}" alt="{{title}}" loading="lazy"></figure>
+                    <p class="is-size-6 has-text-weight-bold has-text-dark" style="line-height: 1.4;">{{title}}</p>
                   </a>
                 {{/foreach}}
             </div>
             {{/if}}
           {{/get}}
 
-          {{!-- MONETIZATION: 5. Native Ad Placeholder --}}
-          <div class="box p-4 mb-5">
-            <p class="title is-6 mb-4 has-text-grey-light">Sponsored</p>
+          {{!-- MONETIZATION: 3. Native Ad Placeholder --}}
+          <div class="box p-5 mb-5">
+            <p class="title is-6 has-text-grey-light mb-4">Sponsored</p>
             <a href="#" class="is-block">
                 <figure class="image is-16by9 mb-2 has-background-grey-lighter is-rounded"></figure>
-                <p class="is-size-7 has-text-weight-bold has-text-dark">This is a Native Ad That Looks Like a Related Post</p>
+                <p class="is-size-6 has-text-weight-bold has-text-dark" style="line-height: 1.4;">This is a Native Ad That Looks Like a Related Post</p>
             </a>
           </div>
 
-          {{!-- MONETIZATION: 6. Sidebar Bottom Ad --}}
+          {{!-- MONETIZATION: 4. Sidebar Bottom Ad --}}
           <div class="box has-background-grey-lighter has-text-centered">
             <p class="has-text-grey-light p-6" style="min-height: 500px;">AdSense Skyscraper Ad (300x600)</p>
           </div>
@@ -145,14 +146,16 @@
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
     let player;
-    let timestampDataForSeo = []; // Array to hold timestamp data for JSON-LD
+    let timestampDataForSeo = [];
 
+    // This function is required by the YouTube API
     function onYouTubeIframeAPIReady() {
         if (document.getElementById('youtube-player')) {
             player = new YT.Player('youtube-player', { events: { 'onReady': onPlayerReady } });
         }
     }
 
+    // This function runs once the player is ready, attaching click events.
     function onPlayerReady(event) {
         document.querySelectorAll('a.timestamp-link').forEach(link => {
             link.addEventListener('click', (e) => {
@@ -167,14 +170,13 @@
     }
     
     document.addEventListener('DOMContentLoaded', () => {
-        // ---- 1. Sticky Sidebar (JS is required for this behavior) ----
+        // ---- 1. Sticky Sidebar ----
         const sidebar = document.querySelector('.post-sidebar-sticky');
         if (sidebar && window.innerWidth >= 1024) {
-            sidebar.style.position = 'sticky';
-            sidebar.style.top = '2rem';
+            sidebar.classList.add('is-sticky');
         }
 
-        // ---- 2. Dynamic Timestamps and SEO Data Generation ----
+        // ---- 2. Dynamic Timestamps ----
         const generateTimestamps = () => {
             const sourceTable = document.querySelector('.gh-content table');
             const timestampWidget = document.getElementById('timestamps-widget');
@@ -195,58 +197,56 @@
                 if (parts.length === 3) seconds = parts[0] * 3600 + parts[1] * 60 + parts[2];
                 else if (parts.length === 2) seconds = parts[0] * 60 + parts[1];
                 
-                // Create link for the UI
                 const link = document.createElement('a');
                 link.className = 'panel-block is-flex is-justify-content-space-between timestamp-link';
                 link.href = `#t=${seconds}`;
                 link.dataset.time = seconds;
-                link.innerHTML = `<span class="is-size-7">${cells[0].textContent.trim()}</span><span class="has-text-right is-size-7">${cells[1].textContent.trim()}</span>`;
+                link.innerHTML = `<span>${cells[0].textContent.trim()}</span><span class="has-text-right is-size-7">${cells[1].textContent.trim()}</span>`;
                 fragment.appendChild(link);
 
-                // Store data for SEO
-                timestampDataForSeo.push({
-                    "@type": "Clip",
-                    "name": cells[1].textContent.trim(),
-                    "startOffset": seconds,
-                    "url": window.location.href + `#t=${seconds}`
-                });
+                timestampDataForSeo.push({"@type": "Clip", "name": cells[1].textContent.trim(), "startOffset": seconds, "url": window.location.href + `#t=${seconds}`});
             });
             
             timestampTarget.appendChild(fragment);
-            timestampWidget.style.display = 'block'; // Show the widget
-            sourceTable.style.display = 'none'; // Hide the original table
+            timestampWidget.style.display = 'block';
         };
         
-        // ---- 3. Share Buttons ----
-        const setupShareButtons = () => {
-            document.querySelectorAll('.share-buttons a').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    let url = encodeURIComponent(window.location.href), title = encodeURIComponent(document.title), shareUrl = '';
-                    const social = button.dataset.social;
-                    if(social === 'twitter') shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${title}`;
-                    if(social === 'facebook') shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
-                    if(social === 'whatsapp') shareUrl = `https://api.whatsapp.com/send?text=${title}%20${url}`;
-                    if(shareUrl) window.open(shareUrl, 'share-window', 'height=450,width=550');
-                });
-            });
-        };
+        // ---- 3. Dynamic Table of Contents ----
+        const generateToc = () => {
+            const content = document.querySelector('.gh-content');
+            const tocWidget = document.getElementById('toc-widget');
+            const tocTarget = document.getElementById('toc-target');
+            const headings = content.querySelectorAll('h2, h3');
+            if (headings.length < 2 || !tocWidget || !tocTarget) return;
 
+            const fragment = document.createDocumentFragment();
+            headings.forEach(heading => {
+                const id = heading.textContent.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+                heading.id = id;
+
+                const link = document.createElement('a');
+                link.href = `#${id}`;
+                link.className = `panel-block ${heading.tagName === 'H3' ? 'pl-5' : ''}`;
+                link.textContent = heading.textContent;
+                fragment.appendChild(link);
+            });
+            tocTarget.appendChild(fragment);
+            tocWidget.classList.add('has-content');
+            tocWidget.style.display = 'block';
+        };
+        
         // ---- 4. Dynamic JSON-LD Injection ----
         const injectSeoData = () => {
             const schemaScript = document.getElementById('video-schema');
             if (!schemaScript) return;
-
             let schema = JSON.parse(schemaScript.textContent);
-            if (timestampDataForSeo.length > 0) {
-                schema.hasPart = timestampDataForSeo;
-            }
+            if (timestampDataForSeo.length > 0) schema.hasPart = timestampDataForSeo;
             schemaScript.textContent = JSON.stringify(schema, null, 2);
         };
         
         generateTimestamps();
-        setupShareButtons();
-        injectSeoData(); // Run after timestamps are parsed
+        generateToc();
+        injectSeoData();
     });
 </script>
 
