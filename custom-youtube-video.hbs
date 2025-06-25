@@ -1,260 +1,255 @@
 {{!< default}}
 
-{{!-- This template assumes your default.hbs provides Bulma CSS, Font Awesome/Phosphor Icons, and your FitVids.js script. --}}
+{{!-- This template assumes your default.hbs provides Bulma CSS, Font Awesome, and FitVids.js. --}}
 
 <style>
     /*
-    This minimal, namespaced CSS block enables ADVANCED BEHAVIORS.
+    This minimal, namespaced CSS block enables the ADVANCED spyscroll and active state features.
     It does not style components, colors, or fonts, adhering to the "Pure Bulma" philosophy.
     */
-    .video-page-body { background-color: #f9f9f9; }
 
-    /* Picture-in-Picture Player Behavior */
-    .video-pip-player {
-        position: fixed;
-        bottom: 1.5rem; right: 1.5rem;
-        width: 352px; max-width: 90vw;
-        z-index: 1000;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 1rem 3rem -1rem rgba(0, 0, 0, 0.4);
-        transform: translateY(200%);
-        transition: transform 0.4s ease-in-out;
+    /* The container for our dynamic progress bar */
+    .video-spyscroll-container {
+        position: relative;
     }
-    .video-pip-player.is-active { transform: translateY(0); }
-    .video-pip-player .video-pip-close { position: absolute; top: 0.5rem; right: 0.5rem; z-index: 1001; }
+    /* The vertical line for the progress track */
+    .video-spyscroll-container::before {
+        content: '';
+        position: absolute;
+        top: 10px; bottom: 10px;
+        left: 20px; /* Aligns with the panel icon's center */
+        width: 2px;
+        background-color: #dbdbdb; /* Bulma's default border color */
+        z-index: 1;
+    }
+    /* The moving dot that indicates progress */
+    #video-spyscroll-indicator {
+        position: absolute;
+        left: 15px; /* Centered on the line */
+        width: 12px; height: 12px;
+        border-radius: 50%;
+        background-color: hsl(217, 71%, 53%); /* Bulma's primary color */
+        border: 2px solid white;
+        z-index: 2;
+        transition: transform 0.1s linear; /* Smooths the movement */
+        transform: translateY(10px); /* Initial position */
+    }
+    
+    /* Highlight the active timestamp block using Bulma's colors */
+    .panel-block.is-active {
+        background-color: hsl(204, 86%, 96%); /* Bulma's 'is-link-light' color */
+        border-left-color: hsl(217, 71%, 53%); /* Bulma's 'is-link' color */
+    }
 
-    /* JS-Controlled Behavior */
+    /* JavaScript-controlled behavior */
     .gh-content table { display: none; }
     .video-sidebar-sticky { position: static; }
     .is-sticky { position: sticky; top: 2rem; }
 </style>
 
 {{#post}}
-<main class="section video-page-body">
+<main class="section">
   <div class="container is-fluid">
     <div class="columns is-variable is-8-desktop">
 
       {{!-- ======== Main Content Column ======== --}}
       <div class="column is-8">
         
-        <div id="video-main-player-wrapper" class="video-container mb-4">
+        <div class="video-container mb-6">
             <iframe id="youtube-player" src="https://www.youtube.com/embed/{{custom_excerpt}}?rel=0&enablejsapi=1&color=white" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
 
-        <h1 class="title is-size-3-desktop is-size-4-mobile has-text-weight-bold post-title mb-3">{{title}}</h1>
-        
-        {{!-- Meta Details & Share Buttons --}}
-        <div class="level is-mobile">
-            <div class="level-left">
-                <div class="tags are-small has-addons">
-                    <span class="tag is-dark">Published</span>
-                    <span class="tag is-light"><time datetime="{{date format="YYYY-MM-DD"}}">{{date format="MMMM DD, YYYY"}}</time></span>
+        <div class="box p-5">
+            <h1 class="title is-size-2-desktop is-size-3-mobile has-text-weight-bold post-title mb-4">{{title}}</h1>
+            <hr class="my-5">
+            <div class="media is-align-items-center">
+                <figure class="media-left"><p class="image is-48x48"><img class="is-rounded" src="{{primary_author.profile_image}}" alt="{{primary_author.name}}"></p></figure>
+                <div class="media-content">
+                    <p class="title is-6">{{primary_author.name}}</p>
+                    <p class="subtitle is-7 has-text-grey">{{excerpt}} subscribers</p>
+                </div>
+                <div class="media-right">
+                    <a href="#" class="button is-dark is-rounded has-text-weight-bold">
+                        <span class="icon"><i class="fab fa-youtube"></i></span>
+                        <span class="is-hidden-mobile">Subscribe</span>
+                    </a>
                 </div>
             </div>
-            <div class="level-right">
-                <div class="share-buttons buttons has-addons">
-                    <a class="button is-small" data-social="twitter"><span class="icon"><i class="fab fa-twitter"></i></span><span>Share</span></a>
-                    <a class="button is-small" data-social="facebook"><span class="icon"><i class="fab fa-facebook-f"></i></span></a>
-                </div>
-            </div>
         </div>
-        <hr class="mt-4 mb-5">
         
-        {{!-- Channel Info & Subscribe Button --}}
-        <div class="level is-mobile mb-6">
-            <div class="level-left">
-                <a href="{{primary_author.url}}" class="media is-align-items-center">
-                    <figure class="media-left"><p class="image is-48x48"><img class="is-rounded" src="{{primary_author.profile_image}}" alt="{{primary_author.name}}"></p></figure>
-                    <div class="media-content">
-                        <p class="title is-6">{{primary_author.name}}</p>
-                        <p class="subtitle is-7 has-text-grey">{{excerpt}} subscribers</p>
-                    </div>
-                </a>
-            </div>
-            <div class="level-right">
-                <a href="#" class="button is-dark is-rounded has-text-weight-bold">Subscribe</a>
-            </div>
-        </div>
-
-        {{!-- MONETIZATION: 1. Below Player Ad --}}
-        <div class="box has-background-white-ter has-text-centered my-6">
-            <p class="has-text-grey-light p-5">AdSense Responsive Ad Unit</p>
-        </div>
-
-        {{!-- Main Description Box --}}
-        <div class="box p-6">
-            <p class="title is-5 mb-4">Description</p>
+        <div class="box p-6 mt-6">
             <div class="content is-medium gh-content">
                 {{content}}
             </div>
         </div>
 
-        {{!-- Site Subscription CTA --}}
         <div class="notification is-link is-light mt-6">
           <p class="title is-4">Enjoying the content?</p>
           <p class="subtitle is-6">Subscribe to get the latest videos and articles delivered straight to your inbox.</p>
         </div>
-        
       </div>
 
       {{!-- ======== Sidebar Column ======== --}}
       <div class="column is-4">
         <aside class="video-sidebar-sticky">
-        
-          {{!-- MONETIZATION: 2. Sidebar Top Ad --}}
-          <div class="box has-background-white-ter has-text-centered mb-6">
-            <p class="has-text-grey-light p-6">AdSense Display Ad (300x250)</p>
-          </div>
           
-          {{!-- WIDGET 1: Timestamps for Desktop --}}
+          {{!-- WIDGET 1: Timestamps with Spyscroll --}}
           <div id="timestamps-widget" class="panel is-link mb-6" style="display: none;">
             <p class="panel-heading">Timestamps</p>
-            <div id="timestamps-target" style="max-height: 40vh; overflow-y: auto;"></div>
+            <div class="video-spyscroll-container">
+                <div id="timestamps-target" style="max-height: 45vh; overflow-y: auto;"></div>
+                <div id="video-spyscroll-indicator" style="display: none;"></div>
+            </div>
           </div>
           
-          {{!-- WIDGET 2: YouTube Schedule --}}
-          <div class="box p-5 mb-6">
-              <p class="title is-5 mb-4">Upload Schedule</p>
-              <div class="content is-small">
-                  <p><strong>New Videos:</strong> Every Tuesday & Friday</p>
-                  <p><strong>Live Streams:</strong> First Sunday of the month</p>
-              </div>
-          </div>
-
-          {{!-- WIDGET 3: Related Videos (YouTube Style) --}}
-          {{#get "posts" filter="tags:hash-video+id:-{{id}}" limit="5" as |related|}}
+          {{!-- WIDGET 2: Related Videos (Card-based Layout) --}}
+          {{#get "posts" filter="tags:hash-video+id:-{{id}}" limit="3" as |related|}}
             {{#if related}}
             <div>
+              <p class="title is-5 mb-4">Up next</p>
                 {{#foreach related}}
-                  {{!-- The classic rectangular thumbnail layout --}}
-                  <a href="{{url}}" class="media mb-5">
-                    <figure class="">
-                      <p class="image">
-                        {{!-- No is-rounded class for a clean, sharp look --}}
-                        <img src="{{#if feature_image}}{{feature_image}}{{else}}https://i.ytimg.com/vi/{{custom_excerpt}}/hqdefault.jpg{{/if}}" alt="{{title}}" loading="lazy" style="border-radius: 8px;">
-                      </p>
-                    </figure>
-                    <div class="media-content">
-                      <p class="is-size-6 has-text-weight-bold" style="line-height: 1.3;">{{title}}</p>
-                      <p class="is-size-7 has-text-grey mt-1">{{primary_author.name}}</p>
+                  {{!-- Using Bulma's card component for a modern, vertical layout --}}
+                  <a href="{{url}}" class="is-block mb-5">
+                    <div class="card">
+                      <div class="card-image">
+                        <figure class="image is-16by9">
+                          <img src="{{#if feature_image}}{{feature_image}}{{else}}https://i.ytimg.com/vi/{{custom_excerpt}}/hqdefault.jpg{{/if}}" alt="{{title}}" loading="lazy">
+                        </figure>
+                      </div>
+                      <div class="card-content py-3 px-4">
+                        <div class="content">
+                          <p class="title is-6 mb-1">{{title}}</p>
+                          <p class="subtitle is-7 has-text-grey">{{primary_author.name}}</p>
+                        </div>
+                      </div>
                     </div>
                   </a>
                 {{/foreach}}
             </div>
             {{/if}}
           {{/get}}
-
-          {{!-- MONETIZATION: 3. Native Ad Placeholder --}}
-          <div class="media">
-            <figure class="media-left">
-              <p class="image is-128x72 has-background-grey-lighter" style="border-radius: 8px;"></p>
-            </figure>
-            <div class="media-content">
-              <p class="is-size-7 has-text-grey-light">Advertisement</p>
-              <p class="is-size-6 has-text-weight-bold">This is a Native Ad That Looks Like a Related Post</p>
-            </div>
-          </div>
         </aside>
       </div>
     </div>
   </div>
 </main>
 
-{{!-- Picture-in-Picture Player (Hidden by default) --}}
-<div id="video-pip-player" class="video-pip-player">
-    <button id="video-pip-close" class="delete video-pip-close"></button>
-    <div id="video-pip-target"></div>
-</div>
-
 
 {{!-- ================== JAVASCRIPT & SEO ================== --}}
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
-    let player, pipPlayer, isPipActive = false, timestampDataForSeo = [];
+    let player;
+    let timestampData = [];
+    let progressInterval;
 
     function onYouTubeIframeAPIReady() {
         if (document.getElementById('youtube-player')) {
-            player = new YT.Player('youtube-player', { events: { 'onReady': onPlayerReady } });
+            player = new YT.Player('youtube-player', { events: { 'onReady': onPlayerReady, 'onStateChange': onPlayerStateChange } });
         }
     }
 
     function onPlayerReady(event) {
         generateTimestamps();
-        setupIntersectionObserver();
     }
     
+    function onPlayerStateChange(event) {
+        if (event.data === YT.PlayerState.PLAYING) {
+            startProgressListener();
+        } else {
+            stopProgressListener();
+        }
+    }
+
+    function startProgressListener() {
+        if (progressInterval) return;
+        progressInterval = setInterval(updateTimestampUI, 250);
+    }
+
+    function stopProgressListener() {
+        clearInterval(progressInterval);
+        progressInterval = null;
+    }
+    
+    function updateTimestampUI() {
+        if (!player || typeof player.getCurrentTime !== 'function') return;
+        const currentTime = player.getCurrentTime();
+        
+        document.querySelectorAll('#timestamps-target .panel-block.is-active').forEach(el => el.classList.remove('is-active'));
+        
+        const activeClip = timestampData.find(clip => currentTime >= clip.start && currentTime < clip.end);
+        if (activeClip) {
+            activeClip.element.classList.add('is-active');
+        }
+        
+        const indicator = document.getElementById('video-spyscroll-indicator');
+        const container = document.getElementById('timestamps-target');
+        const duration = player.getDuration();
+        if (indicator && container && duration > 0) {
+            indicator.style.display = 'block';
+            const progress = (currentTime / duration);
+            const containerHeight = container.scrollHeight - container.clientHeight;
+            const indicatorPosition = progress * containerHeight + 10;
+            indicator.style.transform = `translateY(${indicatorPosition}px)`;
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         const sidebar = document.querySelector('.video-sidebar-sticky');
-        if (sidebar && window.innerWidth >= 1024) sidebar.classList.add('is-sticky');
+        if (sidebar && window.innerWidth >= 1024) {
+            sidebar.classList.add('is-sticky');
+        }
 
         const generateTimestamps = () => {
             const sourceTable = document.querySelector('.gh-content table');
-            const target = document.getElementById('timestamps-target');
             const widget = document.getElementById('timestamps-widget');
-            if (!sourceTable || !target || !widget) return;
+            const target = document.getElementById('timestamps-target');
+            if (!sourceTable || !widget || !target) return;
 
-            const rows = sourceTable.querySelectorAll('tbody tr');
+            const rows = Array.from(sourceTable.querySelectorAll('tbody tr'));
             if (rows.length === 0) return;
             
-            rows.forEach(row => {
+            const duration = player.getDuration();
+
+            rows.forEach((row, index) => {
                 const cells = row.querySelectorAll('td, th');
                 if (cells.length < 2) return;
                 
-                const timeStr = cells[0].textContent.trim().split(' ')[0];
-                const parts = timeStr.split(':').map(part => parseInt(part, 10));
-                let seconds = parts.length > 1 ? parts.reduce((acc, val) => acc * 60 + val, 0) : parts[0] || 0;
+                const parseTime = (timeStr) => {
+                    const parts = timeStr.split(':').map(part => parseInt(part, 10));
+                    return parts.length > 1 ? parts.reduce((acc, val) => acc * 60 + val, 0) : parts[0] || 0;
+                };
+
+                const start = parseTime(cells[0].textContent.trim().split(' ')[0]);
+                let end = (index < rows.length - 1) ? parseTime(rows[index + 1].querySelectorAll('td, th')[0].textContent.trim().split(' ')[0]) : (duration > 0 ? duration : start + 9999);
                 
                 const link = document.createElement('a');
                 link.className = 'panel-block is-clickable';
-                link.addEventListener('click', e => { e.preventDefault(); player?.seekTo(seconds, true); player?.playVideo(); });
+                link.href = `#t=${start}`;
+                link.innerHTML = `<span class="panel-icon"><i class="fas fa-play-circle"></i></span><span class="is-flex-grow-1">${cells[1].textContent.trim()}</span>`;
+                link.addEventListener('click', (e) => { e.preventDefault(); player.seekTo(start, true); player.playVideo(); });
                 
-                link.innerHTML = `<span class="panel-icon"><i class="fas fa-play"></i></span><span class="is-flex-grow-1">${cells[1].textContent.trim()}</span>`;
                 target.appendChild(link);
-                timestampDataForSeo.push({"@type": "Clip", "name": cells[1].textContent.trim(), "startOffset": seconds, "url": `${window.location.href.split('#')[0]}#t=${seconds}`});
+                timestampData.push({ start, end, element: link });
             });
+            
             widget.style.display = 'block';
             injectSeoData();
         };
 
-        const setupIntersectionObserver = () => {
-            const mainPlayerWrapper = document.getElementById('video-main-player-wrapper');
-            const pipWrapper = document.getElementById('video-pip-player');
-            const pipTarget = document.getElementById('video-pip-target');
-            const pipCloseBtn = document.getElementById('video-pip-close');
-            if (!mainPlayerWrapper || !pipWrapper) return;
-
-            pipCloseBtn.addEventListener('click', () => { hidePipPlayer(); player?.pauseVideo(); });
-
-            const showPipPlayer = () => {
-                if (isPipActive || !player || player.getPlayerState() !== YT.PlayerState.PLAYING) return;
-                isPipActive = true;
-                const iframe = document.getElementById('youtube-player');
-                pipTarget.appendChild(iframe);
-                pipWrapper.classList.add('is-active');
-            };
-
-            const hidePipPlayer = () => {
-                if (!isPipActive) return;
-                isPipActive = false;
-                const iframe = document.getElementById('youtube-player');
-                mainPlayerWrapper.appendChild(iframe);
-                pipWrapper.classList.remove('is-active');
-            };
-            
-            const observer = new IntersectionObserver(([entry]) => { entry.isIntersecting ? hidePipPlayer() : showPipPlayer(); }, { threshold: 0.5 });
-            observer.observe(mainPlayerWrapper);
-        };
-        
         const injectSeoData = () => {
             const schemaScript = document.getElementById('video-schema');
             if (!schemaScript) return;
             let schema = JSON.parse(schemaScript.textContent);
-            if (timestampDataForSeo.length > 0) schema.hasPart = timestampDataForSeo;
+            if (timestampData.length > 0) {
+                schema.hasPart = timestampData.map(clip => ({
+                    "@type": "Clip",
+                    "name": clip.element.querySelector('.is-flex-grow-1').textContent,
+                    "startOffset": clip.start, "endOffset": clip.end,
+                    "url": `${window.location.href.split('#')[0]}#t=${clip.start}`
+                }));
+            }
             schemaScript.textContent = JSON.stringify(schema, null, 2);
         };
-        
-        generateTimestamps();
     });
 </script>
 
