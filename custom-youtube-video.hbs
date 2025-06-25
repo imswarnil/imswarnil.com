@@ -7,11 +7,8 @@
     This minimal, namespaced CSS block enables the ADVANCED spyscroll and active state features.
     It does not style components, colors, or fonts, adhering to the "Pure Bulma" philosophy.
     */
-
     /* The container for our dynamic progress bar */
-    .video-spyscroll-container {
-        position: relative;
-    }
+    .video-spyscroll-container { position: relative; }
     /* The vertical line for the progress track */
     .video-spyscroll-container::before {
         content: '';
@@ -20,7 +17,6 @@
         left: 20px; /* Aligns with the panel icon's center */
         width: 2px;
         background-color: #dbdbdb; /* Bulma's default border color */
-        z-index: 1;
     }
     /* The moving dot that indicates progress */
     #video-spyscroll-indicator {
@@ -30,18 +26,10 @@
         border-radius: 50%;
         background-color: hsl(217, 71%, 53%); /* Bulma's primary color */
         border: 2px solid white;
-        z-index: 2;
         transition: transform 0.1s linear; /* Smooths the movement */
-        transform: translateY(10px); /* Initial position */
+        transform: translateY(10px);
     }
-    
-    /* Highlight the active timestamp block using Bulma's colors */
-    .panel-block.is-active {
-        background-color: hsl(204, 86%, 96%); /* Bulma's 'is-link-light' color */
-        border-left-color: hsl(217, 71%, 53%); /* Bulma's 'is-link' color */
-    }
-
-    /* JavaScript-controlled behavior */
+    .panel-block.is-active { background-color: hsl(204, 86%, 96%); }
     .gh-content table { display: none; }
     .video-sidebar-sticky { position: static; }
     .is-sticky { position: sticky; top: 2rem; }
@@ -54,11 +42,7 @@
 
       {{!-- ======== Main Content Column ======== --}}
       <div class="column is-8">
-        
-        <div class="video-container mb-6">
-            <iframe id="youtube-player" src="https://www.youtube.com/embed/{{custom_excerpt}}?rel=0&enablejsapi=1&color=white" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        </div>
-
+        <div class="video-container mb-6"><iframe id="youtube-player" src="https://www.youtube.com/embed/{{custom_excerpt}}?rel=0&enablejsapi=1&color=white" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
         <div class="box p-5">
             <h1 class="title is-size-2-desktop is-size-3-mobile has-text-weight-bold post-title mb-4">{{title}}</h1>
             <hr class="my-5">
@@ -69,23 +53,12 @@
                     <p class="subtitle is-7 has-text-grey">{{excerpt}} subscribers</p>
                 </div>
                 <div class="media-right">
-                    <a href="#" class="button is-dark is-rounded has-text-weight-bold">
-                        <span class="icon"><i class="fab fa-youtube"></i></span>
-                        <span class="is-hidden-mobile">Subscribe</span>
-                    </a>
+                    <a href="#" class="button is-dark is-rounded has-text-weight-bold"><span class="icon"><i class="fab fa-youtube"></i></span><span class="is-hidden-mobile">Subscribe</span></a>
                 </div>
             </div>
         </div>
-        
         <div class="box p-6 mt-6">
-            <div class="content is-medium gh-content">
-                {{content}}
-            </div>
-        </div>
-
-        <div class="notification is-link is-light mt-6">
-          <p class="title is-4">Enjoying the content?</p>
-          <p class="subtitle is-6">Subscribe to get the latest videos and articles delivered straight to your inbox.</p>
+            <div class="content is-medium gh-content">{{content}}</div>
         </div>
       </div>
 
@@ -105,22 +78,17 @@
           {{!-- WIDGET 2: Related Videos (Card-based Layout) --}}
           {{#get "posts" filter="tags:hash-video+id:-{{id}}" limit="3" as |related|}}
             {{#if related}}
-            <div>
+            <div class="mb-6">
               <p class="title is-5 mb-4">Up next</p>
                 {{#foreach related}}
-                  {{!-- Using Bulma's card component for a modern, vertical layout --}}
                   <a href="{{url}}" class="is-block mb-5">
                     <div class="card">
                       <div class="card-image">
-                        <figure class="image is-16by9">
-                          <img src="{{#if feature_image}}{{feature_image}}{{else}}https://i.ytimg.com/vi/{{custom_excerpt}}/hqdefault.jpg{{/if}}" alt="{{title}}" loading="lazy">
-                        </figure>
+                        <figure class="image is-16by9"><img src="{{#if feature_image}}{{feature_image}}{{else}}https://i.ytimg.com/vi/{{custom_excerpt}}/hqdefault.jpg{{/if}}" alt="{{title}}" loading="lazy"></figure>
                       </div>
                       <div class="card-content py-3 px-4">
-                        <div class="content">
-                          <p class="title is-6 mb-1">{{title}}</p>
-                          <p class="subtitle is-7 has-text-grey">{{primary_author.name}}</p>
-                        </div>
+                        <p class="title is-6 mb-1">{{title}}</p>
+                        <p class="subtitle is-7 has-text-grey">{{primary_author.name}}</p>
                       </div>
                     </div>
                   </a>
@@ -128,6 +96,40 @@
             </div>
             {{/if}}
           {{/get}}
+
+          {{!-- WIDGET 3: Latest Posts --}}
+          {{#get "posts" limit="4" filter="id:-{{id}}" as |latest|}}
+            {{#if latest}}
+            <div class="box p-5 mb-6">
+              <p class="title is-5 mb-4">Latest Posts</p>
+              <ul>
+                {{#foreach latest}}
+                  <li class="mb-3"><a href="{{url}}" class="is-size-6 has-text-weight-semibold">{{title}}</a></li>
+                {{/foreach}}
+              </ul>
+            </div>
+            {{/if}}
+          {{/get}}
+
+          {{!-- WIDGET 4: Popular Topics --}}
+          {{#get "tags" limit="12" include="count.posts" order="count.posts desc"}}
+            {{#if tags}}
+            <div class="box p-5 mb-6">
+              <p class="title is-5 mb-4">Popular Topics</p>
+              <div class="tags">
+                {{#foreach tags}}<a class="tag" href="{{url}}">{{name}}</a>{{/foreach}}
+              </div>
+            </div>
+            {{/if}}
+          {{/get}}
+
+          {{!-- WIDGET 5: Newsletter Subscription --}}
+          <div class="notification is-link">
+            <p class="title is-5">Join the Newsletter</p>
+            <p class="mb-4">Get the latest content delivered to your inbox.</p>
+            <div class="field"><div class="control"><input class="input" type="email" placeholder="your-email@example.com"></div></div>
+            <div class="field"><div class="control"><button class="button is-white is-fullwidth">Subscribe</button></div></div>
+          </div>
         </aside>
       </div>
     </div>
@@ -148,6 +150,7 @@
         }
     }
 
+    // THIS IS THE KEY FIX: We only generate timestamps once the player is confirmed to be ready.
     function onPlayerReady(event) {
         generateTimestamps();
     }
@@ -187,8 +190,8 @@
         if (indicator && container && duration > 0) {
             indicator.style.display = 'block';
             const progress = (currentTime / duration);
-            const containerHeight = container.scrollHeight - container.clientHeight;
-            const indicatorPosition = progress * containerHeight + 10;
+            const scrollableHeight = container.scrollHeight - container.clientHeight;
+            const indicatorPosition = progress * scrollableHeight + 10;
             indicator.style.transform = `translateY(${indicatorPosition}px)`;
         }
     }
@@ -198,59 +201,59 @@
         if (sidebar && window.innerWidth >= 1024) {
             sidebar.classList.add('is-sticky');
         }
-
-        const generateTimestamps = () => {
-            const sourceTable = document.querySelector('.gh-content table');
-            const widget = document.getElementById('timestamps-widget');
-            const target = document.getElementById('timestamps-target');
-            if (!sourceTable || !widget || !target) return;
-
-            const rows = Array.from(sourceTable.querySelectorAll('tbody tr'));
-            if (rows.length === 0) return;
-            
-            const duration = player.getDuration();
-
-            rows.forEach((row, index) => {
-                const cells = row.querySelectorAll('td, th');
-                if (cells.length < 2) return;
-                
-                const parseTime = (timeStr) => {
-                    const parts = timeStr.split(':').map(part => parseInt(part, 10));
-                    return parts.length > 1 ? parts.reduce((acc, val) => acc * 60 + val, 0) : parts[0] || 0;
-                };
-
-                const start = parseTime(cells[0].textContent.trim().split(' ')[0]);
-                let end = (index < rows.length - 1) ? parseTime(rows[index + 1].querySelectorAll('td, th')[0].textContent.trim().split(' ')[0]) : (duration > 0 ? duration : start + 9999);
-                
-                const link = document.createElement('a');
-                link.className = 'panel-block is-clickable';
-                link.href = `#t=${start}`;
-                link.innerHTML = `<span class="panel-icon"><i class="fas fa-play-circle"></i></span><span class="is-flex-grow-1">${cells[1].textContent.trim()}</span>`;
-                link.addEventListener('click', (e) => { e.preventDefault(); player.seekTo(start, true); player.playVideo(); });
-                
-                target.appendChild(link);
-                timestampData.push({ start, end, element: link });
-            });
-            
-            widget.style.display = 'block';
-            injectSeoData();
-        };
-
-        const injectSeoData = () => {
-            const schemaScript = document.getElementById('video-schema');
-            if (!schemaScript) return;
-            let schema = JSON.parse(schemaScript.textContent);
-            if (timestampData.length > 0) {
-                schema.hasPart = timestampData.map(clip => ({
-                    "@type": "Clip",
-                    "name": clip.element.querySelector('.is-flex-grow-1').textContent,
-                    "startOffset": clip.start, "endOffset": clip.end,
-                    "url": `${window.location.href.split('#')[0]}#t=${clip.start}`
-                }));
-            }
-            schemaScript.textContent = JSON.stringify(schema, null, 2);
-        };
     });
+
+    const generateTimestamps = () => {
+        const sourceTable = document.querySelector('.gh-content table');
+        const widget = document.getElementById('timestamps-widget');
+        const target = document.getElementById('timestamps-target');
+        if (!sourceTable || !widget || !target) return;
+
+        const rows = Array.from(sourceTable.querySelectorAll('tbody tr'));
+        if (rows.length === 0) return;
+        
+        const duration = player.getDuration();
+
+        rows.forEach((row, index) => {
+            const cells = row.querySelectorAll('td, th');
+            if (cells.length < 2) return;
+            
+            const parseTime = (timeStr) => {
+                const parts = timeStr.split(':').map(part => parseInt(part, 10));
+                return parts.length > 1 ? parts.reduce((acc, val) => acc * 60 + val, 0) : (parts[0] || 0);
+            };
+
+            const start = parseTime(cells[0].textContent.trim().split(' ')[0]);
+            let end = (index < rows.length - 1) ? parseTime(rows[index + 1].querySelectorAll('td, th')[0].textContent.trim().split(' ')[0]) : (duration > 0 ? duration : start + 9999);
+            
+            const link = document.createElement('a');
+            link.className = 'panel-block is-clickable';
+            link.href = `#t=${start}`;
+            link.innerHTML = `<span class="panel-icon"><i class="fas fa-play-circle"></i></span><span class="is-flex-grow-1">${cells[1].textContent.trim()}</span>`;
+            link.addEventListener('click', (e) => { e.preventDefault(); player.seekTo(start, true); player.playVideo(); });
+            
+            target.appendChild(link);
+            timestampData.push({ start, end, element: link });
+        });
+        
+        widget.style.display = 'block';
+        injectSeoData();
+    };
+
+    const injectSeoData = () => {
+        const schemaScript = document.getElementById('video-schema');
+        if (!schemaScript) return;
+        let schema = JSON.parse(schemaScript.textContent);
+        if (timestampData.length > 0) {
+            schema.hasPart = timestampData.map(clip => ({
+                "@type": "Clip",
+                "name": clip.element.querySelector('.is-flex-grow-1').textContent,
+                "startOffset": clip.start, "endOffset": clip.end,
+                "url": `${window.location.href.split('#')[0]}#t=${clip.start}`
+            }));
+        }
+        schemaScript.textContent = JSON.stringify(schema, null, 2);
+    };
 </script>
 
 {{!-- SEO: The single, definitive VideoObject Schema --}}
