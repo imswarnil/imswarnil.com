@@ -1,53 +1,32 @@
 {{!< default}}
 
-{{!-- This template assumes your default.hbs provides Bulma CSS, Font Awesome, and FitVids.js. --}}
+{{!-- This template assumes your default.hbs provides Bulma CSS and your FitVids.js script. --}}
 
 <style>
-    /*
-    This minimal CSS block enables the ADVANCED spyscroll and active state features.
-    It does not style components, colors, or fonts, adhering to the "Pure Bulma" philosophy.
+    /* 
+    This minimal, namespaced CSS block adds premium visual refinements.
+    It does not create new components, only enhances them.
     */
 
-    /* The container for our dynamic progress bar */
-    .spyscroll-container {
-        position: relative;
+    /* Adds a professional shadow and rounded corners to the video player */
+    .video-player-wrapper {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 1rem 3rem -1rem rgba(0, 0, 0, 0.2);
+        background-color: #000; /* Black background for the player */
     }
 
-    /* The vertical line for the progress track */
-    .spyscroll-container::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 20px; /* Aligns with the panel icon */
-        bottom: 0;
-        width: 2px;
-        background-color: #dbdbdb; /* Bulma's default border color */
-        z-index: 1;
-    }
-
-    /* The moving dot that indicates progress */
-    #spyscroll-indicator {
-        position: absolute;
-        left: 15px; /* Centered on the line */
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        background-color: hsl(217, 71%, 53%); /* Bulma's primary color */
-        border: 2px solid white;
-        z-index: 2;
-        transition: transform 0.1s linear; /* Smooths the movement */
+    /* Provides the sticky behavior for the sidebar on desktop */
+    .video-sidebar-sticky {
+        position: -webkit-sticky; /* For Safari */
+        position: sticky;
+        top: 2rem;
     }
     
-    /* Highlight the active timestamp block */
-    .panel-block.is-active {
-        background-color: hsl(204, 86%, 96%); /* Bulma's 'is-link-light' color */
-        border-left-color: hsl(217, 71%, 53%); /* Bulma's 'is-link' color */
+    /* Adds a subtle hover effect to the clickable timestamp links */
+    .video-timestamp-link:hover {
+        background-color: hsl(0, 0%, 98%); /* Bulma's 'is-white-ter' color */
     }
-
-    /* JavaScript-controlled behavior */
-    .gh-content table { display: none; } /* Always hide the source table */
-    .post-sidebar-sticky { position: static; }
-    .is-sticky { position: sticky; top: 2rem; }
 </style>
 
 {{#post}}
@@ -58,23 +37,34 @@
       {{!-- ======== Main Content Column ======== --}}
       <div class="column is-8">
         
-        {{!-- The YouTube Video Player - Ready for FitVids.js --}}
-        <div class="video-container mb-6">
-            <iframe id="youtube-player" src="https://www.youtube.com/embed/{{custom_excerpt}}?rel=0&enablejsapi=1&color=white" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        {{!-- The YouTube Video Player - Wrapped for styling and FitVids.js compatibility --}}
+        <div class="video-player-wrapper mb-6">
+            <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/{{custom_excerpt}}?rel=0&color=white" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
         </div>
 
-        {{!-- Title & Meta Box --}}
+        {{!-- Title, Meta, and Channel Info Block --}}
         <div class="box p-5">
+            {{#if tags}}
+                <div class="tags mb-4">
+                    {{#foreach tags limit="3"}}<a class="tag is-primary is-light" href="{{url}}">{{name}}</a>{{/foreach}}
+                </div>
+            {{/if}}
             <h1 class="title is-size-2-desktop is-size-3-mobile has-text-weight-bold post-title mb-4">{{title}}</h1>
             <hr class="my-5">
-            {{!-- Channel & Subscribe --}}
-            <div class="media is-align-items-center">
-                <figure class="media-left"><p class="image is-48x48"><img class="is-rounded" src="{{primary_author.profile_image}}" alt="{{primary_author.name}}"></p></figure>
-                <div class="media-content">
-                    <p class="title is-6">{{primary_author.name}}</p>
-                    <p class="subtitle is-7 has-text-grey">{{excerpt}} subscribers</p>
+            {{!-- Channel & Subscribe Widget --}}
+            <div class="level is-mobile">
+                <div class="level-left">
+                    <a href="{{primary_author.url}}" class="media is-align-items-center">
+                        <figure class="media-left"><p class="image is-48x48"><img class="is-rounded" src="{{primary_author.profile_image}}" alt="{{primary_author.name}}"></p></figure>
+                        <div class="media-content">
+                            <p class="title is-6">{{primary_author.name}}</p>
+                            <p class="subtitle is-7 has-text-grey">{{excerpt}} subscribers</p>
+                        </div>
+                    </a>
                 </div>
-                <div class="media-right">
+                <div class="level-right">
                     <a href="#" class="button is-danger is-rounded has-text-weight-bold">
                         <span class="icon"><i class="fab fa-youtube"></i></span>
                         <span class="is-hidden-mobile">Subscribe</span>
@@ -85,34 +75,54 @@
         
         {{!-- Main Description Box --}}
         <div class="box p-6 mt-6">
+            <p class="title is-5 mb-4">Description</p>
             <div class="content is-medium gh-content">
                 {{content}}
             </div>
-        </div>
-
-        {{!-- Site Subscription CTA --}}
-        <div class="notification is-link is-light mt-6">
-          <p class="title is-4">Enjoying the content?</p>
-          <p class="subtitle is-6">Subscribe to get the latest videos and articles delivered straight to your inbox.</p>
         </div>
         
       </div>
 
       {{!-- ======== Sidebar Column ======== --}}
       <div class="column is-4">
-        <aside class="post-sidebar-sticky">
-          
-          {{!-- WIDGET 1: Timestamps with Spyscroll --}}
-          <div id="timestamps-widget" class="panel is-link mb-6" style="display: none;">
+        <aside class="video-sidebar-sticky">
+        
+          {{!-- ====================================================================== --}}
+          {{!-- WIDGET 1: Manual Timestamps - EDIT THIS SECTION DIRECTLY --}}
+          {{!-- ====================================================================== --}}
+          {{!-- Since there is no JS, you must add your timestamps here manually. --}}
+          {{!-- Just copy a `<a>` block for each new timestamp. --}}
+          <div class="panel is-link mb-6">
             <p class="panel-heading">Timestamps</p>
-            <div class="spyscroll-container">
-                <div id="timestamps-target" style="max-height: 45vh; overflow-y: auto;">
-                    {{!-- JS will inject clickable panel blocks here --}}
-                </div>
-                <div id="spyscroll-indicator" style="display: none;"></div>
+            <div style="max-height: 45vh; overflow-y: auto;">
+              <a href="https://www.youtube.com/watch?v={{custom_excerpt}}&t=0s" target="_blank" class="panel-block video-timestamp-link">
+                  <span class="panel-icon"><i class="far fa-play-circle"></i></span>
+                  <span class="is-flex-grow-1">Introduction</span>
+                  <span class="has-text-grey is-size-7">0:00</span>
+              </a>
+              <a href="https://www.youtube.com/watch?v={{custom_excerpt}}&t=30s" target="_blank" class="panel-block video-timestamp-link">
+                  <span class="panel-icon"><i class="far fa-play-circle"></i></span>
+                  <span class="is-flex-grow-1">Core Concept</span>
+                  <span class="is-size-7 has-text-grey">0:30</span>
+              </a>
+              <a href="https://www.youtube.com/watch?v={{custom_excerpt}}&t=125s" target="_blank" class="panel-block video-timestamp-link">
+                  <span class="panel-icon"><i class="far fa-play-circle"></i></span>
+                  <span class="is-flex-grow-1">First Example</span>
+                  <span class="is-size-7 has-text-grey">2:05</span>
+              </a>
+              <a href="https://www.youtube.com/watch?v={{custom_excerpt}}&t=300s" target="_blank" class="panel-block video-timestamp-link">
+                  <span class="panel-icon"><i class="far fa-play-circle"></i></span>
+                  <span class="is-flex-grow-1">Advanced Technique</span>
+                  <span class="is-size-7 has-text-grey">5:00</span>
+              </a>
+              <a href="https://www.youtube.com/watch?v={{custom_excerpt}}&t=540s" target="_blank" class="panel-block video-timestamp-link">
+                  <span class="panel-icon"><i class="far fa-play-circle"></i></span>
+                  <span class="is-flex-grow-1">Conclusion</span>
+                  <span class="is-size-7 has-text-grey">9:00</span>
+              </a>
             </div>
           </div>
-          
+
           {{!-- WIDGET 2: Related Videos --}}
           {{#get "posts" filter="tags:hash-video+id:-{{id}}" limit="3" as |related|}}
             {{#if related}}
@@ -127,172 +137,10 @@
             </div>
             {{/if}}
           {{/get}}
+
         </aside>
       </div>
     </div>
   </div>
 </main>
-
-
-{{!-- ================== JAVASCRIPT & SEO ================== --}}
-<script src="https://www.youtube.com/iframe_api"></script>
-<script>
-    let player;
-    let timestampData = [];
-    let progressInterval;
-
-    function onYouTubeIframeAPIReady() {
-        if (document.getElementById('youtube-player')) {
-            player = new YT.Player('youtube-player', { events: { 'onReady': onPlayerReady, 'onStateChange': onPlayerStateChange } });
-        }
-    }
-
-    function onPlayerReady(event) {
-        // Prepare timestamps as soon as the player is ready
-        generateTimestamps();
-    }
-    
-    function onPlayerStateChange(event) {
-        if (event.data === YT.PlayerState.PLAYING) {
-            startProgressListener();
-        } else {
-            stopProgressListener();
-        }
-    }
-
-    function startProgressListener() {
-        if (progressInterval) return; // Already running
-        progressInterval = setInterval(updateTimestampUI, 250);
-    }
-
-    function stopProgressListener() {
-        clearInterval(progressInterval);
-        progressInterval = null;
-    }
-    
-    function updateTimestampUI() {
-        if (!player || typeof player.getCurrentTime !== 'function') return;
-        const currentTime = player.getCurrentTime();
-        let activeFound = false;
-
-        timestampData.forEach(clip => {
-            const isActive = currentTime >= clip.start && currentTime < clip.end;
-            if (isActive) {
-                if (!clip.element.classList.contains('is-active')) {
-                    document.querySelectorAll('#timestamps-target .panel-block.is-active').forEach(el => el.classList.remove('is-active'));
-                    clip.element.classList.add('is-active');
-                }
-                activeFound = true;
-            }
-        });
-        if (!activeFound) {
-             document.querySelectorAll('#timestamps-target .panel-block.is-active').forEach(el => el.classList.remove('is-active'));
-        }
-        
-        // Update Spyscroll
-        const indicator = document.getElementById('spyscroll-indicator');
-        const container = document.getElementById('timestamps-target');
-        const duration = player.getDuration();
-        if (indicator && container && duration > 0) {
-            indicator.style.display = 'block';
-            const progress = (currentTime / duration);
-            const containerHeight = container.scrollHeight;
-            indicator.style.transform = `translateY(${progress * containerHeight}px)`;
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const sidebar = document.querySelector('.post-sidebar-sticky');
-        if (sidebar && window.innerWidth >= 1024) {
-            sidebar.classList.add('is-sticky');
-        }
-
-        const generateTimestamps = () => {
-            const sourceTable = document.querySelector('.gh-content table');
-            const widget = document.getElementById('timestamps-widget');
-            const target = document.getElementById('timestamps-target');
-            if (!sourceTable || !widget || !target) return;
-
-            const rows = Array.from(sourceTable.querySelectorAll('tbody tr'));
-            if (rows.length === 0) return;
-            
-            const duration = player.getDuration();
-
-            rows.forEach((row, index) => {
-                const cells = row.querySelectorAll('td, th');
-                if (cells.length < 2) return;
-                
-                const parseTime = (timeStr) => {
-                    const parts = timeStr.split(':').map(part => parseInt(part, 10));
-                    let seconds = 0;
-                    if (parts.length === 3) seconds = parts[0] * 3600 + parts[1] * 60 + parts[2];
-                    else if (parts.length === 2) seconds = parts[0] * 60 + parts[1];
-                    return seconds;
-                };
-
-                const start = parseTime(cells[0].textContent.trim().split(' ')[0]);
-                let end;
-                if (index < rows.length - 1) {
-                    const nextRowCells = rows[index + 1].querySelectorAll('td, th');
-                    end = parseTime(nextRowCells[0].textContent.trim().split(' ')[0]);
-                } else {
-                    end = duration > 0 ? duration : start + 9999;
-                }
-                
-                const link = document.createElement('a');
-                link.className = 'panel-block timestamp-link';
-                link.href = `#t=${start}`;
-                
-                link.innerHTML = `
-                    <span class="panel-icon"><i class="far fa-circle"></i></span>
-                    <span class="is-flex-grow-1">${cells[1].textContent.trim()}</span>
-                    <span class="has-text-grey is-size-7">${cells[0].textContent.trim()}</span>`;
-                
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    player.seekTo(start, true);
-                    player.playVideo();
-                });
-                
-                target.appendChild(link);
-                timestampData.push({ start, end, element: link });
-            });
-            
-            widget.style.display = 'block';
-            injectSeoData();
-        };
-
-        const injectSeoData = () => {
-            const schemaScript = document.getElementById('video-schema');
-            if (!schemaScript) return;
-            let schema = JSON.parse(schemaScript.textContent);
-            if (timestampData.length > 0) {
-                schema.hasPart = timestampData.map(clip => ({
-                    "@type": "Clip",
-                    "name": clip.element.querySelector('.is-flex-grow-1').textContent,
-                    "startOffset": clip.start,
-                    "endOffset": clip.end,
-                    "url": window.location.href + `#t=${clip.start}`
-                }));
-            }
-            schemaScript.textContent = JSON.stringify(schema, null, 2);
-        };
-    });
-</script>
-
-{{!-- SEO: The single, definitive VideoObject Schema --}}
-<script id="video-schema" type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "VideoObject",
-  "name": "{{title}}",
-  "description": "{{excerpt words="50"}}",
-  "uploadDate": "{{date format="YYYY-MM-DDTHH:mm:ss.SSSZ"}}",
-  "embedUrl": "https://www.youtube.com/embed/{{custom_excerpt}}",
-  "thumbnailUrl": [
-    {{#if feature_image}}"{{feature_image}}"{{else}}"https://i.ytimg.com/vi/{{custom_excerpt}}/maxresdefault.jpg"{{/if}}
-  ],
-  "author": { "@type": "Person", "name": "{{primary_author.name}}" }
-}
-</script>
 {{/post}}
