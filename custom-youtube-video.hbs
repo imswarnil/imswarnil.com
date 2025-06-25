@@ -1,42 +1,27 @@
 {{!< default}}
 
-{{!-- This template assumes your default.hbs provides Bulma CSS and your FitVids.js script. --}}
-
-<style>
-    /*
-    This minimal CSS block controls RESPONSIVE BEHAVIOR only.
-    It does not style fonts, colors, or components, adhering to the "Pure Bulma" philosophy.
-    */
-    /* Mobile-first timestamp accordion behavior */
-    #timestamps-accordion { display: none; }
-    #timestamps-accordion .panel-content { display: none; border-top: 1px solid #dbdbdb; }
-    #timestamps-accordion.is-active .panel-content { display: block; }
-    #timestamps-accordion.is-active .panel-heading .icon.is-angle { transform: rotate(180deg); }
-
-    /* Show/hide widgets based on screen size */
-    @media screen and (max-width: 1023px) {
-        #timestamps-accordion { display: block; }
-        #timestamps-sidebar { display: none !important; }
-    }
-    /* JavaScript-controlled behavior */
-    .post-sidebar-sticky { position: static; }
-    .is-sticky { position: sticky; top: 2rem; }
-    .gh-content table { display: none; } /* Always hide the source table */
-</style>
+{{!-- This template assumes your default.hbs provides:
+    - Bulma CSS.
+    - Font Awesome CSS.
+    - Your FitVids.js script.
+    - Standard <head> and <body> tags.
+--}}
 
 {{#post}}
+<body class="has-background-whitesmoke"> {{!-- Using a standard Bulma background color class --}}
 
 <main class="section">
-  <div class="container">
+  {{!-- Using a fluid container for a wide, immersive layout --}}
+  <div class="container is-fluid">
     {{!-- MONETIZATION: 1. Top Leaderboard Ad --}}
-    <div class="box has-background-grey-lighter has-text-centered mb-5 is-hidden-mobile">
-        <p class="has-text-grey-light p-4">AdSense Leaderboard (728x90)</p>
+    <div class="box has-background-white-ter has-text-centered mb-6 is-hidden-mobile">
+        <p class="has-text-grey p-4">AdSense Leaderboard (728x90)</p>
     </div>
 
-    <div class="columns is-variable is-8-desktop">
+    <div class="columns is-variable is-6-desktop">
 
-      {{!-- ======== Main Content Column ======== --}}
-      <div class="column is-8">
+      {{!-- ======== Main Content Column (Expansive 9-column width) ======== --}}
+      <div class="column is-9">
         
         {{!-- The YouTube Video Player - Wrapped in a simple div for FitVids.js --}}
         <div class="video-container mb-6">
@@ -47,12 +32,11 @@
         <div class="box p-5">
             {{#if tags}}
                 <div class="tags mb-4">
-                    {{#foreach tags limit="3"}}<a class="tag is-primary is-light" href="{{url}}">{{name}}</a>{{/foreach}}
+                    {{#foreach tags limit="3"}}<a class="tag is-link is-light" href="{{url}}">{{name}}</a>{{/foreach}}
                 </div>
             {{/if}}
             <h1 class="title is-size-2-desktop is-size-3-mobile has-text-weight-bold post-title mb-4">{{title}}</h1>
             <hr class="my-5">
-            {{!-- Channel & Subscribe Widget --}}
             <div class="level is-mobile">
                 <div class="level-left">
                     <a href="{{primary_author.url}}" class="media is-align-items-center">
@@ -73,17 +57,8 @@
         </div>
         
         {{!-- MONETIZATION: 2. Below Player Ad --}}
-        <div class="box has-background-grey-lighter has-text-centered my-6">
-            <p class="has-text-grey-light p-5">AdSense Responsive Ad Unit</p>
-        </div>
-
-        {{!-- WIDGET: Mobile Timestamp Accordion (hidden on desktop) --}}
-        <div id="timestamps-accordion" class="panel is-link my-6">
-            <p class="panel-heading is-clickable">
-                <span class="icon-text"><span class="icon"><i class="fas fa-list-ol"></i></span><span>Video Timestamps</span></span>
-                <span class="icon is-angle"><i class="fas fa-angle-down"></i></span>
-            </p>
-            <div class="panel-content" id="timestamps-target-mobile"></div>
+        <div class="box has-background-white-ter has-text-centered my-6">
+            <p class="has-text-grey p-5">AdSense Responsive Ad Unit</p>
         </div>
 
         {{!-- Main Description Box --}}
@@ -96,43 +71,34 @@
         {{!-- Site Subscription CTA Widget --}}
         <div class="notification is-link is-light mt-6">
           <p class="title is-4">Enjoying the content?</p>
-          <p class="subtitle is-6">Subscribe to get the latest videos and articles delivered straight to your inbox.</p>
-          <div class="field has-addons">
-            <div class="control is-expanded">
-              <input class="input" type="email" placeholder="your-email@example.com">
-            </div>
-            <div class="control">
-              <a class="button is-link">Subscribe</a>
-            </div>
-          </div>
+          <p class="subtitle is-6">Subscribe to my site to get the latest videos and articles delivered straight to your inbox.</p>
         </div>
         
       </div>
 
       {{!-- ======== Sidebar Column ======== --}}
-      <div class="column is-4">
+      <div class="column is-3">
         <aside class="post-sidebar-sticky">
         
           {{!-- MONETIZATION: 3. Sidebar Top Ad --}}
-          <div class="box has-background-grey-lighter has-text-centered mb-5">
-            <p class="has-text-grey-light p-6">AdSense Display Ad (300x250)</p>
+          <div class="box has-background-white-ter has-text-centered mb-6">
+            <p class="has-text-grey p-6">AdSense Display Ad (300x250)</p>
           </div>
           
-          {{!-- WIDGET 1: Timestamps for Desktop --}}
-          <div id="timestamps-sidebar" class="panel is-link mb-6">
-            <p class="panel-heading">Timestamps</p>
-            <div id="timestamps-target-desktop" style="max-height: 40vh; overflow-y: auto;"></div>
+          {{!-- WIDGET 1: Timestamps for Desktop (Rendered as a beautiful table) --}}
+          <div id="timestamps-widget" class="box p-4 mb-6" style="display: none;"> {{!-- JS controls visibility --}}
+            <p class="title is-5 mb-4">Timestamps</p>
+            <div id="timestamps-target" class="table-container">
+              {{!-- JS will inject a styled Bulma table here --}}
+            </div>
           </div>
           
           {{!-- WIDGET 2: YouTube Schedule --}}
           <div class="box p-5 mb-6">
-              <p class="title is-5 mb-4">Upload Schedule</p>
+              <p class="title is-5 mb-4">My Upload Schedule</p>
               <div class="content is-small">
-                  <ul>
-                      <li><strong>New Videos:</strong> Every Tuesday & Friday</li>
-                      <li><strong>Live Streams:</strong> First Sunday of the month</li>
-                  </ul>
-                  <p>All times are based on the PST time zone.</p>
+                  <p><strong>New Videos:</strong> Every Tuesday & Friday</p>
+                  <p><strong>Live Streams:</strong> First Sunday of the month</p>
               </div>
           </div>
 
@@ -156,25 +122,8 @@
             <p class="title is-6 has-text-grey-light mb-4">Sponsored</p>
             <a href="#" class="is-block">
                 <figure class="image is-16by9 mb-3 has-background-grey-lighter is-rounded"></figure>
-                <p class="is-size-6 has-text-weight-bold" style="line-height: 1.4;">This is a Native Ad That Looks Like a Related Post</p>
+                <p class="is-size-6 has-text-weight-bold">This is a Native Ad That Looks Like a Related Post</p>
             </a>
-          </div>
-          
-          {{!-- WIDGET 4: Popular Tags --}}
-          {{#get "tags" limit="12" include="count.posts" order="count.posts desc"}}
-            {{#if tags}}
-            <div class="box p-5 mb-6">
-              <p class="title is-5 mb-4">Popular Topics</p>
-              <div class="tags">
-                {{#foreach tags}}<a class="tag" href="{{url}}">{{name}}</a>{{/foreach}}
-              </div>
-            </div>
-            {{/if}}
-          {{/get}}
-
-          {{!-- MONETIZATION: 5. Sidebar Bottom Ad --}}
-          <div class="box has-background-grey-lighter has-text-centered">
-            <p class="has-text-grey-light p-6" style="min-height: 400px;">AdSense Skyscraper Ad</p>
           </div>
         </aside>
       </div>
@@ -196,36 +145,32 @@
     }
 
     function onPlayerReady(event) {
-        document.querySelectorAll('a.timestamp-link').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const time = parseFloat(link.dataset.time);
-                if (player && typeof player.seekTo === 'function') {
-                    player.seekTo(time, true);
-                    player.playVideo();
-                }
-            });
-        });
+        // This function is now primarily for attaching event listeners AFTER the table is built
     }
     
     document.addEventListener('DOMContentLoaded', () => {
+        // ---- 1. Sticky Sidebar (Behavioral JS) ----
         const sidebar = document.querySelector('.post-sidebar-sticky');
         if (sidebar && window.innerWidth >= 1024) {
-            sidebar.classList.add('is-sticky');
+            sidebar.style.position = 'sticky';
+            sidebar.style.top = '2rem';
         }
 
+        // ---- 2. Dynamic Timestamps (Rendered as a Table) ----
         const generateTimestamps = () => {
             const sourceTable = document.querySelector('.gh-content table');
-            const desktopWidget = document.getElementById('timestamps-sidebar');
-            const mobileWidget = document.getElementById('timestamps-accordion');
-            if (!sourceTable || !desktopWidget || !mobileWidget) return;
+            const timestampWidget = document.getElementById('timestamps-widget');
+            const timestampTarget = document.getElementById('timestamps-target');
+            if (!sourceTable || !timestampWidget || !timestampTarget) return;
 
-            const desktopTarget = document.getElementById('timestamps-target-desktop');
-            const mobileTarget = document.getElementById('timestamps-target-mobile');
             const rows = sourceTable.querySelectorAll('tbody tr');
             if (rows.length === 0) return;
             
-            const fragment = document.createDocumentFragment();
+            // Create a new, styled Bulma table
+            const newTable = document.createElement('table');
+            newTable.className = 'table is-fullwidth is-striped is-hoverable is-narrow';
+            const tableBody = document.createElement('tbody');
+
             rows.forEach(row => {
                 const cells = row.querySelectorAll('td, th');
                 if (cells.length < 2) return;
@@ -236,24 +181,40 @@
                 if (parts.length === 3) seconds = parts[0] * 3600 + parts[1] * 60 + parts[2];
                 else if (parts.length === 2) seconds = parts[0] * 60 + parts[1];
                 
-                const link = document.createElement('a');
-                link.className = 'panel-block is-flex is-justify-content-space-between timestamp-link';
-                link.href = `#t=${seconds}`;
-                link.dataset.time = seconds;
-                link.innerHTML = `<span class="is-size-6">${cells[0].textContent.trim()}</span><span class="has-text-right is-size-7">${cells[1].textContent.trim()}</span>`;
-                fragment.appendChild(link);
+                // Create the new table row and cells
+                const newRow = document.createElement('tr');
+                const timeCell = document.createElement('td');
+                const descCell = document.createElement('td');
 
-                timestampDataForSeo.push({"@type": "Clip", "name": cells[1].textContent.trim(), "startOffset": seconds, "url": window.location.href + `#t=${seconds}`});
+                // Make the time cell a clickable link
+                timeCell.innerHTML = `<a href="#t=${seconds}" class="timestamp-link has-text-weight-semibold" data-time="${seconds}">${cells[0].textContent.trim()}</a>`;
+                descCell.textContent = cells[1].textContent.trim();
+
+                newRow.appendChild(timeCell);
+                newRow.appendChild(descCell);
+                tableBody.appendChild(newRow);
+
+                timestampDataForSeo.push({"@type": "Clip", "name": descCell.textContent, "startOffset": seconds, "url": window.location.href + `#t=${seconds}`});
             });
             
-            desktopTarget.appendChild(fragment.cloneNode(true));
-            mobileTarget.appendChild(fragment);
+            newTable.appendChild(tableBody);
+            timestampTarget.appendChild(newTable);
+            timestampWidget.style.display = 'block'; // Show the widget
+            sourceTable.style.display = 'none'; // Hide the original table
             
-            mobileWidget.querySelector('.panel-heading').addEventListener('click', () => {
-                mobileWidget.classList.toggle('is-active');
+            // IMPORTANT: Attach click listeners AFTER the new table is in the DOM
+            document.querySelectorAll('a.timestamp-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (!player || typeof player.seekTo !== 'function') return;
+                    const time = parseFloat(link.dataset.time);
+                    player.seekTo(time, true);
+                    player.playVideo();
+                });
             });
         };
         
+        // ---- 3. Dynamic JSON-LD Injection ----
         const injectSeoData = () => {
             const schemaScript = document.getElementById('video-schema');
             if (!schemaScript) return;
@@ -282,4 +243,5 @@
   "author": { "@type": "Person", "name": "{{primary_author.name}}" }
 }
 </script>
+</body>
 {{/post}}
