@@ -4,12 +4,10 @@
     - Bulma CSS.
     - Font Awesome CSS.
     - Your FitVids.js script.
-    - Standard <head> and <body> tags.
+    - The opening and closing <body> tags.
 --}}
 
 {{#post}}
-<body class="has-background-whitesmoke"> {{!-- Using a standard Bulma background color class --}}
-
 <main class="section">
   {{!-- Using a fluid container for a wide, immersive layout --}}
   <div class="container is-fluid">
@@ -85,7 +83,7 @@
             <p class="has-text-grey p-6">AdSense Display Ad (300x250)</p>
           </div>
           
-          {{!-- WIDGET 1: Timestamps for Desktop (Rendered as a beautiful table) --}}
+          {{!-- WIDGET 1: Timestamps (Rendered as a beautiful table) --}}
           <div id="timestamps-widget" class="box p-4 mb-6" style="display: none;"> {{!-- JS controls visibility --}}
             <p class="title is-5 mb-4">Timestamps</p>
             <div id="timestamps-target" class="table-container">
@@ -118,7 +116,7 @@
           {{/get}}
 
           {{!-- MONETIZATION: 4. Native Ad Placeholder --}}
-          <div class="box p-5 mb-6">
+          <div class="box p-5">
             <p class="title is-6 has-text-grey-light mb-4">Sponsored</p>
             <a href="#" class="is-block">
                 <figure class="image is-16by9 mb-3 has-background-grey-lighter is-rounded"></figure>
@@ -145,11 +143,21 @@
     }
 
     function onPlayerReady(event) {
-        // This function is now primarily for attaching event listeners AFTER the table is built
+        // This function attaches event listeners AFTER the new timestamp table is built and in the DOM.
+        document.querySelectorAll('a.timestamp-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (!player || typeof player.seekTo !== 'function') return;
+                const time = parseFloat(link.dataset.time);
+                player.seekTo(time, true);
+                player.playVideo();
+            });
+        });
     }
     
     document.addEventListener('DOMContentLoaded', () => {
         // ---- 1. Sticky Sidebar (Behavioral JS) ----
+        // This is a necessary piece of JS as Bulma does not have a native sticky class.
         const sidebar = document.querySelector('.post-sidebar-sticky');
         if (sidebar && window.innerWidth >= 1024) {
             sidebar.style.position = 'sticky';
@@ -186,7 +194,6 @@
                 const timeCell = document.createElement('td');
                 const descCell = document.createElement('td');
 
-                // Make the time cell a clickable link
                 timeCell.innerHTML = `<a href="#t=${seconds}" class="timestamp-link has-text-weight-semibold" data-time="${seconds}">${cells[0].textContent.trim()}</a>`;
                 descCell.textContent = cells[1].textContent.trim();
 
@@ -200,18 +207,7 @@
             newTable.appendChild(tableBody);
             timestampTarget.appendChild(newTable);
             timestampWidget.style.display = 'block'; // Show the widget
-            sourceTable.style.display = 'none'; // Hide the original table
-            
-            // IMPORTANT: Attach click listeners AFTER the new table is in the DOM
-            document.querySelectorAll('a.timestamp-link').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    if (!player || typeof player.seekTo !== 'function') return;
-                    const time = parseFloat(link.dataset.time);
-                    player.seekTo(time, true);
-                    player.playVideo();
-                });
-            });
+            sourceTable.style.display = 'none'; // Hide the original table from the main content
         };
         
         // ---- 3. Dynamic JSON-LD Injection ----
@@ -243,5 +239,4 @@
   "author": { "@type": "Person", "name": "{{primary_author.name}}" }
 }
 </script>
-</body>
 {{/post}}
